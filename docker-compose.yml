@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  db:
+      image: mariadb
+      container_name: wbotcontainer
+      restart: always
+      ports: ['3306:3306']
+      volumes:
+       - mariadb-data:/var/lib/mysql
+      environment:
+        MYSQL_DATABASE: wbot
+        MYSQL_USER: user
+        MYSQL_PASSWORD: password
+        MYSQL_ROOT_PASSWORD: password
+
+  phphmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmincontainer
+    restart: always
+    depends_on: ['db']
+    ports: ['80:80']
+    links: ['db:db']
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=user
+      - PMA_PASSWORD=password
+      
+volumes:
+  mariadb-data:
