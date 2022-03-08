@@ -2,6 +2,7 @@ package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Services.MessageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class MessageController {
     }
 
     @GetMapping
-    public List<Message> getMessages()  {
+    public List<Message> getMessages(){
         return _messageService.getMessages();
     }
 
