@@ -18,7 +18,7 @@ public class Message {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long messageId;
 
     @NonNull
     @Size(min = 5,max = 30)
@@ -27,7 +27,6 @@ public class Message {
     @NonNull
     @Size(min = 20)
     private String text;
-
     private LocalDate createdAt;
 //    private LocalDate createdAt = LocalDate.now();
 
@@ -66,7 +65,7 @@ public class Message {
     @Override
     public String toString() {
         return "Message{" +
-                "id=" + id +
+                "id=" + messageId +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
                 ", createdAt=" + createdAt +
