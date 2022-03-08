@@ -1,11 +1,14 @@
 package com.nsoft.welcomebot.Entities;
 
-import lombok.Data;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.Data;
+import lombok.NonNull;
+import org.aspectj.apache.bcel.classfile.Module;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
@@ -16,9 +19,17 @@ public class Message {
     @Id
     @GeneratedValue
     private Long id;
+
+    @NonNull
+    @Size(min = 5,max = 30)
     private String title;
+
+    @NonNull
+    @Size(min = 20)
     private String text;
-    private LocalDate createdAt = LocalDate.now();
+
+    private LocalDate createdAt;
+//    private LocalDate createdAt = LocalDate.now();
 
     public Message() {
     }
@@ -46,6 +57,10 @@ public class Message {
 
     public LocalDate getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
