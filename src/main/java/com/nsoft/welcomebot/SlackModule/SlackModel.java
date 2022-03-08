@@ -16,7 +16,7 @@ public final class SlackModel {
 
     public SlackModel() throws IOException, DeploymentException {
         run();
-        addUserTypingEvent("C035W3Q5YQK", ":wave: Test test :D");
+        addUserTypingEvent("#test", ":wave: Test test :D");
     }
 
     public void run() throws IOException, DeploymentException {

@@ -25,7 +25,6 @@ CREATE TABLE triggers
     message_id bigint NOT NULL,
     channel varchar(50) NOT NULL,
     is_active BOOLEAN NOT NULL,
-    created_at DATE NULL,
     PRIMARY KEY (trigger_id),
     FOREIGN KEY (message_id) REFERENCES messages(message_id)
 )
