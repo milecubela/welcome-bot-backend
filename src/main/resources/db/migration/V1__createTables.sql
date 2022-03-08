@@ -1,30 +1,31 @@
 CREATE TABLE messages
 (
-    messageId bigint NOT NULL,
+    message_id bigint NOT NULL,
     title varchar(50) NOT NULL,
     text varchar(50) NOT NULL,
-    PRIMARY KEY(messageId)
+    created_at DATE NULL,
+    PRIMARY KEY(message_id)
 );
 
 CREATE  TABLE schedules
 (
-    scheduleId bigint NOT NULL,
-    runDate DATE NOT NULL,
-    isRepeat BOOLEAN NOT NULL,
-    isActive BOOLEAN NOT NULL,
-    createdAt DATE NOT NULL,
-    messageId bigint NOT NULL,
-    PRIMARY KEY (scheduleId),
-    FOREIGN KEY (messageId) REFERENCES messages(messageId)
+    schedule_id bigint NOT NULL,
+    run_date DATE NULL,
+    is_repeat BOOLEAN NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    created_at DATE NULL,
+    message_id bigint NOT NULL,
+    PRIMARY KEY (schedule_id),
+    FOREIGN KEY (message_id) REFERENCES messages(message_id)
 );
 
 CREATE TABLE triggers
 (
-    triggerId bigint NOT NULL,
-    messageId bigint NOT NULL,
+    trigger_id bigint NOT NULL,
+    message_id bigint NOT NULL,
     channel varchar(50) NOT NULL,
-    isActive BOOLEAN NOT NULL,
-    createdAT DATE NOT NULL,
-    PRIMARY KEY (triggerId),
-    FOREIGN KEY (messageId) REFERENCES messages(messageId)
+    is_active BOOLEAN NOT NULL,
+    created_at DATE NULL,
+    PRIMARY KEY (trigger_id),
+    FOREIGN KEY (message_id) REFERENCES messages(message_id)
 )
