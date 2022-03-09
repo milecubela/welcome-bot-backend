@@ -1,14 +1,16 @@
 package com.nsoft.welcomebot.Services;
 
+import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ScheduleService {
@@ -16,7 +18,6 @@ public class ScheduleService {
     private final ScheduleRepository _scheduleRepository;
     private final MessageRepository _messageRepository;
 
-    @Autowired
     public ScheduleService(ScheduleRepository scheduleRepository, MessageRepository messageRepository) {
         _scheduleRepository = scheduleRepository;
         _messageRepository = messageRepository;
@@ -26,17 +27,25 @@ public class ScheduleService {
         return _scheduleRepository.findAll();
     }
 
+    @NonNull
     public void createNewSchedule(Schedule schedule) {
+        var opt = Optional.ofNullable(schedule);
+        if(opt.isEmpty()){
+            throw new IllegalStateException(" Scheduler has null value ");
+        }
+        var msg = Optional.ofNullable(schedule.getMessage());
+        if(msg.isEmpty()){
+         throw new IllegalStateException(" Scheduler has recieved a null message entity");
+        }
+//        if (schedule.getMessage()== null){
+//            throw new IllegalStateException(" Scheduler has recieved a null message entity");
+//        }
         boolean valid = _messageRepository.existsById(schedule.getMessage().getMessageId());
         if (!valid){
             throw new IllegalStateException(" Scheduler has recieved a message entity whose ID does not exist");
         }
         schedule.setCreated_at(LocalDate.now());
-        if (schedule.getMessage() == null ) {
-            throw new IllegalStateException(" Scheduler has recieved a null message entity or the message ID does not exist");
-        } else {
-            _scheduleRepository.save(schedule);
-        }
+        _scheduleRepository.save(schedule);
     }
 
     public void deleteSchedule(Long scheduleId) {
