@@ -35,6 +35,14 @@ public class Schedule {
     public Schedule() {
     }
 
+    public Schedule(Schedule sched) {
+        this.scheduleId=sched.getScheduleId();
+        this.is_repeat=sched.getIs_repeat();
+        this.is_active=sched.getIs_active();
+        this.created_at=sched.getCreated_at();
+        this.run_date=sched.getRun_date();
+    }
+
     public Schedule(Message message) {
         this.message = message;
     }
