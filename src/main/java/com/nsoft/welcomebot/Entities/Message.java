@@ -4,12 +4,15 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
 import org.aspectj.apache.bcel.classfile.Module;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -29,6 +32,14 @@ public class Message {
     private String text;
     private LocalDate createdAt;
 //    private LocalDate createdAt = LocalDate.now();
+
+    @OneToMany(
+            mappedBy = "message",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Trigger> triggers = new ArrayList<>();
 
     public Message() {
     }
