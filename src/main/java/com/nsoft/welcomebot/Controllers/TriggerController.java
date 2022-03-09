@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "api/v1/triggers")
 public class TriggerController {
@@ -22,7 +24,7 @@ public class TriggerController {
     }
 
     @PostMapping
-    public void createTrigger(@RequestBody Trigger trigger){
+    public void createTrigger(@Valid @RequestBody Trigger trigger){
         _triggerService.createTrigger(trigger);
     }
 }

@@ -15,13 +15,16 @@ public class Trigger {
     @GeneratedValue
     private Long triggerId;
 
-    @ManyToOne
-    @JoinColumn(name = "messageId", referencedColumnName = "messageId")
-    private Message message;
-    private TriggerEvent triggerEvent;
-
     @NonNull
     private String channel;
+
+    private Boolean isActive;
+
+    @ManyToOne()
+    @JoinColumn(name = "message_id")
+    private Message message;
+
+    private TriggerEvent triggerEvent;
 
     public Trigger() {
 
@@ -43,6 +46,14 @@ public class Trigger {
 
     public void setTriggerId(Long triggerId) {
         this.triggerId = triggerId;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public Message getMessage() {
