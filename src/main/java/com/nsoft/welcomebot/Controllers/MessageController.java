@@ -36,7 +36,7 @@ public class MessageController {
     }
     //path varijable moraju imati identicno ime kao varijable koje se u funkciju pozivaju
     @DeleteMapping(path = "{messageId}")
-    public void deleteStudent(@PathVariable("messageId") long messageId){
+    public void deleteMessage(@PathVariable("messageId") long messageId){
         _messageService.deleteMessage(messageId);
     }
 }
