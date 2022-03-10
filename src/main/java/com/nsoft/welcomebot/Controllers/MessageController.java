@@ -2,6 +2,7 @@ package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Services.MessageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class MessageController {
     }
 
     @GetMapping
-    public List<Message> getMessages()  {
+    public List<Message> getMessages(){
         return _messageService.getMessages();
     }
 
@@ -34,7 +35,7 @@ public class MessageController {
     public void createMessage(@Valid @RequestBody Message message) {
         _messageService.createNewMessage(message);
     }
-    //path varijable moraju imati identicno ime kao varijable koje se u funkciju pozivaju
+
     @DeleteMapping(path = "{messageId}")
     public void deleteMessage(@PathVariable("messageId") long messageId){
         _messageService.deleteMessage(messageId);

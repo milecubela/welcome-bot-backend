@@ -1,9 +1,12 @@
 package com.nsoft.welcomebot.Entities;
 
+
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 
 @Data
 @Entity
@@ -42,6 +46,14 @@ public class Message {
     )
     @JsonIgnore
     private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "message",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Trigger> triggers = new ArrayList<>();
 
     public Message() {
     }
