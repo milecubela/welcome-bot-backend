@@ -2,15 +2,13 @@ package com.nsoft.welcomebot.Controllers;
 
 
 import com.nsoft.welcomebot.Entities.Trigger;
-import com.nsoft.welcomebot.Services.MessageService;
 import com.nsoft.welcomebot.Services.TriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/triggers")
@@ -26,5 +24,13 @@ public class TriggerController {
     @PostMapping
     public void createTrigger(@Valid @RequestBody Trigger trigger){
         _triggerService.createTrigger(trigger);
+    }
+
+    @GetMapping
+    public List<Trigger> getTriggers(){return _triggerService.getTriggers();}
+
+    @GetMapping(path="{triggerId}")
+    public Optional<Trigger> getTriggerById(@PathVariable("triggerId") long triggerId){
+        return _triggerService.getTriggerById(triggerId);
     }
 }
