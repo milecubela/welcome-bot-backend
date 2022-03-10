@@ -1,37 +1,51 @@
 package com.nsoft.welcomebot.Entities;
 
+
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
-import org.aspectj.apache.bcel.classfile.Module;
-
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 @Data
 @Entity
 @Table(name = "messages")
 public class Message {
 
+
+
     @Id
     @GeneratedValue
     private Long messageId;
 
     @NonNull
-    @Size(min = 5,max = 30)
+    @Size(min = 5, max = 30)
     private String title;
 
     @NonNull
     @Size(min = 20)
     private String text;
     private LocalDate createdAt;
-//    private LocalDate createdAt = LocalDate.now();
+
+
+
+
+    @OneToMany(
+            mappedBy = "message",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Schedule> schedules = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "message",
@@ -82,4 +96,12 @@ public class Message {
                 ", createdAt=" + createdAt +
                 '}';
     }
+
+    public Message(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
+
 }
