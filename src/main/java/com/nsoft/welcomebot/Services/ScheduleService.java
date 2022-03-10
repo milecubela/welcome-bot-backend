@@ -29,17 +29,12 @@ public class ScheduleService {
 
     @NonNull
     public void createNewSchedule(Schedule schedule) {
-        var opt = Optional.ofNullable(schedule);
-        if(opt.isEmpty()){
+        if(Optional.ofNullable(schedule).isEmpty()){
             throw new IllegalStateException(" Scheduler has null value ");
         }
-        var msg = Optional.ofNullable(schedule.getMessage());
-        if(msg.isEmpty()){
+        if(Optional.ofNullable(schedule.getMessage()).isEmpty()){
          throw new IllegalStateException(" Scheduler has recieved a null message entity");
         }
-//        if (schedule.getMessage()== null){
-//            throw new IllegalStateException(" Scheduler has recieved a null message entity");
-//        }
         boolean valid = _messageRepository.existsById(schedule.getMessage().getMessageId());
         if (!valid){
             throw new IllegalStateException(" Scheduler has recieved a message entity whose ID does not exist");
