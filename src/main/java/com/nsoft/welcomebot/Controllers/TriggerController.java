@@ -30,7 +30,18 @@ public class TriggerController {
     public List<Trigger> getTriggers(){return _triggerService.getTriggers();}
 
     @GetMapping(path="{triggerId}")
-    public Optional<Trigger> getTriggerById(@PathVariable("triggerId") long triggerId){
+    public Trigger getTriggerById(@PathVariable("triggerId") long triggerId){
         return _triggerService.getTriggerById(triggerId);
     }
+
+    @DeleteMapping(path="{triggerId}")
+    public void deleteTrigger(@PathVariable("triggerId") long triggerId){
+        _triggerService.deleteTrigger(triggerId);
+    }
+
+    @PutMapping
+    public void updateTrigger(@Valid @RequestBody Trigger trigger){
+        _triggerService.updateTrigger(trigger);
+    }
+
 }

@@ -1,4 +1,7 @@
 package com.nsoft.welcomebot.SlackModule;
+import com.nsoft.welcomebot.Entities.Trigger;
+import com.nsoft.welcomebot.Repositories.MessageRepository;
+import com.nsoft.welcomebot.Repositories.TriggerRepository;
 import com.slack.api.Slack;
 import com.slack.api.model.event.UserTypingEvent;
 import com.slack.api.rtm.*;
