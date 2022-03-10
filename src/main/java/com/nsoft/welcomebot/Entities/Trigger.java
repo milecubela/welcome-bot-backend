@@ -26,6 +26,14 @@ public class Trigger {
 
     private TriggerEvent triggerEvent;
 
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
     public Trigger() {
 
     }
@@ -48,13 +56,6 @@ public class Trigger {
         this.triggerId = triggerId;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
     public Message getMessage() {
         return message;
