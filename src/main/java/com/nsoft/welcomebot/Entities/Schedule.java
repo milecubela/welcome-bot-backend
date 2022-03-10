@@ -1,13 +1,14 @@
 package com.nsoft.welcomebot.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nsoft.welcomebot.Entities.Message;
+import com.nsoft.welcomebot.Utilities.RepeatingValue;
+import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import lombok.Data;
-import org.hibernate.action.internal.CollectionUpdateAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
+
+import static com.nsoft.welcomebot.Utilities.TriggerEvent.CHANNEL_LEFT;
 
 @Data
 @Entity
@@ -24,8 +25,8 @@ public class Schedule {
     private LocalDate created_at;
 
     private Date run_date;
-
-
+//    @Enumerated
+//    private RepeatingValue repeat;
 
     // @ManyToOne
     @ManyToOne
@@ -36,21 +37,22 @@ public class Schedule {
     }
 
     public Schedule(Schedule sched) {
-        this.scheduleId=sched.getScheduleId();
-        this.is_repeat=sched.getIs_repeat();
-        this.is_active=sched.getIs_active();
-        this.created_at=sched.getCreated_at();
-        this.run_date=sched.getRun_date();
+        this.scheduleId = sched.getScheduleId();
+        this.is_repeat = sched.getIs_repeat();
+        this.is_active = sched.getIs_active();
+        this.created_at = sched.getCreated_at();
+        this.run_date = sched.getRun_date();
     }
 
     public Schedule(Message message) {
         this.message = message;
     }
 
-    public Schedule(Boolean is_repeat, Boolean is_active, Date run_date) {
+    public Schedule(Boolean is_repeat, Boolean is_active, Date run_date /*, RepeatingValue repeat*/) {
         this.is_repeat = is_repeat;
         this.is_active = is_active;
         this.run_date = run_date;
+//        this.repeat = repeat;
     }
 
     @Override
