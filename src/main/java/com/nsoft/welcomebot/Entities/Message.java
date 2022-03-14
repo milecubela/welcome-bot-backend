@@ -21,8 +21,6 @@ import java.util.Set;
 @Table(name = "messages")
 public class Message {
 
-
-
     @Id
     @GeneratedValue
     private Long messageId;
@@ -35,9 +33,6 @@ public class Message {
     @Size(min = 20)
     private String text;
     private LocalDate createdAt;
-
-
-
 
     @OneToMany(
             mappedBy = "message",

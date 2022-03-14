@@ -11,13 +11,11 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/v1/schedules")
 public class ScheduleController {
+
     private final ScheduleService _scheduleSerivce;
 
     @Autowired
-    public ScheduleController(ScheduleService scheduleSerivce) {
-        _scheduleSerivce = scheduleSerivce;
-
-    }
+    public ScheduleController(ScheduleService scheduleSerivce) {_scheduleSerivce = scheduleSerivce;}
 
     @GetMapping
     public List<Schedule> getSchedules(){

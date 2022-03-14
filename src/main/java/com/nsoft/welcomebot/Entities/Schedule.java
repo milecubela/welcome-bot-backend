@@ -25,8 +25,6 @@ public class Schedule {
 
     private Date run_date;
 
-
-
     // @ManyToOne
     @ManyToOne
     @JoinColumn(name = "message_id")

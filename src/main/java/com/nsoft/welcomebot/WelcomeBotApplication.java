@@ -1,16 +1,16 @@
 package com.nsoft.welcomebot;
 
-import com.nsoft.welcomebot.SlackModule.SlackModel;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import javax.websocket.DeploymentException;
-import java.io.IOException;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
+@EnableSwagger2
+@ServletComponentScan
 public class WelcomeBotApplication {
 
-    public static void main(String[] args) throws DeploymentException, IOException {
+    public static void main(String[] args) {
         SpringApplication.run(WelcomeBotApplication.class, args);
     }
 

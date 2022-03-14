@@ -1,41 +1,111 @@
 package com.nsoft.welcomebot.SlackModule;
+
 import com.nsoft.welcomebot.Entities.Trigger;
-import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.TriggerRepository;
-import com.slack.api.Slack;
-import com.slack.api.model.event.UserTypingEvent;
-import com.slack.api.rtm.*;
-import com.slack.api.rtm.message.*;
+import com.nsoft.welcomebot.Utilities.TriggerEvent;
+import com.slack.api.bolt.App;
+import com.slack.api.methods.SlackApiException;
+import com.slack.api.model.Conversation;
+import com.slack.api.model.event.*;
 
-import javax.websocket.DeploymentException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+
 import java.io.IOException;
+import java.util.List;
 
-public final class SlackModel {
+@Configuration
+@EnableWebMvc
+public class SlackModel {
 
-    RTMEventsDispatcher dispatcher=RTMEventsDispatcherFactory.getInstance();
-    String botToken = Token.SLACK_BOT_TOKEN;
-    Slack slack = Slack.getInstance();
-    RTMClient rtm = slack.rtmConnect(botToken);
+    private App app;
+    private List<Trigger> appMentionEventTriggers;
+    private List<Trigger> userLeftChannelTriggers;
 
-    public SlackModel() throws IOException, DeploymentException {
-        run();
-        addUserTypingEvent("#test", ":wave: Test test :D");
+    @Autowired
+    private final TriggerRepository _triggerRepository;
+
+    public SlackModel(List<Trigger> appMentionEventTriggers, List<Trigger> userLeftChannelTriggers, TriggerRepository triggerRepository) throws Exception {
+        this.appMentionEventTriggers = appMentionEventTriggers;
+        this.userLeftChannelTriggers = userLeftChannelTriggers;
+        _triggerRepository = triggerRepository;
     }
 
-    public void run() throws IOException, DeploymentException {
-        rtm.connect();
-        rtm.addMessageHandler(dispatcher.toMessageHandler());
-     }
+    @Bean
+    public App initSlackApp() throws Exception {
+        app=new App();
 
-     public void addUserTypingEvent(String channelId, String txt){
-         RTMEventHandler<UserTypingEvent> userTyping = new RTMEventHandler<UserTypingEvent>() {
-             @Override
-             public void handle(UserTypingEvent event) {
-                 String _channelId = channelId;
-                 String _message = Message.builder().channel(_channelId).text(txt).build().toJSONString();
-                 rtm.sendMessage(_message);
-             }
-         };
-         dispatcher.register(userTyping);
-     }
+        app.message("hello", (req, ctx) -> {
+            var logger = ctx.logger;
+            try {
+                var event = req.getEvent();
+                // Call the chat.postMessage method using the built-in WebClient
+                var result = ctx.client().chatPostMessage(r -> r
+                        // Payload message should be posted in the channel where original message was heard
+                        .channel(event.getChannel())
+                        .text("hello")
+                );
+                logger.info("result: {}", result);
+            } catch (IOException | SlackApiException e) {
+                logger.error("error: {}", e.getMessage(), e);
+            }
+            return ctx.ack();
+        });
+
+        addTriggers();
+
+        return app;
+    }
+
+    public void addTriggers() throws SlackApiException, IOException {
+        for(Trigger trigger:_triggerRepository.findAll()){
+            if(trigger.getTriggerEvent()== TriggerEvent.APP_MENTION_EVENT){
+                appMentionEventTriggers.add(trigger);
+            }else if(trigger.getTriggerEvent()==TriggerEvent.CHANNEL_LEFT){
+                userLeftChannelTriggers.add(trigger);
+            }
+        }
+        addAppMentionEvent(appMentionEventTriggers);
+        addUserLeftChannelEvent(userLeftChannelTriggers);
+    }
+
+    public void addAppMentionEvent(List<Trigger> triggers){
+        app.event(AppMentionEvent.class, (payload, ctx) -> {
+            var event = payload.getEvent();
+            var channelResult = app.getClient().conversationsInfo( r -> r
+                    .token(System.getenv("SLACK_BOT_TOKEN"))
+                    .channel(event.getChannel()));
+            var channelName=channelResult.getChannel().getName();
+            for(Trigger trigger:triggers){
+                if(channelName.equals(trigger.getChannel())){
+                    var result = ctx.client().chatPostMessage(r -> r
+                            // Payload message should be posted in the channel where original message was heard
+                            .channel(event.getChannel())
+                            .text(trigger.getMessage().getText())
+                    );
+                }
+            }
+            return ctx.ack();
+        });
+    }
+
+    public void addUserLeftChannelEvent(List<Trigger> triggers) throws SlackApiException, IOException {
+        app.event(MemberLeftChannelEvent.class, (payload, ctx) -> {
+            var event = payload.getEvent();
+            for(Trigger trigger:triggers){
+                if(event.getChannel().equals(trigger.getChannel())){
+                    var result = ctx.client().chatPostMessage(r -> r
+                            // Payload message should be posted in the channel where original message was heard
+                            .channel(event.getChannel())
+                            .text(trigger.getMessage().getText() + "<@"+event.getUser()+">")
+                    );
+                }
+            }
+            return ctx.ack();
+        });
+    }
 }
+

@@ -34,9 +34,7 @@ public class Trigger {
         isActive = active;
     }
 
-    public Trigger() {
-
-    }
+    public Trigger() {}
 
     @Override
     public String toString() {
