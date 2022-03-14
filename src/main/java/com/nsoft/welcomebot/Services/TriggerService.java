@@ -3,11 +3,12 @@ package com.nsoft.welcomebot.Services;
 import com.nsoft.welcomebot.Entities.Trigger;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.TriggerRepository;
+import com.nsoft.welcomebot.SlackModule.SlackModel;
+import com.slack.api.methods.SlackApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
