@@ -12,7 +12,7 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule,Long> {
     @Query(
             value = "SELECT * FROM `schedules` \n" +
-                    "where is_active = false\n" +
+                    "where is_active = true\n" +
                     "and is_repeat = true\n" +
                     "and run_date<LOCALTIME",
             nativeQuery = true)

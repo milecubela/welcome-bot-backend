@@ -10,9 +10,10 @@ CREATE TABLE messages
 CREATE  TABLE schedules
 (
     schedule_id bigint NOT NULL,
-    run_date DATE NULL,
+    run_date varchar(50) NULL,
     is_repeat BOOLEAN NOT NULL,
     is_active BOOLEAN NOT NULL,
+    Schedulertime SMALLINT NULL,
     created_at DATE NULL,
     message_id bigint NOT NULL,
     PRIMARY KEY (schedule_id),

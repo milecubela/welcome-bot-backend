@@ -1,15 +1,13 @@
 package com.nsoft.welcomebot.SlackModule;
-import com.nsoft.welcomebot.Controllers.MessageController;
-import com.nsoft.welcomebot.Entities.Trigger;
-import com.nsoft.welcomebot.Repositories.MessageRepository;
-import com.nsoft.welcomebot.Repositories.TriggerRepository;
-import com.nsoft.welcomebot.Services.MessageService;
+
 import com.slack.api.Slack;
 import com.slack.api.model.event.UserTypingEvent;
-import com.slack.api.rtm.*;
-import com.slack.api.rtm.message.*;
+import com.slack.api.rtm.RTMClient;
+import com.slack.api.rtm.RTMEventHandler;
+import com.slack.api.rtm.RTMEventsDispatcher;
+import com.slack.api.rtm.RTMEventsDispatcherFactory;
+import com.slack.api.rtm.message.Message;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import javax.websocket.DeploymentException;
 import java.io.IOException;
@@ -39,12 +37,12 @@ public final class SlackModel {
                  String _channelId = channelId;
                  String _message = Message.builder().channel(_channelId).text(txt).build().toJSONString();
                  rtm.sendMessage(_message);
+
              }
          };
          dispatcher.register(userTyping);
      }
 
-    @Scheduled(fixedDelay = 60000)
     public void sendScheduledMessage(String text){
          String _channelId = "C035W3Q5YQK";
          String _message = Message.builder().channel(_channelId).text(text).build().toJSONString();

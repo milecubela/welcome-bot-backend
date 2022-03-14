@@ -14,7 +14,5 @@ public class WelcomeBotApplication {
 
     public static void main(String[] args) throws DeploymentException, IOException {
         SpringApplication.run(WelcomeBotApplication.class, args);
-
     }
-
 }
