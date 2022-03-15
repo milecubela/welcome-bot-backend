@@ -5,38 +5,38 @@ import com.nsoft.welcomebot.Repositories.TriggerRepository;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import com.slack.api.bolt.App;
 import com.slack.api.methods.SlackApiException;
-import com.slack.api.model.event.*;
-
+import com.slack.api.model.event.AppMentionEvent;
+import com.slack.api.model.event.MemberJoinedChannelEvent;
+import com.slack.api.model.event.MemberLeftChannelEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Configuration
 @EnableWebMvc
-public class SlackModel {
+public class SlackService {
 
     private App app;
-    private List<Trigger> appMentionEventTriggers=new ArrayList<>();
-    private List<Trigger> userLeftChannelTriggers=new ArrayList<>();
-    private List<Trigger> userJoinedChannelTriggers=new ArrayList<>();
+    private final List<Trigger> appMentionEventTriggers = new ArrayList<>();
+    private final List<Trigger> userLeftChannelTriggers = new ArrayList<>();
+    private final List<Trigger> userJoinedChannelTriggers = new ArrayList<>();
 
-
-    @Autowired
     private final TriggerRepository _triggerRepository;
 
-    public SlackModel(TriggerRepository triggerRepository){
+    @Autowired
+    public SlackService(TriggerRepository triggerRepository) {
         _triggerRepository = triggerRepository;
     }
 
     @Bean
-    public App initSlackApp(){
-        app=new App();
+    public App initSlackApp() {
+        app = new App();
 
         app.message("hello", (req, ctx) -> {
             var logger = ctx.logger;
@@ -57,13 +57,17 @@ public class SlackModel {
 
         app.command("/channel-info", (req, ctx) -> {
             var payload = req.getPayload();
-            var convMembers = app.client().conversationsMembers( r -> r
+            var user = app.client().usersInfo( r -> r
+                    .token(System.getenv("SLACK_BOT_TOKEN"))
+                    .user(payload.getUserId())
+            ).getUser();
+            var convMembers = app.client().conversationsMembers(r -> r
                     .token(System.getenv("SLACK_BOT_TOKEN"))
                     .channel(payload.getChannelId())).getMembers();
             String message = "This is channel about!\nChannel members: ";
-            for(int i=0; i<convMembers.size();i++){
-                message+="<@"+convMembers.get(i)+">";
-                message += (i+1 < convMembers.size()? ", ": ".");
+            for (int i = 0; i < convMembers.size(); i++) {
+                message += "<@" + convMembers.get(i) + ">";
+                message += (i + 1 < convMembers.size() ? ", " : ".");
             }
             return ctx.ack(message);
         });
@@ -73,41 +77,41 @@ public class SlackModel {
         return app;
     }
 
-    public void addTriggers(){
+    public void addTriggers() {
         clearTriggers();
-        for(Trigger trigger:_triggerRepository.findAll()){
-            if(trigger.getTriggerEvent()== TriggerEvent.APP_MENTION_EVENT){
+        for (Trigger trigger : _triggerRepository.findAll()) {
+            if (trigger.getTriggerEvent() == TriggerEvent.APP_MENTION_EVENT) {
                 appMentionEventTriggers.add(trigger);
-            }else if(trigger.getTriggerEvent()==TriggerEvent.CHANNEL_LEFT){
+            } else if (trigger.getTriggerEvent() == TriggerEvent.CHANNEL_LEFT) {
                 userLeftChannelTriggers.add(trigger);
-            }else if(trigger.getTriggerEvent()==TriggerEvent.CHANNEL_JOINED){
+            } else if (trigger.getTriggerEvent() == TriggerEvent.CHANNEL_JOINED) {
                 userJoinedChannelTriggers.add(trigger);
             }
         }
         subscribeToSlackEvents();
     }
 
-    private void subscribeToSlackEvents(){
+    private void subscribeToSlackEvents() {
         subscribeAppMentionEvent(appMentionEventTriggers);
         subscribeUserLeftChannelEvent(userLeftChannelTriggers);
         subscribeUserJoinedChannelEvent(userJoinedChannelTriggers);
     }
 
-    private void clearTriggers(){
+    private void clearTriggers() {
         appMentionEventTriggers.clear();
         userLeftChannelTriggers.clear();
         userJoinedChannelTriggers.clear();
     }
 
-    public void subscribeAppMentionEvent(List<Trigger> triggers){
+    public void subscribeAppMentionEvent(List<Trigger> triggers) {
         app.event(AppMentionEvent.class, (payload, ctx) -> {
             var event = payload.getEvent();
-            var channelResult = app.getClient().conversationsInfo( r -> r
+            var channelResult = app.getClient().conversationsInfo(r -> r
                     .token(System.getenv("SLACK_BOT_TOKEN"))
                     .channel(event.getChannel()));
-            var channelName=channelResult.getChannel().getName();
-            for(Trigger trigger:triggers){
-                if(channelName.equals(trigger.getChannel())){
+            var channelName = channelResult.getChannel().getName();
+            for (Trigger trigger : triggers) {
+                if (channelName.equals(trigger.getChannel())) {
                     ctx.client().chatPostMessage(r -> r
                             // Payload message should be posted in the channel where original message was heard
                             .channel(event.getChannel())
@@ -119,15 +123,15 @@ public class SlackModel {
         });
     }
 
-    public void subscribeUserLeftChannelEvent(List<Trigger> triggers){
+    public void subscribeUserLeftChannelEvent(List<Trigger> triggers) {
         app.event(MemberLeftChannelEvent.class, (payload, ctx) -> {
             var event = payload.getEvent();
-            for(Trigger trigger:triggers){
-                if(event.getChannel().equals(trigger.getChannel())){
+            for (Trigger trigger : triggers) {
+                if (event.getChannel().equals(trigger.getChannel())) {
                     ctx.client().chatPostMessage(r -> r
                             // Payload message should be posted in the channel where original message was heard
                             .channel(event.getChannel())
-                            .text(trigger.getMessage().getText() + "<@"+event.getUser()+">")
+                            .text(trigger.getMessage().getText() + "<@" + event.getUser() + ">")
                     );
                 }
             }
@@ -135,15 +139,15 @@ public class SlackModel {
         });
     }
 
-    public void subscribeUserJoinedChannelEvent(List<Trigger> triggers){
+    public void subscribeUserJoinedChannelEvent(List<Trigger> triggers) {
         app.event(MemberJoinedChannelEvent.class, (payload, ctx) -> {
             var event = payload.getEvent();
-            for(Trigger trigger:triggers){
-                if(event.getChannel().equals(trigger.getChannel())){
+            for (Trigger trigger : triggers) {
+                if (event.getChannel().equals(trigger.getChannel())) {
                     ctx.client().chatPostMessage(r -> r
                             // Payload message should be posted in the channel where original message was heard
                             .channel(event.getChannel())
-                            .text(trigger.getMessage().getText() + "<@"+event.getUser()+">")
+                            .text(trigger.getMessage().getText() + "<@" + event.getUser() + ">")
                     );
                 }
             }
@@ -151,4 +155,3 @@ public class SlackModel {
         });
     }
 }
-
