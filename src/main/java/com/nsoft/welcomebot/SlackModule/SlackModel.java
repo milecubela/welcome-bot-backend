@@ -7,11 +7,12 @@ import com.slack.api.rtm.RTMEventHandler;
 import com.slack.api.rtm.RTMEventsDispatcher;
 import com.slack.api.rtm.RTMEventsDispatcherFactory;
 import com.slack.api.rtm.message.Message;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import javax.websocket.DeploymentException;
 import java.io.IOException;
 
+@Component
 public final class SlackModel {
 
     RTMEventsDispatcher dispatcher=RTMEventsDispatcherFactory.getInstance();

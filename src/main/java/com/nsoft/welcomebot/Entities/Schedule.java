@@ -108,8 +108,7 @@ public class Schedule {
     public LocalDateTime getRunDateConverted() throws ParseException {
         // PRETVARA STRING OBJEKAT U DATUM I VRACA LOCALDATETIME
         Date temp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(this.getRun_date());
-        var temp2 = temp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        return temp2;
+        return temp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
     public void setLast_run(LocalDateTime last_run) {
         this.last_run = last_run;

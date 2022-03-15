@@ -8,6 +8,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class ScheduleService {
     }
 
     @NonNull
-    public void createNewSchedule(Schedule schedule) {
+    public void createNewSchedule(Schedule schedule) throws ParseException {
         if(Optional.ofNullable(schedule).isEmpty()){
             throw new IllegalStateException(" Scheduler has null value ");
         }
@@ -40,6 +41,7 @@ public class ScheduleService {
             throw new IllegalStateException(" Scheduler has recieved a message entity whose ID does not exist");
         }
         schedule.setCreated_at(LocalDate.now());
+        schedule.setNext_run(schedule.getRunDateConverted());
         _scheduleRepository.save(schedule);
     }
 
@@ -52,10 +54,10 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void updateSchedule(Schedule schedule) {
+    public void updateSchedule(Schedule schedule) throws ParseException {
         Schedule sched = _scheduleRepository.findById(schedule.getScheduleId()).orElseThrow(() ->
                 new IllegalStateException("Schedule with the ID of : " + schedule.getScheduleId() + " does not exist"));
-
+        schedule.setNext_run(schedule.getRunDateConverted());
         _scheduleRepository.save(schedule);
     }
 

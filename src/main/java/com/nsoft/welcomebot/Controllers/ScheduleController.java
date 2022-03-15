@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ScheduleController {
     public Schedule getScheduleById(@PathVariable Long scheduleID){return _scheduleSerivce.getScheduleById(scheduleID);}
 
     @PostMapping
-    public void createSchedule(@Valid @RequestBody Schedule schedule){
+    public void createSchedule(@Valid @RequestBody Schedule schedule) throws ParseException {
         _scheduleSerivce.createNewSchedule(schedule);
     }
 
@@ -36,6 +37,6 @@ public class ScheduleController {
     public void deleteSchedule(@PathVariable Long scheduleId){_scheduleSerivce.deleteSchedule(scheduleId);}
 
     @PutMapping
-    public void updateSchedule(@Valid @RequestBody Schedule schedule){ _scheduleSerivce.updateSchedule(schedule);}
+    public void updateSchedule(@Valid @RequestBody Schedule schedule) throws ParseException { _scheduleSerivce.updateSchedule(schedule);}
 
 }
