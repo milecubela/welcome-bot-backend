@@ -40,7 +40,7 @@ public class User implements UserDetails {
         this.userRole = userRole;
     }
     /*
-    Get user authorithies from spring security class UserDetails
+    Get user authorities from spring security class UserDetails
      */
     public Collection<? extends GrantedAuthority> getAuthorities() {
 

@@ -19,9 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /*
-    Allow /api/v1/auth/validateToken for everyone, request ADMIN role on every other route
+    Request ADMIN role on every route
     Filter oauthRequestFilter checks if user is ADMIN
      */
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
            http

@@ -25,19 +25,10 @@ import java.util.Optional;
 @Service
 public class OauthTokenService {
 
-    private final UserService userService;
-    private final GoogleIdTokenVerifier verifier;
-
-    @Autowired
-    public OauthTokenService(UserService userService, GoogleIdTokenVerifier verifier){
-        this.userService = userService;
-        this.verifier = verifier;
-    }
-
 /*
     Function that takes googleid token as param, and checks if the token is valid
-
  */
+
     public JsonObject verifyGoogleToken(String token) throws GeneralSecurityException, IOException {
 
         URL url = new URL("https://oauth2.googleapis.com/tokeninfo?id_token=" + token);
@@ -51,17 +42,5 @@ public class OauthTokenService {
         con.disconnect();
         System.out.println(json);
         return json;
-
-//        GoogleIdToken googleIdToken = verifier.verify(token);
-//        if(googleIdToken != null) {
-//            GoogleIdToken.Payload payload = googleIdToken.getPayload();
-//            String email = payload.getEmail();
-//
-//            if(!userService.validateUser(email)){
-//                return new ApiResponse(HttpStatus.UNAUTHORIZED, "The user is not defined as admin");
-//            }
-//            return  new ApiResponse(HttpStatus.OK, "The user exists in database, and is admin");
-//        }
-//        return new ApiResponse(HttpStatus.BAD_REQUEST, "Token is not valid");
     }
 }
