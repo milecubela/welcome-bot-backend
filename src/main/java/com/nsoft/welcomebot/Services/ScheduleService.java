@@ -5,6 +5,8 @@ import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -63,5 +65,9 @@ public class ScheduleService {
         Schedule sched = _scheduleRepository.findById(scheduleId).orElseThrow(() ->
                 new IllegalStateException("Schedule with the ID of : " + scheduleId + " does not exist"));
         return sched;
+    }
+    public Page<Schedule> findAllPaginated(int offset, int pagesize){
+        Page<Schedule> schedules = _scheduleRepository.findAll(PageRequest.of(offset, pagesize));
+        return schedules;
     }
 }

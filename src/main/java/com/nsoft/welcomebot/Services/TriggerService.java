@@ -1,9 +1,12 @@
 package com.nsoft.welcomebot.Services;
 
+import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Trigger;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.TriggerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -51,5 +54,9 @@ public class TriggerService {
         Trigger trigg = _triggerRepository.findById(trigger.getTriggerId()).orElseThrow(() ->
                 new IllegalStateException("Trigger with the ID of : " + trigger.getTriggerId() + " does not exist"));
         _triggerRepository.save(trigger);
+    }
+    public Page<Trigger> findAllPaginated(int offset, int pagesize){
+        Page<Trigger> triggers = _triggerRepository.findAll(PageRequest.of(offset, pagesize));
+        return triggers;
     }
 }
