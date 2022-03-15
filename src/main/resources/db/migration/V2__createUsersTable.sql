@@ -7,4 +7,6 @@ CREATE TABLE users
 );
 
 INSERT INTO users(user_id, email, user_role)
-values(1, 'mile.cubela1@gmail.com', 'ADMIN');
+values(1, 'mile.cubela1@gmail.com', 'ADMIN'),
+       (2, 'tarearnaut@gmail.com', 'ADMIN'),
+       (3, 'thegepic@gmail.com', 'ADMIN');
