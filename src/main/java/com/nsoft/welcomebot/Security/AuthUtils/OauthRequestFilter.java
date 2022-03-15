@@ -2,8 +2,8 @@ package com.nsoft.welcomebot.Security.AuthUtils;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.nsoft.welcomebot.Entities.User;
-import com.nsoft.welcomebot.Repositories.UserRepository;
+import com.google.gson.JsonObject;
+import com.nsoft.welcomebot.Services.OauthTokenService;
 import com.nsoft.welcomebot.Services.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,13 +29,15 @@ import java.security.GeneralSecurityException;
 public class OauthRequestFilter extends OncePerRequestFilter {
 
 
-    private final GoogleIdTokenVerifier verifier;
+    //private final GoogleIdTokenVerifier verifier;
     private final UserService userService;
+    private final OauthTokenService oauthTokenService;
 
 
-    public OauthRequestFilter(GoogleIdTokenVerifier verifier, UserService userService) {
-        this.verifier = verifier;
+    public OauthRequestFilter(GoogleIdTokenVerifier verifier, UserService userService, OauthTokenService oauthTokenService) {
+        //this.verifier = verifier;
         this.userService = userService;
+        this.oauthTokenService = oauthTokenService;
     }
 
 
@@ -51,18 +53,23 @@ public class OauthRequestFilter extends OncePerRequestFilter {
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
             token = authorizationHeader.substring(7);
             try {
-                GoogleIdToken googleIdToken = verifier.verify(token);
-                GoogleIdToken.Payload payload = googleIdToken.getPayload();
-                email = payload.getEmail();
+                JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
+                System.out.println(jsonObject.get("email"));
+//                var email2 = jsonObject.get("email").toString();
+                email = jsonObject.get("email").getAsString();
+                System.out.println(email);
             } catch (GeneralSecurityException e) {
-                response.setStatus(401);
+                e.printStackTrace();
             }
+//                GoogleIdToken googleIdToken = verifier.verify(token);
+//                GoogleIdToken.Payload payload = googleIdToken.getPayload();
+//                email = payload.getEmail();
         }
 
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails user = userService.loadUserByUsername(email);
-
+                System.out.println(user);
                 if (userService.validateUser(email)) {
                     var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             user,
@@ -76,7 +83,8 @@ public class OauthRequestFilter extends OncePerRequestFilter {
                             .setAuthentication(usernamePasswordAuthenticationToken);
                 }
             } catch (UsernameNotFoundException e) {
-
+// todo
+                System.out.println("everything failed");
             }
         }
         filterChain.doFilter(request, response);

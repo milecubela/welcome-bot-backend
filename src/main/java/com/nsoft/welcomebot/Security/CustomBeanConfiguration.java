@@ -20,7 +20,7 @@ public class CustomBeanConfiguration {
     public GoogleIdTokenVerifier googleIdTokenVerifier(HttpTransport httpTransport, JsonFactory jsonFactory){
         return new GoogleIdTokenVerifier.Builder(httpTransport, jsonFactory)
                 // Specify the CLIENT_ID of the app that accesses the backend:
-                .setAudience(Collections.singleton("808924355914-r7km6h2s0l7jcqh826ca9u7vcsj4rr9l.apps.googleusercontent.com"))
+                .setAudience(Collections.singleton("808924355914-8k4928tljobpmqc276b5iqa60fshkubi.apps.googleusercontent.com"))
                 .build();
     }
 
