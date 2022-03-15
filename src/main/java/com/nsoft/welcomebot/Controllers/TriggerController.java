@@ -1,9 +1,11 @@
 package com.nsoft.welcomebot.Controllers;
 
 
+import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Trigger;
 import com.nsoft.welcomebot.Services.TriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -43,5 +45,12 @@ public class TriggerController {
     public void updateTrigger(@Valid @RequestBody Trigger trigger){
         _triggerService.updateTrigger(trigger);
     }
+
+    @GetMapping("/paginated/{offset}/{pagesize}")
+    public Page<Trigger> getPaginatedMessages(@PathVariable int offset, @PathVariable int pagesize){
+        Page<Trigger> triggers=_triggerService.findAllPaginated(offset, pagesize);
+        return triggers;
+    }
+
 
 }
