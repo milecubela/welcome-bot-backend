@@ -25,17 +25,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-           http
-                   .cors()
-                   .and()
-                   .csrf()
-                   .disable()
-                   .authorizeRequests()
-                   .antMatchers("/home.html").permitAll()
-                   .anyRequest().hasRole("ADMIN")
-                   .and()
-                   .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                .cors()
+                .and()
+                .csrf()
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/home.html").permitAll()
+                .antMatchers("/api/v1/auth/login").permitAll()
+                .anyRequest().hasRole("ADMIN")
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-           http.addFilterBefore(oauthRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(oauthRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

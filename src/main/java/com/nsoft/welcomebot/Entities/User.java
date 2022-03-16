@@ -1,11 +1,7 @@
 package com.nsoft.welcomebot.Entities;
 
 import com.nsoft.welcomebot.Security.AuthUtils.UserRole;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import org.apache.catalina.UserDatabase;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +15,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -32,21 +31,18 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    public User() {
-    }
 
     public User(@NonNull String email, UserRole userRole) {
         this.email = email;
         this.userRole = userRole;
     }
+
     /*
     Get user authorities from spring security class UserDetails
      */
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.getUserRole()));
-
         return authorities;
     }
 
@@ -80,12 +76,4 @@ public class User implements UserDetails {
         return false;
     }
 
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

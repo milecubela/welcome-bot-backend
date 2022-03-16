@@ -1,20 +1,29 @@
 package com.nsoft.welcomebot.Services;
 
+import com.google.gson.JsonObject;
 import com.nsoft.welcomebot.Entities.User;
 import com.nsoft.welcomebot.Repositories.UserRepository;
+import com.nsoft.welcomebot.Utilities.TokenResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final OauthTokenService oauthTokenService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, OauthTokenService oauthTokenService) {
         this.userRepository = userRepository;
+        this.oauthTokenService = oauthTokenService;
     }
 
     /*
@@ -36,6 +45,31 @@ public class UserService implements UserDetailsService {
             return user.isPresent();
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /*
+    Initial check for frontend token, returns an appropriate response
+    */
+
+    public ResponseEntity<TokenResponse> loginUser(String idtoken) {
+        String email = null;
+        if (idtoken != null && idtoken.startsWith("Bearer ")) {
+            String token = idtoken.substring(7);
+            try {
+                JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
+                email = jsonObject.get("email").getAsString();
+            } catch (GeneralSecurityException | IOException e) {
+                return new ResponseEntity("Not a valid Google token", HttpStatus.UNAUTHORIZED);
+            }
+        }
+        TokenResponse tokenResponse = new TokenResponse();
+        if (validateUser(email)) {
+            tokenResponse.setIdToken(idtoken);
+            // Accepted, return OK and token
+            return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+        } else {
+            return new ResponseEntity("User email is not admin, unauthorized", HttpStatus.FORBIDDEN);
         }
     }
 }
