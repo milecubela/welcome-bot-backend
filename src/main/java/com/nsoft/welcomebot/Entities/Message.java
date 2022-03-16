@@ -55,47 +55,4 @@ public class Message {
         this.title = title;
         this.text = text;
     }
-//
-//    public String getTitle() {
-//        return title;
-//    }
-//
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
-//
-//    public String getText() {
-//        return text;
-//    }
-//
-////    public void setText(String text) {
-////        this.text = text;
-////    }
-//
-//    public LocalDate getCreatedAt() {
-//        return createdAt;
-//    }
-//
-//    public void setCreatedAt(LocalDate createdAt) {
-//        this.createdAt = createdAt;
-//    }
-//
-// /*    @Override
-//   public String toString() {
-//        return "Message{" +
-//                "id=" + messageId +
-//                ", title='" + title + '\'' +
-//                ", text='" + text + '\'' +
-//                ", createdAt=" + createdAt +
-//                '}';
-//    }*/
-//
-//    public Message(List<Schedule> schedules) {
-//        this.schedules = schedules;
-//    }
-//
-//    public void setSchedules(List<Schedule> schedules) {
-//        this.schedules = schedules;
-//    }
-
 }

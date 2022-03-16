@@ -55,7 +55,7 @@ public class ScheduleService {
 
     @Transactional
     public void updateSchedule(Schedule schedule) throws ParseException {
-        Schedule sched = _scheduleRepository.findById(schedule.getScheduleId()).orElseThrow(() ->
+        _scheduleRepository.findById(schedule.getScheduleId()).orElseThrow(() ->
                 new IllegalStateException("Schedule with the ID of : " + schedule.getScheduleId() + " does not exist"));
         schedule.setNext_run(schedule.getRunDateConverted());
         _scheduleRepository.save(schedule);

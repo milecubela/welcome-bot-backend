@@ -39,88 +39,86 @@ public class PeriodicalMessages {
         List<Schedule> startrunninglist = new ArrayList<>();
 
         // setDefaultValues POSTAVLJA LAST RUN NA RUN DATE (default) +  sendAtScheduledRunDate PROVJERAVA JE LI TRENUTNO RUN DATE
-        for (Schedule i : schedules) {
-            setDefaultValues(i);
-            sendAtScheduledRunDate(i);
+        for (Schedule schedule : schedules) {
+            setDefaultValues(schedule);
+            sendAtScheduledRunDate(schedule);
             //   IZDVAJA SVE SCHEDULES KOJE TREBA REPEATAT U SEPARATE LISTU
-            if (checkIsRepeating(i)) startrunninglist.add(i);
+            if (checkIsRepeating(schedule)) startrunninglist.add(schedule);
         }
 
         //   IZVRSAVA REPEAT
-        for (Schedule a : startrunninglist) {
-            if (a.getschedulertime() == Schedulertime.MINUTE) {
-                System.out.println("current time " + LocalDateTime.now());
-                System.out.println("schedul time " + a.getNext_run());
-                if (LocalDateTime.now().isAfter(a.getNext_run())) {
-                        sendMessage(a);
+        for (Schedule schedule : startrunninglist) {
+            if (schedule.getschedulertime() == Schedulertime.MINUTE) {
+                if (LocalDateTime.now().isAfter(schedule.getNext_run())) {
+                        sendMessage(schedule);
                 }
             }
-            if (a.getschedulertime() == Schedulertime.HOUR) {
-                if (checkIsItTimeToSend(a)) {
-                    sendMessage(a);
+            if (schedule.getschedulertime() == Schedulertime.HOUR) {
+                if (checkIsItTimeToSend(schedule)) {
+                    sendMessage(schedule);
                 }
             }
-            if (a.getschedulertime() == Schedulertime.DAY) {
-                if (checkIsItTimeToSend(a)) {
-                    sendMessage(a);
+            if (schedule.getschedulertime() == Schedulertime.DAY) {
+                if (checkIsItTimeToSend(schedule)) {
+                    sendMessage(schedule);
                 }
             }
-            checkForLaggingSchedules(a);
+            checkForLaggingSchedules(schedule);
         }
     }
 
-    private boolean checkIsItTimeToSend(Schedule a) {
-        return LocalDateTime.now().isEqual(a.getNext_run());
+    private boolean checkIsItTimeToSend(Schedule schedule) {
+        return LocalDateTime.now().isEqual(schedule.getNext_run());
     }
 
-    public boolean checkIsRepeating(Schedule a) {
-        return a.getIs_active() && a.getIs_repeat();
+    public boolean checkIsRepeating(Schedule schedule) {
+        return schedule.getIs_active() && schedule.getIs_repeat();
     }
 
-    public void sendMessage(Schedule s) {
-        s.setLast_run(LocalDateTime.now());
-        bot.sendScheduledMessage(s.getMessage().getText());
-        setNextRunDate(s);
-        _scheduleRepository.save(s);
+    public void sendMessage(Schedule schedule) {
+        schedule.setLast_run(LocalDateTime.now());
+        bot.sendScheduledMessage(schedule.getMessage().getText());
+        setNextRunDate(schedule);
+        _scheduleRepository.save(schedule);
     }
 
-    public void setNextRunDate(Schedule s) {
-        if (s.getschedulertime() == Schedulertime.MINUTE) {
-            s.setNext_run(s.getNext_run().plusMinutes(1));
+    public void setNextRunDate(Schedule schedule) {
+        if (schedule.getschedulertime() == Schedulertime.MINUTE) {
+            schedule.setNext_run(schedule.getNext_run().plusMinutes(1));
         }
-        if (s.getschedulertime() == Schedulertime.HOUR) {
-            s.setNext_run(LocalDateTime.now().plusHours(1));
+        if (schedule.getschedulertime() == Schedulertime.HOUR) {
+            schedule.setNext_run(LocalDateTime.now().plusHours(1));
         }
-        if (s.getschedulertime() == Schedulertime.DAY) {
-            s.setNext_run(LocalDateTime.now().plusDays(1));
+        if (schedule.getschedulertime() == Schedulertime.DAY) {
+            schedule.setNext_run(LocalDateTime.now().plusDays(1));
         }
-        _scheduleRepository.save(s);
+        _scheduleRepository.save(schedule);
 
     }
 
-    public void setDefaultValues(Schedule i) throws ParseException {
-        if (i.getLast_run() == null || i.getRunDateConverted().isAfter(i.getLast_run())) {
-            i.setNext_run(i.getRunDateConverted());
-            i.setLast_run(i.getRunDateConverted());
-            _scheduleRepository.save(i);
+    public void setDefaultValues(Schedule schedule) throws ParseException {
+        if (schedule.getLast_run() == null || schedule.getRunDateConverted().isAfter(schedule.getLast_run())) {
+            schedule.setNext_run(schedule.getRunDateConverted());
+            schedule.setLast_run(schedule.getRunDateConverted());
+            _scheduleRepository.save(schedule);
         }
     }
 
-    public void sendAtScheduledRunDate(Schedule i) throws ParseException {
-        if (i.getIs_active()) {
-            if (ChronoUnit.MINUTES.between(i.getRunDateConverted(), LocalDateTime.now()) == 0) {
-                bot.sendScheduledMessage(i.getMessage().getText());
-                if (!i.getIs_repeat()) i.setIs_active(false);
-                setNextRunDate(i);
-                i.setLast_run(LocalDateTime.now());
-                _scheduleRepository.save(i);
+    public void sendAtScheduledRunDate(Schedule schedule) throws ParseException {
+        if (schedule.getIs_active()) {
+            if (ChronoUnit.MINUTES.between(schedule.getRunDateConverted(), LocalDateTime.now()) == 0) {
+                bot.sendScheduledMessage(schedule.getMessage().getText());
+                if (!schedule.getIs_repeat()) schedule.setIs_active(false);
+                setNextRunDate(schedule);
+                schedule.setLast_run(LocalDateTime.now());
+                _scheduleRepository.save(schedule);
             }
         }
     }
 
-    public void checkForLaggingSchedules(Schedule a) {
-        if (a.getNext_run() == null) {
-            if (LocalDateTime.now().isAfter(a.getNext_run())) sendMessage(a);
+    public void checkForLaggingSchedules(Schedule schedule) {
+        if (schedule.getNext_run() == null) {
+            if (LocalDateTime.now().isAfter(schedule.getNext_run())) sendMessage(schedule);
         }
     }
 }
