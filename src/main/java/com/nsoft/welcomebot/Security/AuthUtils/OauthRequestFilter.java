@@ -38,28 +38,30 @@ public class OauthRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
+        String email = getEmailFromToken(request, response);
+        setSecurityContext(request, response, email);
+        filterChain.doFilter(request, response);
+    }
 
+    private String getEmailFromToken(HttpServletRequest request, HttpServletResponse response) {
+        String token;
         String email = null;
-        String token = null;
-
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+        final String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
             try {
                 JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
                 email = jsonObject.get("email").getAsString();
-            } catch (GeneralSecurityException e) {
-                response.setStatus(401);
-            } catch (IOException e){
+            } catch (GeneralSecurityException | IOException e) {
                 response.setStatus(401);
             }
         }
+        return email;
+    }
 
-        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+    private void setSecurityContext(HttpServletRequest request, HttpServletResponse response, String email) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                if(!userService.validateUser(email)) {
-                    response.setStatus(403);
-                }
                 UserDetails user = userService.loadUserByUsername(email);
                 if (userService.validateUser(email)) {
                     var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -76,6 +78,5 @@ public class OauthRequestFilter extends OncePerRequestFilter {
                 response.setStatus(403);
             }
         }
-        filterChain.doFilter(request, response);
     }
 }
