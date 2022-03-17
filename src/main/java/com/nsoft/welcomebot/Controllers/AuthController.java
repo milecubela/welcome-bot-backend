@@ -1,11 +1,14 @@
 package com.nsoft.welcomebot.Controllers;
 
+import com.nsoft.welcomebot.Models.RequestModels.TokenRequest;
 import com.nsoft.welcomebot.Services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 
 @RestController
@@ -19,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    private ResponseEntity loginUser(@RequestHeader("Authorization") String idtoken) {
-        return userService.loginUser(idtoken);
+    private ResponseEntity loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
+        return userService.loginUser(tokenRequest);
     }
 }

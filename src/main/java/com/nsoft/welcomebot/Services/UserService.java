@@ -2,8 +2,9 @@ package com.nsoft.welcomebot.Services;
 
 import com.google.gson.JsonObject;
 import com.nsoft.welcomebot.Entities.User;
+import com.nsoft.welcomebot.Models.RequestModels.TokenRequest;
 import com.nsoft.welcomebot.Repositories.UserRepository;
-import com.nsoft.welcomebot.Utilities.TokenResponse;
+import com.nsoft.welcomebot.Models.ResponseModels.TokenResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,8 +53,9 @@ public class UserService implements UserDetailsService {
     Initial check for frontend token, returns an appropriate response
     */
 
-    public ResponseEntity<TokenResponse> loginUser(String idtoken) {
+    public ResponseEntity<TokenResponse> loginUser(TokenRequest tokenRequest) {
         String email = null;
+        String idtoken = tokenRequest.getIdtoken();
         if (idtoken != null && idtoken.startsWith("Bearer ")) {
             String token = idtoken.substring(7);
             try {
@@ -65,7 +67,7 @@ public class UserService implements UserDetailsService {
         }
         TokenResponse tokenResponse = new TokenResponse();
         if (validateUser(email)) {
-            tokenResponse.setIdToken(idtoken);
+            tokenResponse.setIdToken(idtoken.substring(7));
             // Accepted, return OK and token
             return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
         } else {

@@ -1,4 +1,4 @@
-package com.nsoft.welcomebot.Utilities;
+package com.nsoft.welcomebot.Models.ResponseModels;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
