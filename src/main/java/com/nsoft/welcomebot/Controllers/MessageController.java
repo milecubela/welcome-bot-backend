@@ -2,7 +2,6 @@ package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Services.MessageService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +21,12 @@ public class MessageController {
     }
 
     @GetMapping
-    public List<Message> getMessages(){
+    public List<Message> getMessages() {
         return _messageService.getMessages();
     }
 
     @GetMapping(path = "{messageId}")
-    public Optional<Message> getMessages(@PathVariable("messageId") long messageId)  {
+    public Optional<Message> getMessages(@PathVariable("messageId") long messageId) {
         return _messageService.getMessageById(messageId);
     }
 
@@ -37,8 +36,7 @@ public class MessageController {
     }
 
     @DeleteMapping(path = "{messageId}")
-    public void deleteMessage(@PathVariable("messageId") long messageId){
+    public void deleteMessage(@PathVariable("messageId") long messageId) {
         _messageService.deleteMessage(messageId);
     }
-
 }

@@ -19,12 +19,15 @@ public class MessageService {
         _messageRepository = messageRepository;
     }
 
-    public List<Message> getMessages() { return _messageRepository.findAll(); }
+    public List<Message> getMessages() {
+        return _messageRepository.findAll();
+    }
 
     public void createNewMessage(Message message) {
         message.setCreatedAt(LocalDate.now());
         _messageRepository.save(message);
     }
+
     public void deleteMessage(Long messageId) {
         boolean exist = _messageRepository.existsById(messageId);
         if (!exist) {
@@ -32,8 +35,7 @@ public class MessageService {
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " Message with the ID: " + messageId + " does not exist ");
         }
         _messageRepository.deleteById(messageId);
-
-   }
+    }
 
     public Optional<Message> getMessageById(Long messageId) {
         boolean exist = _messageRepository.existsById(messageId);
