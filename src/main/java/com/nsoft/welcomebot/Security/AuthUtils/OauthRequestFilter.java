@@ -52,7 +52,7 @@ public class OauthRequestFilter extends OncePerRequestFilter {
             try {
                 JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
                 email = jsonObject.get("email").getAsString();
-            } catch (GeneralSecurityException | IOException e) {
+            } catch (IOException e) {
                 response.setStatus(401);
             }
         }

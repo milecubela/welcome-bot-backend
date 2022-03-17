@@ -1,14 +1,18 @@
 package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Models.RequestModels.TokenRequest;
+import com.nsoft.welcomebot.Models.ResponseModels.TokenResponse;
 import com.nsoft.welcomebot.Services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 
 @RestController
@@ -22,7 +26,16 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    private ResponseEntity loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
-        return userService.loginUser(tokenRequest);
+    private ResponseEntity<TokenResponse> loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
+        try {
+            TokenResponse tokenResponse = userService.loginUser(tokenRequest);
+            return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            String message = e.getMessage();
+            return new ResponseEntity(message, HttpStatus.FORBIDDEN);
+        } catch (IOException e) {
+            String message = e.getMessage();
+            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
+        }
     }
 }
