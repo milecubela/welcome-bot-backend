@@ -5,9 +5,10 @@ import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -67,4 +68,8 @@ public class ScheduleService {
         return sched;
     }
 
+    public Page<Schedule> findAllPaginated(int offset, int pagesize){
+        Page<Schedule> schedules = _scheduleRepository.findAll(PageRequest.of(offset, pagesize));
+        return schedules;
+    }
 }

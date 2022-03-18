@@ -3,6 +3,7 @@ package com.nsoft.welcomebot.Controllers;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Services.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.text.ParseException;
@@ -42,6 +43,12 @@ public class ScheduleController {
     @PutMapping
     public void updateSchedule(@Valid @RequestBody Schedule schedule) throws ParseException {
         _scheduleSerivce.updateSchedule(schedule);
+    }
+
+    @GetMapping("/paginated/{offset}/{pagesize}")
+    public Page<Schedule> getPaginatedMessages(@PathVariable int offset, @PathVariable int pagesize){
+        Page<Schedule> schedules=_scheduleSerivce.findAllPaginated(offset, pagesize);
+        return schedules;
     }
 
 }

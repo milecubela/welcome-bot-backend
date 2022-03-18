@@ -3,6 +3,8 @@ package com.nsoft.welcomebot.Services;
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,5 +43,9 @@ public class MessageService {
             throw new IllegalStateException(" Message with the ID: " + messageId + " does not exist ");
         }
         return _messageRepository.findById(messageId);
+    }
+    public Page<Message> findAllPaginated(int offset,int pagesize){
+        Page<Message> messages = _messageRepository.findAll(PageRequest.of(offset, pagesize));
+        return messages;
     }
 }
