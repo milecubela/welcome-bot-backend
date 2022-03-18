@@ -99,6 +99,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>welcomeBot</finalName>
     </build>
 
 </project>

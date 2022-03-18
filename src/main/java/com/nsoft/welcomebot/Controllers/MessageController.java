@@ -3,6 +3,7 @@ package com.nsoft.welcomebot.Controllers;
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +25,13 @@ public class MessageController {
     public List<Message> getMessages() {
         return _messageService.getMessages();
     }
+
+    @GetMapping("/paginated/{offset}/{pagesize}")
+    public Page<Message> getPaginatedMessages(@PathVariable int offset,@PathVariable int pagesize){
+        Page<Message> msgs=_messageService.findAllPaginated(offset, pagesize);
+        return msgs;
+    }
+
 
     @GetMapping(path = "{messageId}")
     public Optional<Message> getMessages(@PathVariable("messageId") long messageId) {

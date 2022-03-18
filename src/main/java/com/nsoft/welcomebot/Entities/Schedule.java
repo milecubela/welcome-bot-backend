@@ -1,58 +1,93 @@
 package com.nsoft.welcomebot.Entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.nsoft.welcomebot.Utilities.SchedulerInterval;
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
+@Data
+@Entity
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
-@Entity
 @Table(name = "schedules")
 public class Schedule {
-
     @Id
     @GeneratedValue
     private Long scheduleId;
 
-    private Boolean is_repeat;
+    private boolean isRepeat;
 
-    private Boolean is_active;
+    private boolean isActive;
 
-    private LocalDate created_at;
+    private LocalDate createdAt;
 
-    private Date run_date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    private LocalDateTime runDate;
+
+    private LocalDateTime nextRun;
+
+    @Enumerated(EnumType.ORDINAL)
+    private SchedulerInterval schedulerInterval;
 
     @ManyToOne
     @JoinColumn(name = "message_id")
     private Message message;
 
+    public Schedule() {
+    }
+
     public Schedule(Schedule sched) {
         this.scheduleId = sched.getScheduleId();
-        this.is_repeat = sched.getIs_repeat();
-        this.is_active = sched.getIs_active();
-        this.created_at = sched.getCreated_at();
-        this.run_date = sched.getRun_date();
+        this.isRepeat = sched.getIsRepeat();
+        this.isActive = sched.getIsActive();
+        this.createdAt = sched.getCreatedAt();
+        this.runDate = sched.getRunDate();
+        this.schedulerInterval = sched.getSchedulerInterval();
     }
 
     public Schedule(Message message) {
         this.message = message;
     }
 
-    public Schedule(Boolean is_repeat, Boolean is_active, Date run_date) {
-        this.is_repeat = is_repeat;
-        this.is_active = is_active;
-        this.run_date = run_date;
+    public Schedule(Boolean isRepeat, Boolean isActive, LocalDateTime runDate, SchedulerInterval schedulerInterval) {
+        this.isRepeat = isRepeat;
+        this.isActive = isActive;
+        this.runDate = runDate;
+        this.schedulerInterval = schedulerInterval;
     }
 
-    public void setCreated_at(LocalDate created_at) {
-        this.created_at = created_at;
+    public boolean getIsActive() {
+        return this.isActive;
+    }
+
+    public void setIsActive(boolean isactive) {
+        this.isActive = isactive;
+    }
+
+    public boolean getIsRepeat() {
+        return this.isRepeat;
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" + "scheduleId=" + scheduleId + ", is_repeat=" + isRepeat + ", is_active=" + isActive + ", created_at=" + createdAt + ", run_date=" + runDate + '}';
+    }
+
+    public LocalDateTime getNextRun() {
+        return nextRun;
+    }
+
+    public void setNextRun(LocalDateTime next_run) {
+        this.nextRun = next_run;
+    }
+
+    public void setCreatedAt(LocalDate created_at) {
+        this.createdAt = created_at;
     }
 
     public Message getMessage() {
@@ -62,4 +97,17 @@ public class Schedule {
     public void setMessage(Message message) {
         this.message = message;
     }
+
+    public SchedulerInterval getSchedulerInterval() {
+        return schedulerInterval;
+    }
+
+    public void setSchedulerInterval(SchedulerInterval schedulerInterval) {
+        this.schedulerInterval = schedulerInterval;
+    }
+
+    public LocalDateTime getRunDate() {
+        return runDate;
+    }
+
 }
