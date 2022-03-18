@@ -25,6 +25,5 @@ public class SlackChannelInfoCommand implements SlackCommandsInterface {
             }
             return ctx.ack(message);
         });
-
     }
 }

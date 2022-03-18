@@ -22,7 +22,7 @@ public class SlackWeatherCommand implements SlackCommandsInterface {
             var json = ConsumeJSON.getJSONObject("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + System.getenv("OPEN_WEATHER_API_KEY"));
             var sky = json.getAsJsonArray("weather").get(0).getAsJsonObject().get("main").toString();
             sky = sky.substring(1, sky.length() - 1);
-            var temperature = json.getAsJsonObject("main").get("temp").getAsInt() - 272;
+            var temperature = json.getAsJsonObject("main").get("temp").getAsInt() - 273;
             double wind = json.getAsJsonObject("wind").get("speed").getAsInt() * 1.6;
             System.out.println(sky);
             String message = ":thermometer: Weather forecast for " + city + " today is:\n " +
