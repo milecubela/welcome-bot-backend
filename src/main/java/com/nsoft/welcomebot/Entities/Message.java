@@ -1,6 +1,5 @@
 package com.nsoft.welcomebot.Entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -11,15 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Data
-@Entity
-@Table(name = "messages")
-@ToString
 @Getter
 @Setter
+@ToString
+@RequiredArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "messages")
 public class Message {
-
 
     @Id
     @GeneratedValue
@@ -34,13 +32,13 @@ public class Message {
     private String text;
     private LocalDate createdAt;
 
-
     @OneToMany(
             mappedBy = "message",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     @JsonIgnore
+    @ToString.Exclude
     private List<Schedule> schedules = new ArrayList<>();
 
     @OneToMany(
@@ -49,10 +47,6 @@ public class Message {
             orphanRemoval = true
     )
     @JsonIgnore
+    @ToString.Exclude
     private List<Trigger> triggers = new ArrayList<>();
-
-    public Message(String title, String text) {
-        this.title = title;
-        this.text = text;
-    }
 }
