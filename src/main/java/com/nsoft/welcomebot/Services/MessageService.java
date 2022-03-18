@@ -1,6 +1,7 @@
 package com.nsoft.welcomebot.Services;
 
 import com.nsoft.welcomebot.Entities.Message;
+import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,29 +26,30 @@ public class MessageService {
         return _messageRepository.findAll();
     }
 
-    public void createNewMessage(Message message) {
+    public void createNewMessage(MessageRequest messageRequest) {
+        Message message = new Message(messageRequest);
         message.setCreatedAt(LocalDate.now());
         _messageRepository.save(message);
     }
 
     public void deleteMessage(Long messageId) {
-        boolean exist = _messageRepository.existsById(messageId);
-        if (!exist) {
-            throw new IllegalStateException(" Message with the ID: " + messageId + " does not exist ");
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " Message with the ID: " + messageId + " does not exist ");
-        }
         _messageRepository.deleteById(messageId);
     }
 
     public Optional<Message> getMessageById(Long messageId) {
-        boolean exist = _messageRepository.existsById(messageId);
-        if (!exist) {
-            throw new IllegalStateException(" Message with the ID: " + messageId + " does not exist ");
-        }
         return _messageRepository.findById(messageId);
     }
+
     public Page<Message> findAllPaginated(int offset,int pagesize){
         Page<Message> messages = _messageRepository.findAll(PageRequest.of(offset, pagesize));
         return messages;
+    }
+
+    public Message updateMessage(Long messageId, MessageRequest messageRequest) {
+        Message message = _messageRepository.getById(messageId);
+        message.setText(messageRequest.getText());
+        message.setTitle(messageRequest.getTitle());
+        _messageRepository.save(message);
+        return message;
     }
 }
