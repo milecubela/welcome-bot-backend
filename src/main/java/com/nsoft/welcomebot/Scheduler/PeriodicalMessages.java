@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public class PeriodicalMessages {
 
     public void setNextRunDate(Schedule schedule) {
         if (schedule.getSchedulerInterval() == SchedulerInterval.MINUTE) {
-            schedule.setNextRun(schedule.getNextRun().plusMinutes(1));
+            schedule.setNextRun(LocalDateTime.now().plusMinutes(1));
         }
         if (schedule.getSchedulerInterval() == SchedulerInterval.HOUR) {
             schedule.setNextRun(LocalDateTime.now().plusHours(1));
