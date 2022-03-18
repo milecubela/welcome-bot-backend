@@ -1,26 +1,24 @@
 package com.nsoft.welcomebot.Entities;
 
 
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Data
 @Entity
 @Table(name = "messages")
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
 public class Message {
-
 
 
     @Id
@@ -35,8 +33,6 @@ public class Message {
     @Size(min = 20)
     private String text;
     private LocalDate createdAt;
-
-
 
 
     @OneToMany(
@@ -55,53 +51,8 @@ public class Message {
     @JsonIgnore
     private List<Trigger> triggers = new ArrayList<>();
 
-    public Message() {
-    }
-
     public Message(String title, String text) {
         this.title = title;
         this.text = text;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "id=" + messageId +
-                ", title='" + title + '\'' +
-                ", text='" + text + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
-    }
-
-    public Message(List<Schedule> schedules) {
-        this.schedules = schedules;
-    }
-    public void setSchedules(List<Schedule> schedules) {
-        this.schedules = schedules;
-    }
-
 }

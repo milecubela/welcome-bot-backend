@@ -10,11 +10,13 @@ CREATE TABLE messages
 CREATE  TABLE schedules
 (
     schedule_id bigint NOT NULL,
-    run_date DATE NULL,
+    run_date datetime NULL,
     is_repeat BOOLEAN NOT NULL,
     is_active BOOLEAN NOT NULL,
+    scheduler_interval SMALLINT NULL,
     created_at DATE NULL,
     message_id bigint NOT NULL,
+    next_run datetime null,
     PRIMARY KEY (schedule_id),
     FOREIGN KEY (message_id) REFERENCES messages(message_id)
 );
