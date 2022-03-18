@@ -59,9 +59,9 @@ public class PeriodicalMessages {
     }
 
     public void sendMessage(Schedule schedule) {
-        bot.sendScheduledMessage(schedule.getMessage().getText());
-        setNextRunDate(schedule);
-        _scheduleRepository.save(schedule);
+//        bot.sendScheduledMessage(schedule.getMessage().getText());
+//        setNextRunDate(schedule);
+//        _scheduleRepository.save(schedule);
     }
 
     public void setNextRunDate(Schedule schedule) {
@@ -90,10 +90,10 @@ public class PeriodicalMessages {
         }
 
         if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            bot.sendScheduledMessage(schedule.getMessage().getText());
-            if (!schedule.getIsRepeat()) schedule.setIsActive(false);
-            setNextRunDate(schedule);
-            _scheduleRepository.save(schedule);
+//            bot.sendScheduledMessage(schedule.getMessage().getText());
+//            if (!schedule.getIsRepeat()) schedule.setIsActive(false);
+//            setNextRunDate(schedule);
+//            _scheduleRepository.save(schedule);
         }
     }
 
