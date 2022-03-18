@@ -40,7 +40,7 @@ public class MessageService {
         return _messageRepository.findById(messageId);
     }
 
-    public Page<Message> findAllPaginated(int offset,int pagesize){
+    public Page<Message> findAllPaginated(int offset, int pagesize) {
         Page<Message> messages = _messageRepository.findAll(PageRequest.of(offset, pagesize));
         return messages;
     }
