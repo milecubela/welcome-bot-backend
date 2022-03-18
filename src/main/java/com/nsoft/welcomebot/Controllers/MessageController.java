@@ -79,7 +79,12 @@ public class MessageController {
         if (message.isEmpty()) {
             return new ResponseEntity("Message with id " + messageId + " not found!", HttpStatus.NOT_FOUND);
         }
-        Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
-        return new ResponseEntity(updatedMessage, HttpStatus.ACCEPTED);
+        try{
+            Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
+            return new ResponseEntity(updatedMessage, HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity("Bad request!", HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
