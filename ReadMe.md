@@ -1,7 +1,7 @@
 **WelcomeBot v1**
 
-
 Technologies used
+
 ```text
 Java 17 - JDK 17.0.2
 Spring Boot 2.6.4
@@ -14,9 +14,10 @@ Dependencies:
     - MariaDB Java Client
 ```
 
-A slack bot with the ability to send automated messages and talk to slack users. 
+A slack bot with the ability to send automated messages and talk to slack users.
 
-Admin features : 
+Admin features :
+
 ```text
 Messages - Create new message, delete a message
          - Bind schedule to message
@@ -32,5 +33,17 @@ Trigger  - Create a new trigger
          - Activate/Deactivate 
 ```
 
-Bot can also communicate with users and listen to their messages to give them a correct response.
-Responses are defined in database. 
+Adding new events and commands:
+
+```text
+Adding events:
+    1. Add new enum member in TriggerEvent under Utilities package.
+    2. Create a new class in SlackEvents package that will contain its interface methods.
+Adding commands:
+Before going through these steps the bot owner needs to subscribe to certain SlashCommands in its bot configuration page.
+    1. Add new enum member in SlackCommand under Utilities package.
+    2. Create a new class in SlackCommands package that will contain its interface methods.
+```
+
+Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
+in database. 
