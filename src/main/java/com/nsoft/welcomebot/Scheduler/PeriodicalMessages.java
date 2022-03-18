@@ -61,16 +61,14 @@ public class PeriodicalMessages {
     }
 
     public void sendMessage(Schedule schedule) throws SlackApiException, IOException {
-        bot2.client().chatPostMessage(r -> r.token("xoxb-3185202762819-3204736816567-dCo8NEYO6vH7HvF7H5GqQCZ4")
-                .channel("C037FSVSEJX")
-                .text(schedule.getMessage().getText()));
+        bot2.client().chatPostMessage(r -> r.token("xoxb-3185202762819-3204736816567-dCo8NEYO6vH7HvF7H5GqQCZ4").channel("C037FSVSEJX").text(schedule.getMessage().getText()));
         setNextRunDate(schedule);
         _scheduleRepository.save(schedule);
     }
 
     public void setNextRunDate(Schedule schedule) {
         if (schedule.getSchedulerInterval() == SchedulerInterval.MINUTE) {
-            schedule.setNextRun(LocalDateTime.now().plusMinutes(1));
+            schedule.setNextRun(LocalDateTime.now().plusSeconds(55));
         }
         if (schedule.getSchedulerInterval() == SchedulerInterval.HOUR) {
             schedule.setNextRun(LocalDateTime.now().plusHours(1));
