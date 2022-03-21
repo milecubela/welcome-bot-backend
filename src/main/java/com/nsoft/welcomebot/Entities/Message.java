@@ -1,6 +1,7 @@
 package com.nsoft.welcomebot.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,4 +43,9 @@ public class Message {
     @JsonIgnore
     @ToString.Exclude
     private List<Trigger> triggers = new ArrayList<>();
+
+    public Message(MessageRequest messageRequest) {
+        this.text = messageRequest.getText();
+        this.title = messageRequest.getTitle();
+    }
 }
