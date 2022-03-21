@@ -79,7 +79,7 @@ public class PeriodicalMessages {
             return;
         }
         if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            bot2.client().chatPostMessage(r -> r.token("xoxb-3185202762819-3204736816567-dCo8NEYO6vH7HvF7H5GqQCZ4").channel("C037FSVSEJX").text(schedule.getMessage().getText()));
+            bot2.client().chatPostMessage(r -> r.token("xoxb-3185202762819-3204736816567-dCo8NEYO6vH7HvF7H5GqQCZ4").channel(schedule.getChannel()).text(schedule.getMessage().getText()));
             if (!schedule.isRepeat()) schedule.setActive(false);
             setNextRunDate(schedule);
             _scheduleRepository.save(schedule);
