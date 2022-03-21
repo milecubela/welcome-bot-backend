@@ -17,6 +17,7 @@ CREATE  TABLE schedules
     created_at DATE NULL,
     message_id bigint NOT NULL,
     next_run datetime null,
+    channel varchar(50) NULL,
     PRIMARY KEY (schedule_id),
     FOREIGN KEY (message_id) REFERENCES messages(message_id)
 );

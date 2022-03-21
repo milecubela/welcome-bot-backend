@@ -82,7 +82,8 @@ public class MessageController {
         StringBuilder string = new StringBuilder();
         BindingResult result = e.getBindingResult();
         final List<FieldError> fieldErrors = result.getFieldErrors();
-        for(FieldError error : fieldErrors) string.append(error.getField() + " : " + error.getDefaultMessage() + " | ");
-        return new ResponseEntity(string.toString(),HttpStatus.BAD_REQUEST);
+        for (FieldError error : fieldErrors)
+            string.append(error.getField() + " : " + error.getDefaultMessage() + " | ");
+        return new ResponseEntity(string.toString(), HttpStatus.BAD_REQUEST);
     }
 }
