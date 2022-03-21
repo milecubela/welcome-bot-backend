@@ -29,7 +29,7 @@ public class MessageService {
 
     public Optional<Message> getMessageById(Long messageId) {
         Optional<Message> message = _messageRepository.findById(messageId);
-        if(message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
+        if (message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
         return message;
     }
 
@@ -45,12 +45,13 @@ public class MessageService {
 
     public void deleteMessage(Long messageId) {
         Optional<Message> message = _messageRepository.findById(messageId);
-        if(message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
+        if (message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
         _messageRepository.deleteById(messageId);
     }
 
     public Message updateMessage(Long messageId, MessageRequest messageRequest) {
-        if(_messageRepository.findById(messageId).isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found");
+        if (_messageRepository.findById(messageId).isEmpty())
+            throw new NotFoundException("Message with ID " + messageId + " not found");
         Message message = _messageRepository.getById(messageId);
         message.setText(messageRequest.getText());
         message.setTitle(messageRequest.getTitle());
