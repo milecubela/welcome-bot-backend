@@ -38,8 +38,8 @@ public class MessageController {
 
 
     @GetMapping(path = "{messageId}")
-    public ResponseEntity<Optional<Message>> getMessages(@PathVariable("messageId") Long messageId) {
-        Optional<Message> message = _messageService.getMessageById(messageId);
+    public ResponseEntity<Message> getMessages(@PathVariable("messageId") Long messageId) {
+        Message message = _messageService.getMessageById(messageId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 

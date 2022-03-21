@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -27,10 +26,10 @@ public class MessageService {
         return _messageRepository.findAll();
     }
 
-    public Optional<Message> getMessageById(Long messageId) {
-        Optional<Message> message = _messageRepository.findById(messageId);
-        if (message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
-        return message;
+    public Message getMessageById(Long messageId) {
+        if (_messageRepository.findById(messageId).isEmpty())
+            throw new NotFoundException("Message with ID " + messageId + " not found!");
+        return _messageRepository.getById(messageId);
     }
 
     public Page<Message> findAllPaginated(int offset, int pagesize) {
@@ -44,8 +43,8 @@ public class MessageService {
     }
 
     public void deleteMessage(Long messageId) {
-        Optional<Message> message = _messageRepository.findById(messageId);
-        if (message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
+        if (_messageRepository.findById(messageId).isEmpty())
+            throw new NotFoundException("Message with ID " + messageId + " not found!");
         _messageRepository.deleteById(messageId);
     }
 
