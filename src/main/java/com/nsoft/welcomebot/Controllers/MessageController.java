@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,9 +75,14 @@ public class MessageController {
         return new ResponseEntity(updatedMessage, HttpStatus.OK);
     }
 
+    // Response for bad @Valid requests
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity validationError() {
-        return new ResponseEntity("Bad Request!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity validationError(MethodArgumentNotValidException e) {
+        StringBuilder string = new StringBuilder();
+        BindingResult result = e.getBindingResult();
+        final List<FieldError> fieldErrors = result.getFieldErrors();
+        for(FieldError error : fieldErrors) string.append(error.getField() + " : " + error.getDefaultMessage() + " | ");
+        return new ResponseEntity(string.toString(),HttpStatus.BAD_REQUEST);
     }
 }
