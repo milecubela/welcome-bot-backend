@@ -30,22 +30,15 @@ public class Message {
     @NonNull
     @Size(min = 20)
     private String text;
+
     private LocalDate createdAt;
 
-    @OneToMany(
-            mappedBy = "message",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
     private List<Schedule> schedules = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "message",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
     private List<Trigger> triggers = new ArrayList<>();

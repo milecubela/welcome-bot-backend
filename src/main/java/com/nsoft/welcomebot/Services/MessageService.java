@@ -34,7 +34,6 @@ public class MessageService {
         boolean exist = _messageRepository.existsById(messageId);
         if (!exist) {
             throw new IllegalStateException(" Message with the ID: " + messageId + " does not exist ");
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " Message with the ID: " + messageId + " does not exist ");
         }
         _messageRepository.deleteById(messageId);
     }
@@ -46,8 +45,8 @@ public class MessageService {
         }
         return _messageRepository.findById(messageId);
     }
-    public Page<Message> findAllPaginated(int offset,int pagesize){
-        Page<Message> messages = _messageRepository.findAll(PageRequest.of(offset, pagesize));
-        return messages;
+
+    public Page<Message> findAllPaginated(int offset, int pagesize) {
+        return _messageRepository.findAll(PageRequest.of(offset, pagesize));
     }
 }
