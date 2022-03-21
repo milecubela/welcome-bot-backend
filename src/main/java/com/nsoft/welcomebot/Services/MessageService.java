@@ -1,6 +1,7 @@
 package com.nsoft.welcomebot.Services;
 
 import com.nsoft.welcomebot.Entities.Message;
+import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.NotFoundException;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,16 @@ public class MessageService {
         return _messageRepository.findAll();
     }
 
+    public Optional<Message> getMessageById(Long messageId) {
+        Optional<Message> message = _messageRepository.findById(messageId);
+        if(message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
+        return message;
+    }
+
+    public Page<Message> findAllPaginated(int offset, int pagesize) {
+        return _messageRepository.findAll(PageRequest.of(offset, pagesize));
+    }
+
     public void createNewMessage(MessageRequest messageRequest) {
         Message message = new Message(messageRequest);
         message.setCreatedAt(LocalDate.now());
@@ -33,19 +44,13 @@ public class MessageService {
     }
 
     public void deleteMessage(Long messageId) {
+        Optional<Message> message = _messageRepository.findById(messageId);
+        if(message.isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found!");
         _messageRepository.deleteById(messageId);
     }
 
-    public Optional<Message> getMessageById(Long messageId) {
-        return _messageRepository.findById(messageId);
-    }
-
-    public Page<Message> findAllPaginated(int offset, int pagesize) {
-        Page<Message> messages = _messageRepository.findAll(PageRequest.of(offset, pagesize));
-        return messages;
-    }
-
     public Message updateMessage(Long messageId, MessageRequest messageRequest) {
+        if(_messageRepository.findById(messageId).isEmpty()) throw new NotFoundException("Message with ID " + messageId + " not found");
         Message message = _messageRepository.getById(messageId);
         message.setText(messageRequest.getText());
         message.setTitle(messageRequest.getTitle());

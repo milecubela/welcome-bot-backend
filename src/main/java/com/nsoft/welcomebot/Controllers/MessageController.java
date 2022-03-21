@@ -28,7 +28,7 @@ public class MessageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Message>> getMessages() {
+    public ResponseEntity getMessages() {
         List<Message> messageList = _messageService.getMessages();
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
@@ -43,9 +43,6 @@ public class MessageController {
     @GetMapping(path = "{messageId}")
     public ResponseEntity<Optional<Message>> getMessages(@PathVariable("messageId") Long messageId) {
         Optional<Message> message = _messageService.getMessageById(messageId);
-        if (message.isEmpty()) {
-            return new ResponseEntity("Message with ID " + messageId + " not found!", HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -57,32 +54,13 @@ public class MessageController {
 
     @DeleteMapping(path = "{messageId}")
     public ResponseEntity<String> deleteMessage(@PathVariable("messageId") Long messageId) {
-        Optional<Message> message = _messageService.getMessageById(messageId);
-        if (message.isEmpty()) {
-            return new ResponseEntity<>("Message with ID " + messageId + " not found!", HttpStatus.NOT_FOUND);
-        }
         _messageService.deleteMessage(messageId);
         return new ResponseEntity<>("Message deleted", HttpStatus.OK);
     }
 
     @PutMapping(path = "/{messageId}")
     public ResponseEntity<Message> updateMessage(@PathVariable("messageId") Long messageId, @Valid @RequestBody MessageRequest messageRequest) {
-        Optional<Message> message = _messageService.getMessageById(messageId);
-        if (message.isEmpty()) {
-            return new ResponseEntity("Message with id " + messageId + " not found!", HttpStatus.NOT_FOUND);
-        }
         Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
         return new ResponseEntity(updatedMessage, HttpStatus.OK);
-    }
-
-    // Response for bad @Valid requests
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
-    public ResponseEntity validationError(MethodArgumentNotValidException e) {
-        StringBuilder string = new StringBuilder();
-        BindingResult result = e.getBindingResult();
-        final List<FieldError> fieldErrors = result.getFieldErrors();
-        for(FieldError error : fieldErrors) string.append(error.getField() + " : " + error.getDefaultMessage() + " | ");
-        return new ResponseEntity(string.toString(),HttpStatus.BAD_REQUEST);
     }
 }
