@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,21 +27,14 @@ public class MessageController {
 
     @GetMapping
     public ResponseEntity<List<Message>> getMessages() {
-        try {
-            List<Message> messageList = _messageService.getMessages();
-            return new ResponseEntity<>(messageList, HttpStatus.FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<Message> messageList = _messageService.getMessages();
+        return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
 
-    @GetMapping("/{offset}/{pagesize}")
-    public ResponseEntity<Page<Message>> getPaginatedMessages(@PathVariable int offset, @PathVariable int pagesize) {
+    @GetMapping("/")
+    public ResponseEntity<Page<Message>> getPaginatedMessages(@RequestParam(name = "offset") int offset, @RequestParam(name = "pagesize") int pagesize) {
         Page<Message> messages = _messageService.findAllPaginated(offset, pagesize);
-        if (messages.isEmpty()) {
-            return new ResponseEntity("No items on that page", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(messages, HttpStatus.FOUND);
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
 
@@ -50,17 +44,13 @@ public class MessageController {
         if (message.isEmpty()) {
             return new ResponseEntity("Message with ID " + messageId + " not found!", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(message, HttpStatus.FOUND);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<String> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
-        try {
-            _messageService.createNewMessage(messageRequest);
-            return new ResponseEntity<>("Created new message succesfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Bad request!", HttpStatus.BAD_REQUEST);
-        }
+        _messageService.createNewMessage(messageRequest);
+        return new ResponseEntity<>("Created new message succesfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "{messageId}")
@@ -79,12 +69,13 @@ public class MessageController {
         if (message.isEmpty()) {
             return new ResponseEntity("Message with id " + messageId + " not found!", HttpStatus.NOT_FOUND);
         }
-        try{
-            Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
-            return new ResponseEntity(updatedMessage, HttpStatus.ACCEPTED);
-        } catch (Exception e) {
-            return new ResponseEntity("Bad request!", HttpStatus.BAD_REQUEST);
-        }
+        Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
+        return new ResponseEntity(updatedMessage, HttpStatus.OK);
+    }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ResponseEntity validationError() {
+        return new ResponseEntity("Bad Request!", HttpStatus.BAD_REQUEST);
     }
 }
