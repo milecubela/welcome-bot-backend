@@ -53,6 +53,7 @@ public class TriggerService {
         _triggerRepository.findById(trigger.getTriggerId()).orElseThrow(() -> new IllegalStateException("Trigger with the ID of : " + trigger.getTriggerId() + " does not exist"));
         _triggerRepository.save(trigger);
     }
+
     public Page<Trigger> findAllPaginated(int offset, int pagesize) {
         Page<Trigger> triggers = _triggerRepository.findAll(PageRequest.of(offset, pagesize));
         return triggers;

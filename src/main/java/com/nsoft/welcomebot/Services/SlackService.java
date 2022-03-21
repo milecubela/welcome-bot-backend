@@ -2,6 +2,7 @@ package com.nsoft.welcomebot.Services;
 
 import com.nsoft.welcomebot.SlackModule.SlackFactory.SlackCommmandsFactory;
 import com.nsoft.welcomebot.SlackModule.SlackFactory.SlackEventsFactory;
+import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SlackCommand;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import com.slack.api.bolt.App;
@@ -15,12 +16,14 @@ import java.util.Arrays;
 @EnableWebMvc
 public class SlackService {
 
+    private final Credentials _credentials;
     private final App _app;
     private final SlackEventsFactory _slackEventsFactory;
     private final SlackCommmandsFactory _slackCommandsFactory;
 
     @Autowired
-    public SlackService(App app, SlackEventsFactory slackEventsFactory, SlackCommmandsFactory slackCommandsFactory) {
+    public SlackService(Credentials credentials, App app, SlackEventsFactory slackEventsFactory, SlackCommmandsFactory slackCommandsFactory) {
+        _credentials = credentials;
         _app = app;
         _slackEventsFactory = slackEventsFactory;
         _slackCommandsFactory = slackCommandsFactory;
@@ -35,14 +38,14 @@ public class SlackService {
     private void subscribeToEvents() {
         var list = Arrays.stream(TriggerEvent.values()).toList();
         for (TriggerEvent triggerEvent : list) {
-            _slackEventsFactory.getEvent(triggerEvent).subscribeToEvent(_app);
+            _slackEventsFactory.getEvent(triggerEvent).subscribeToEvent(_app, _credentials);
         }
     }
 
     private void subscribeToCommands() {
         var list = Arrays.stream(SlackCommand.values()).toList();
         for (SlackCommand slackCommand : list) {
-            _slackCommandsFactory.getCommand(slackCommand).subscribeToSlackCommand(_app);
+            _slackCommandsFactory.getCommand(slackCommand).subscribeToSlackCommand(_app, _credentials);
         }
     }
 
