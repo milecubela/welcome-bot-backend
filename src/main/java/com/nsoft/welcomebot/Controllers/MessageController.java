@@ -28,7 +28,7 @@ public class MessageController {
     }
 
     @GetMapping
-    public ResponseEntity getMessages() {
+    public ResponseEntity<List<Message>> getMessages() {
         List<Message> messageList = _messageService.getMessages();
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
@@ -61,6 +61,6 @@ public class MessageController {
     @PutMapping(path = "/{messageId}")
     public ResponseEntity<Message> updateMessage(@PathVariable("messageId") Long messageId, @Valid @RequestBody MessageRequest messageRequest) {
         Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
-        return new ResponseEntity(updatedMessage, HttpStatus.OK);
+        return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
     }
 }
