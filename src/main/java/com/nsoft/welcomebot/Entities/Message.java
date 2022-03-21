@@ -31,6 +31,7 @@ public class Message {
     @NonNull
     @Size(min = 20)
     private String text;
+
     private LocalDate createdAt;
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
