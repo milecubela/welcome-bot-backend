@@ -31,7 +31,7 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public void createSchedule(@Valid @RequestBody Schedule schedule) throws ParseException {
+    public void createSchedule(@Valid @RequestBody Schedule schedule) {
         _scheduleSerivce.createNewSchedule(schedule);
     }
 
@@ -41,14 +41,13 @@ public class ScheduleController {
     }
 
     @PutMapping
-    public void updateSchedule(@Valid @RequestBody Schedule schedule) throws ParseException {
+    public void updateSchedule(@Valid @RequestBody Schedule schedule) {
         _scheduleSerivce.updateSchedule(schedule);
     }
 
-    @GetMapping("/paginated/{offset}/{pagesize}")
-    public Page<Schedule> getPaginatedMessages(@PathVariable int offset, @PathVariable int pagesize){
-        Page<Schedule> schedules=_scheduleSerivce.findAllPaginated(offset, pagesize);
-        return schedules;
+    @GetMapping("/")
+    public Page<Schedule> getPaginatedMessages(@RequestParam(name = "offset") int offset, @RequestParam(name = "pagesize") int pagesize){
+        return _scheduleSerivce.findAllPaginated(offset, pagesize);
     }
 
 }

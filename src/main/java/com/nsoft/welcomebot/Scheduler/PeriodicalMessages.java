@@ -23,7 +23,7 @@ public class PeriodicalMessages {
 
     @Scheduled(fixedRate = 30000)
     public void sendScheduledMessages() throws SlackApiException, IOException {
-        List<Schedule> schedules = _scheduleRepository.findAll();
+        List<Schedule> schedules = _scheduleRepository.findAllActiveSchedules();
         // this list is composed of all active repeating schedules
         List<Schedule> startrunninglist = new ArrayList<>();
 
@@ -68,7 +68,9 @@ public class PeriodicalMessages {
 
     public void setNextRunDate(Schedule schedule) {
         if (schedule.getSchedulerInterval() == SchedulerInterval.MINUTE) {
-            schedule.setNextRun(LocalDateTime.now().plusSeconds(55));
+            // 60-1 fixes a scheduling problem where the localtime would be less than the run time by a few milliseconds,hence not printing the message
+            // by rescheduling it for 59 seconds the localtime is always going to be ~1s more than the scheduled run time,making sure the message prints
+            schedule.setNextRun(LocalDateTime.now().plusSeconds(60-1));
         }
         if (schedule.getSchedulerInterval() == SchedulerInterval.HOUR) {
             schedule.setNextRun(LocalDateTime.now().plusHours(1));
