@@ -32,7 +32,7 @@ public class SlackAppMention implements SlackEventInterface {
                     .token(System.getenv("SLACK_BOT_TOKEN"))
                     .channel(event.getChannel()));
             var channelName = channelResult.getChannel().getName();
-            for (Trigger trigger : _triggerRepository.findTriggersByChannel(channelName)) {
+            for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActive(channelName, true)) {
                 ctx.say(trigger.getMessage().getText());
             }
             return ctx.ack();
