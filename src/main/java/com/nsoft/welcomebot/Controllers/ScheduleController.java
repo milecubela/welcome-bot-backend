@@ -2,27 +2,29 @@ package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Services.ScheduleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
-import java.text.ParseException;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/schedules")
 public class ScheduleController {
     private final ScheduleService _scheduleSerivce;
 
-    @Autowired
-    public ScheduleController(ScheduleService scheduleSerivce) {
-        _scheduleSerivce = scheduleSerivce;
-
-    }
-
     @GetMapping
-    public List<Schedule> getSchedules() {
-        return _scheduleSerivce.getSchedules();
+    public ResponseEntity<Object> getSchedules(@Valid @RequestParam(name = "offset", required = false) Integer offset, @RequestParam(name = "pagesize", required = false) Integer pagesize) {
+        if (offset == null || pagesize == null) {
+            List<Schedule> scheduleList = _scheduleSerivce.getSchedules();
+            return new ResponseEntity<>(scheduleList, HttpStatus.OK);
+        }
+        Page<Schedule> pageSchedules = _scheduleSerivce.findAllPaginated(offset, pagesize);
+        return new ResponseEntity<>(pageSchedules, HttpStatus.OK);
     }
 
     @GetMapping(path = "{scheduleID}")
@@ -44,10 +46,4 @@ public class ScheduleController {
     public void updateSchedule(@Valid @RequestBody Schedule schedule) {
         _scheduleSerivce.updateSchedule(schedule);
     }
-
-    @GetMapping("/")
-    public Page<Schedule> getPaginatedMessages(@RequestParam(name = "offset") int offset, @RequestParam(name = "pagesize") int pagesize){
-        return _scheduleSerivce.findAllPaginated(offset, pagesize);
-    }
-
 }
