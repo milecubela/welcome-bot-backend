@@ -3,6 +3,7 @@ package com.nsoft.welcomebot.Controllers;
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Services.MessageService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -12,16 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "api/v1/messages")
 public class MessageController {
 
     private final MessageService _messageService;
-
-    @Autowired
-    public MessageController(MessageService messageService) {
-        _messageService = messageService;
-    }
 
     @GetMapping
     public ResponseEntity<Object> getMessages(@Valid @RequestParam(name = "offset", required = false) Integer offset, @RequestParam(name = "pagesize", required = false) Integer pagesize) {
