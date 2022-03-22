@@ -4,11 +4,12 @@ import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import lombok.NonNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -63,13 +64,11 @@ public class ScheduleService {
     }
 
     public Schedule getScheduleById(Long scheduleId) {
-        Schedule sched = _scheduleRepository.findById(scheduleId).orElseThrow(() ->
+        return _scheduleRepository.findById(scheduleId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule with the ID of : " + scheduleId + " does not exist"));
-        return sched;
     }
 
-    public Page<Schedule> findAllPaginated(int offset, int pagesize){
-        Page<Schedule> schedules = _scheduleRepository.findAll(PageRequest.of(offset, pagesize));
-        return schedules;
+    public Page<Schedule> findAllPaginated(int offset, int pagesize) {
+        return _scheduleRepository.findAll(PageRequest.of(offset, pagesize));
     }
 }
