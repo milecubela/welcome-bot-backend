@@ -4,6 +4,7 @@ import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.NotFoundException;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class MessageService {
 
@@ -30,6 +32,7 @@ public class MessageService {
     public Message getMessageById(Long messageId) {
         Optional<Message> optionalMessage = _messageRepository.findById(messageId);
         if (optionalMessage.isEmpty()) {
+            log.error("Message with ID {} not found", messageId);
             throw new NotFoundException("Message with ID " + messageId + " not found!");
         }
         return optionalMessage.get();

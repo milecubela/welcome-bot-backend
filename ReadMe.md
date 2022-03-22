@@ -47,3 +47,12 @@ Before going through these steps the bot owner needs to subscribe to certain Sla
 
 Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
 in database. 
+
+Logging 
+
+```text
+Use @Slf4j annotation above the class that uses the logger. 
+log.info("String") / warn() / error()
+
+Loggs everything to console, but only logs warns and errors to logfile
+```
