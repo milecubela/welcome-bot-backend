@@ -69,6 +69,7 @@ public class TriggerService {
         trigger.setChannel(triggerRequest.getChannel());
         trigger.setIsActive(triggerRequest.getIsActive());
         trigger.setMessage(optionalMessage.get());
+        _triggerRepository.save(trigger);
         return trigger;
     }
 
