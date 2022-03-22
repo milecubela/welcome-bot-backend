@@ -55,4 +55,5 @@ Use @Slf4j annotation above the class that uses the logger.
 log.info("String") / warn() / error()
 
 Loggs everything to console, but only logs warns and errors to logfile
+Rolls over new log file every day
 ```
