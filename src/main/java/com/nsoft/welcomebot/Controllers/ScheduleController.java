@@ -1,6 +1,7 @@
 package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Entities.Schedule;
+import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Services.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,35 +16,39 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/schedules")
 public class ScheduleController {
-    private final ScheduleService _scheduleSerivce;
+    private final ScheduleService scheduleService;
 
     @GetMapping
     public ResponseEntity<Object> getSchedules(@Valid @RequestParam(name = "offset", required = false) Integer offset, @RequestParam(name = "pagesize", required = false) Integer pagesize) {
         if (offset == null || pagesize == null) {
-            List<Schedule> scheduleList = _scheduleSerivce.getSchedules();
+            List<Schedule> scheduleList = scheduleService.getSchedules();
             return new ResponseEntity<>(scheduleList, HttpStatus.OK);
         }
-        Page<Schedule> pageSchedules = _scheduleSerivce.findAllPaginated(offset, pagesize);
+        Page<Schedule> pageSchedules = scheduleService.findAllPaginated(offset, pagesize);
         return new ResponseEntity<>(pageSchedules, HttpStatus.OK);
     }
 
     @GetMapping(path = "{scheduleID}")
-    public Schedule getScheduleById(@PathVariable Long scheduleID) {
-        return _scheduleSerivce.getScheduleById(scheduleID);
+    public ResponseEntity<Schedule> getScheduleById(@PathVariable Long scheduleID) {
+        Schedule schedule = scheduleService.getScheduleById(scheduleID);
+        return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
     @PostMapping
-    public void createSchedule(@Valid @RequestBody Schedule schedule) {
-        _scheduleSerivce.createNewSchedule(schedule);
+    public ResponseEntity<String> createSchedule(@Valid @RequestBody ScheduleRequest scheduleRequest) {
+        scheduleService.createNewSchedule(scheduleRequest);
+        return new ResponseEntity<>("Created new schedule successfully", HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{scheduleId}")
-    public void deleteSchedule(@PathVariable Long scheduleId) {
-        _scheduleSerivce.deleteSchedule(scheduleId);
+    public ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId) {
+        scheduleService.deleteSchedule(scheduleId);
+        return new ResponseEntity("Schedule deleted", HttpStatus.OK);
     }
 
-    @PutMapping
-    public void updateSchedule(@Valid @RequestBody Schedule schedule) {
-        _scheduleSerivce.updateSchedule(schedule);
+    @PutMapping(path = "/{scheduleId}")
+    public ResponseEntity<Schedule> updateSchedule(@PathVariable("scheduleId") Long scheduleId, @Valid @RequestBody ScheduleRequest scheduleRequest) {
+        Schedule updatedSchedule = scheduleService.updateSchedule(scheduleId, scheduleRequest);
+        return new ResponseEntity(updatedSchedule, HttpStatus.OK);
     }
 }
