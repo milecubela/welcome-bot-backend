@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.Entities;
 
+import com.nsoft.welcomebot.Models.RequestModels.TriggerRequest;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import lombok.*;
 
@@ -28,4 +29,10 @@ public class Trigger {
     private Message message;
 
     private TriggerEvent triggerEvent;
+
+    public Trigger(TriggerRequest triggerRequest) {
+        this.channel = triggerRequest.getChannel();
+        this.triggerEvent = triggerRequest.getTriggerEvent();
+        this.isActive = triggerRequest.getIsActive();
+    }
 }

@@ -34,10 +34,11 @@ Trigger  - Create a new trigger
 ```
 
 Adding new events and commands:
+You can find the supported event types here: https://api.slack.com/events
 
 ```text
 Adding events:
-    1. Add new enum member in TriggerEvent under Utilities package.
+    1. Add new enum member in TriggerEvent under Utilities package that describes the event.
     2. Create a new class in SlackEvents package that will contain its interface methods.
 Adding commands:
 Before going through these steps the bot owner needs to subscribe to certain SlashCommands in its bot configuration page.
