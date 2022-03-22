@@ -4,7 +4,6 @@ import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Services.MessageService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
