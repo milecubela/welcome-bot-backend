@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.List;
 
+// Global exception handler
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -30,7 +31,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    //
+    // Throw this exception when something doesn't exist in the database by ID lookup
     @ExceptionHandler(value = NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());

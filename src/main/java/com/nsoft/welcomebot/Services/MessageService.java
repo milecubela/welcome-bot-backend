@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -27,9 +28,11 @@ public class MessageService {
     }
 
     public Message getMessageById(Long messageId) {
-        if (_messageRepository.findById(messageId).isEmpty())
+        Optional<Message> optionalMessage = _messageRepository.findById(messageId);
+        if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + messageId + " not found!");
-        return _messageRepository.getById(messageId);
+        }
+        return optionalMessage.get();
     }
 
     public Page<Message> findAllPaginated(int offset, int pagesize) {
@@ -43,15 +46,18 @@ public class MessageService {
     }
 
     public void deleteMessage(Long messageId) {
-        if (_messageRepository.findById(messageId).isEmpty())
+        Optional<Message> optionalMessage = _messageRepository.findById(messageId);
+        if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + messageId + " not found!");
+        }
         _messageRepository.deleteById(messageId);
     }
 
     public Message updateMessage(Long messageId, MessageRequest messageRequest) {
-        if (_messageRepository.findById(messageId).isEmpty())
+        Optional<Message> optionalMessage = _messageRepository.findById(messageId);
+        if (optionalMessage.isEmpty())
             throw new NotFoundException("Message with ID " + messageId + " not found");
-        Message message = _messageRepository.getById(messageId);
+        Message message = optionalMessage.get();
         message.setText(messageRequest.getText());
         message.setTitle(messageRequest.getTitle());
         _messageRepository.save(message);

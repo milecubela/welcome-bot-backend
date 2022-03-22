@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/messages")
@@ -25,17 +24,14 @@ public class MessageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Message>> getMessages() {
-        List<Message> messageList = _messageService.getMessages();
-        return new ResponseEntity<>(messageList, HttpStatus.OK);
+    public ResponseEntity<Object> getMessages(@Valid @RequestParam(name = "offset", required = false) Integer offset, @RequestParam(name = "pagesize", required = false) Integer pagesize) {
+        if (offset == null || pagesize == null) {
+            List<Message> messageList = _messageService.getMessages();
+            return new ResponseEntity<>(messageList, HttpStatus.OK);
+        }
+        Page<Message> pageMessages = _messageService.findAllPaginated(offset, pagesize);
+        return new ResponseEntity<>(pageMessages, HttpStatus.OK);
     }
-
-    @GetMapping("/")
-    public ResponseEntity<Page<Message>> getPaginatedMessages(@RequestParam(name = "offset") int offset, @RequestParam(name = "pagesize") int pagesize) {
-        Page<Message> messages = _messageService.findAllPaginated(offset, pagesize);
-        return new ResponseEntity<>(messages, HttpStatus.OK);
-    }
-
 
     @GetMapping(path = "{messageId}")
     public ResponseEntity<Message> getMessages(@PathVariable("messageId") Long messageId) {
