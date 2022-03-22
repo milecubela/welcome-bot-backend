@@ -1,6 +1,9 @@
 package com.nsoft.welcomebot.Services;
 
+import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Trigger;
+import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.NotFoundException;
+import com.nsoft.welcomebot.Models.RequestModels.TriggerRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.TriggerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +26,13 @@ public class TriggerService {
         _messageRepository = messageRepository;
     }
 
-    public void createTrigger(Trigger trigger) {
-        if (Optional.ofNullable(trigger.getMessage()).isEmpty()) {
-            throw new IllegalStateException("Trigger has recieved a null message entitiy!");
-        } else if (!_messageRepository.existsById(trigger.getMessage().getMessageId())) {
-            throw new IllegalStateException(" Trigger has recieved a message entity whose ID does not exist");
+    public void createNewTrigger(TriggerRequest triggerRequest) {
+        Optional<Message> optionalMessage = _messageRepository.findById(triggerRequest.getMessageId());
+        if (optionalMessage.isEmpty()) {
+            throw new NotFoundException("Message with ID " + triggerRequest.getMessageId() + " not found!");
         }
+        Trigger trigger = new Trigger(triggerRequest);
+        trigger.setMessage(optionalMessage.get());
         _triggerRepository.save(trigger);
     }
 
@@ -37,25 +41,38 @@ public class TriggerService {
     }
 
     public Trigger getTriggerById(Long triggerId) {
-        Trigger trigger = _triggerRepository.findById(triggerId).orElseThrow(() -> new IllegalStateException("Trigger with the ID of : " + triggerId + " does not exist"));
-        return trigger;
+        Optional<Trigger> optionalTrigger = _triggerRepository.findById(triggerId);
+        if (optionalTrigger.isEmpty()) {
+            throw new NotFoundException("Trigger with ID " + triggerId + " not found!");
+        }
+        return optionalTrigger.get();
     }
 
     public void deleteTrigger(Long triggerId) {
-        if (!_triggerRepository.existsById(triggerId)) {
-            throw new IllegalStateException("Trigger with the ID: " + triggerId + " does not exist ");
-        } else {
-            _triggerRepository.deleteById(triggerId);
+        Optional<Trigger> optionalTrigger = _triggerRepository.findById(triggerId);
+        if (optionalTrigger.isEmpty()) {
+            throw new NotFoundException("Trigger with ID " + triggerId + " not found!");
         }
+        _triggerRepository.deleteById(triggerId);
     }
 
-    public void updateTrigger(Trigger trigger) {
-        _triggerRepository.findById(trigger.getTriggerId()).orElseThrow(() -> new IllegalStateException("Trigger with the ID of : " + trigger.getTriggerId() + " does not exist"));
-        _triggerRepository.save(trigger);
+    public Trigger updateTrigger(Long triggerId, TriggerRequest triggerRequest) {
+        Optional<Trigger> optionalTrigger = _triggerRepository.findById(triggerId);
+        Optional<Message> optionalMessage = _messageRepository.findById(triggerRequest.getMessageId());
+        if (optionalTrigger.isEmpty()) {
+            throw new NotFoundException("Trigger with ID " + triggerId + " not found!");
+        } else if (optionalMessage.isEmpty()) {
+            throw new NotFoundException("Message with ID " + triggerRequest.getMessageId() + " not found!");
+        }
+        Trigger trigger = optionalTrigger.get();
+        trigger.setTriggerEvent(triggerRequest.getTriggerEvent());
+        trigger.setChannel(triggerRequest.getChannel());
+        trigger.setIsActive(triggerRequest.getIsActive());
+        trigger.setMessage(optionalMessage.get());
+        return trigger;
     }
 
     public Page<Trigger> findAllPaginated(int offset, int pagesize) {
-        Page<Trigger> triggers = _triggerRepository.findAll(PageRequest.of(offset, pagesize));
-        return triggers;
+        return _triggerRepository.findAll(PageRequest.of(offset, pagesize));
     }
 }
