@@ -3,6 +3,7 @@ package com.nsoft.welcomebot.Scheduler;
 
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import com.slack.api.bolt.App;
 import com.slack.api.methods.SlackApiException;
@@ -20,7 +21,7 @@ import java.util.List;
 public class PeriodicalMessages {
     private final ScheduleRepository _scheduleRepository;
     private final App bot2;
-
+    private final Credentials crd;
     @Scheduled(fixedRate = 30000)
     public void sendScheduledMessages() throws SlackApiException, IOException {
         List<Schedule> schedules = _scheduleRepository.findAllActiveSchedules();
@@ -79,7 +80,7 @@ public class PeriodicalMessages {
             return;
         }
         if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            bot2.client().chatPostMessage(r -> r.token("xoxb-3185202762819-3204736816567-dCo8NEYO6vH7HvF7H5GqQCZ4").channel(schedule.getChannel()).text(schedule.getMessage().getText()));
+            bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
             if (!schedule.isRepeat()) schedule.setActive(false);
             setNextRunDate(schedule);
             _scheduleRepository.save(schedule);
