@@ -33,7 +33,7 @@ public class SlackChannelLeft implements SlackEventInterface {
                     .token(crd.getSlackBotToken())
                     .channel(event.getChannel()));
             var channelName = channelResult.getChannel().getName();
-            for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActive(channelName, true)) {
+            for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActiveAndAndTriggerEvent(channelName, true, getEventType())) {
                 ctx.say(trigger.getMessage().getText());
             }
             return ctx.ack();
