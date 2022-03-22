@@ -1,11 +1,7 @@
 package com.nsoft.welcomebot.Models.RequestModels;
 
-import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import lombok.*;
-
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Getter
 @NoArgsConstructor
@@ -18,9 +14,8 @@ public class TriggerRequest {
 
     private Boolean isActive;
 
-    @ManyToOne()
-    @JoinColumn(name = "message_id")
-    private Message message;
+    @NonNull
+    private Long messageId;
 
     private TriggerEvent triggerEvent;
 }

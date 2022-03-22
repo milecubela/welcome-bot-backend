@@ -21,7 +21,6 @@ public class SlackWeatherCommand implements SlackCommandsInterface {
         app.command("/weather", (req, ctx) -> {
             var payload = req.getPayload();
             var city = payload.getText();
-            var test = crd.getOpenWeatherApiKey();
             var json = ConsumeJSON.getJSONObject("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + crd.getOpenWeatherApiKey());
             var sky = json.getAsJsonArray("weather").get(0).getAsJsonObject().get("main").toString();
             sky = sky.substring(1, sky.length() - 1);
