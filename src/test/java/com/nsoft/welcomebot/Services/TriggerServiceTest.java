@@ -11,9 +11,10 @@ import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+@DataJpaTest
 @ExtendWith(MockitoExtension.class)
 class TriggerServiceTest {
 
@@ -30,6 +32,10 @@ class TriggerServiceTest {
     private TriggerRepository triggerRepository;
     @Mock
     private MessageRepository messageRepository;
+    @Autowired
+    private TriggerRepository triggerRepositoryMemoryBase;
+    @Autowired
+    private MessageRepository messageRepositoryMemoryBase;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +45,9 @@ class TriggerServiceTest {
     @Test
     void canCreateNewTrigger() {
         // given
+        // initializing triggerServiceTest to use the trigger repository that is on the H2 memory base
+        // so we can see if it is actually stored.
+        triggerServiceTest = new TriggerService(triggerRepositoryMemoryBase, messageRepositoryMemoryBase);
         Message message = new Message(
                 new MessageRequest(
                         "Neki title",
@@ -52,23 +61,16 @@ class TriggerServiceTest {
                 triggerId,
                 TriggerEvent.APP_MENTION_EVENT
         );
-        given(messageRepository.findById(triggerRequest.getMessageId()))
-                .willReturn(Optional.of(message));
-
+        messageRepositoryMemoryBase.save(message);
         // when
         triggerServiceTest.createNewTrigger(triggerRequest);
-
         // then
-        ArgumentCaptor<Trigger> triggerArgumentCaptor =
-                ArgumentCaptor.forClass(Trigger.class);
-        verify(triggerRepository).save(triggerArgumentCaptor.capture());
-        Trigger trigger = triggerArgumentCaptor.getValue();
-        boolean expected = trigger.getChannel().matches(triggerRequest.getChannel());
+        boolean expected = triggerRepositoryMemoryBase.findAll().size() > 0;
         assertThat(expected).isTrue();
     }
 
     @Test
-    void willThrowCreateNewTrigger() {
+    void willThrowOnCreateNewTrigger() {
         // given
         Long triggerId = 1L;
         TriggerRequest triggerRequest = new TriggerRequest(
@@ -105,7 +107,7 @@ class TriggerServiceTest {
     }
 
     @Test
-    void willThrowGetTriggerById() {
+    void willThrowOnGetTriggerById() {
         // given
         Long triggerId = 1L;
         given(triggerRepository.findById(triggerId))
@@ -136,7 +138,7 @@ class TriggerServiceTest {
     }
 
     @Test
-    void willThrowCanDeleteTrigger() {
+    void willThrowOnDeleteTrigger() {
         // given
         Long triggerId = 1L;
         given(triggerRepository.findById(triggerId))
@@ -182,7 +184,7 @@ class TriggerServiceTest {
     }
 
     @Test
-    void willThrowWhenMessageDoesNotExistsUpdateTrigger() {
+    void willThrowWhenMessageDoesNotExistsOnUpdateTrigger() {
         // given
         Long messageId = 1L;
         Long triggerId = 1L;
@@ -205,9 +207,8 @@ class TriggerServiceTest {
     }
 
     @Test
-    void willThrowWhenTriggerDoesNotExistsUpdateTrigger() {
+    void willThrowWhenTriggerDoesNotExistsOnUpdateTrigger() {
         // given
-        Long messageId = 1L;
         Long triggerId = 1L;
         TriggerRequest triggerRequest = new TriggerRequest(
                 "channel",
