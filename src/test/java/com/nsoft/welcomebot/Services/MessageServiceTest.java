@@ -6,7 +6,6 @@ import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -49,7 +48,7 @@ class MessageServiceTest {
 
     /**
      * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
-     * */
+     */
     @Test
     void willThrowWhenGetIdIsNotFound() {
         // given
@@ -59,11 +58,12 @@ class MessageServiceTest {
         // then
         assertThatThrownBy(() -> messageServiceTest.getMessageById(1L)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }
+
     /**
      * To break this test, assert that the text is not equal
-     * */
+     */
     @Test
-    void willReturnTheMessageById(){
+    void willReturnTheMessageById() {
         //Given
         Message testMessage = new Message(1L, "Title", "Text Text");
         given(messageRepository.findById(testMessage.getMessageId())).willReturn(Optional.of(testMessage));
@@ -73,9 +73,10 @@ class MessageServiceTest {
         assertThat(message).isInstanceOf(Message.class);
         //assertThat(message.getText()).matches("Not the same text");
     }
+
     /**
      * To break this test, assert that the text is not equal
-     * */
+     */
     @Test
     void canAddMessage() {
         //given
@@ -90,9 +91,10 @@ class MessageServiceTest {
         assertThat(capturedMessage.getText()).matches(messageRequest.getText());
 //        assertThat(capturedMessage.getText()).doesNotMatch(messageRequest.getText());
     }
+
     /**
      * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
-     * */
+     */
     @Test
     void willThrowWhenDeleteIdNotFound() {
         // given
@@ -102,9 +104,10 @@ class MessageServiceTest {
         // then
         assertThatThrownBy(() -> messageServiceTest.deleteMessage(1L)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }
+
     /**
      * To break the test, assert that the text is not equal
-     * */
+     */
     @Test
     void willReturnUpdatedMessage() {
         // given
@@ -117,9 +120,10 @@ class MessageServiceTest {
         assertThat(updatedMessage.getText()).matches(testMessage.getText());
         //assertThat(updatedMessage.getText()).doesNotMatch(testMessage.getText());
     }
+
     /**
      * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
-     * */
+     */
     @Test
     void willThrownWhenUpdateIdNotFound() {
         // given
