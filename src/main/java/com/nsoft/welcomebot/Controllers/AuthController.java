@@ -26,16 +26,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    private ResponseEntity<TokenResponse> loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
-        try {
-            TokenResponse tokenResponse = userService.loginUser(tokenRequest);
-            return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
-        } catch (UsernameNotFoundException e) {
-            String message = e.getMessage();
-            return new ResponseEntity(message, HttpStatus.FORBIDDEN);
-        } catch (IOException e) {
-            String message = e.getMessage();
-            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
-        }
+    private ResponseEntity<Object> loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
+        return userService.loginUser(tokenRequest);
     }
 }
