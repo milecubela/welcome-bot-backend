@@ -38,14 +38,6 @@ class MessageServiceTest {
         messageRepository.deleteAll();
     }
 
-    @Test
-    void canGetAllMessages() {
-        // when we call messageService.getMessages()
-        messageServiceTest.getMessages();
-        // Then we should verify if the mock function messageRepository.findAll() was called
-        verify(messageRepository).findAll();
-    }
-
     /**
      * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
      */
@@ -70,7 +62,7 @@ class MessageServiceTest {
         //when
         Message message = messageServiceTest.getMessageById(1L);
         //then
-        assertThat(message).isInstanceOf(Message.class);
+        assertThat(message.getText()).matches("Text Text");
         //assertThat(message.getText()).matches("Not the same text");
     }
 
