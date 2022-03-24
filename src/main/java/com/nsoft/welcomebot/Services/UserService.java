@@ -52,12 +52,12 @@ public class UserService implements UserDetailsService {
     Initial check for frontend token, returns an appropriate response
     */
 
-    public ResponseEntity<Object> loginUser(TokenRequest tokenRequest){
+    public ResponseEntity<Object> loginUser(TokenRequest tokenRequest) {
         String email = null;
         String idtoken = tokenRequest.getIdtoken();
         if (idtoken != null && idtoken.startsWith("Bearer ")) {
             String token = idtoken.substring(7);
-            try{
+            try {
                 JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
                 email = jsonObject.get("email").getAsString();
             } catch (IOException e) {

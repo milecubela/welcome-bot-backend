@@ -17,7 +17,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 /*
     Every request goes through this filter. Check if the header token is valid, check if email from payload exists in database.
@@ -64,15 +63,9 @@ public class OauthRequestFilter extends OncePerRequestFilter {
             try {
                 UserDetails user = userService.loadUserByUsername(email);
                 if (userService.validateUser(email)) {
-                    var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                            user,
-                            null,
-                            user.getAuthorities()
-                    );
-                    usernamePasswordAuthenticationToken
-                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext()
-                            .setAuthentication(usernamePasswordAuthenticationToken);
+                    var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             } catch (UsernameNotFoundException e) {
                 response.setStatus(403);

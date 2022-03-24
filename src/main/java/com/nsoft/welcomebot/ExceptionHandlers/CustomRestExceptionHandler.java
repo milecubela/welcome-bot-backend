@@ -2,20 +2,12 @@ package com.nsoft.welcomebot.ExceptionHandlers;
 
 import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.BadTokenException;
 import com.nsoft.welcomebot.Models.ResponseModels.ApiError;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.List;
 
 // Global exception handler
 @ControllerAdvice
@@ -29,7 +21,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = BadTokenException.class)
-    public ResponseEntity<Object> handleBadTokenException(BadTokenException ex){
+    public ResponseEntity<Object> handleBadTokenException(BadTokenException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
