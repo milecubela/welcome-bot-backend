@@ -8,12 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MessageServiceIntegrationTest {
 
     @Autowired
@@ -31,13 +33,14 @@ public class MessageServiceIntegrationTest {
     }
 
     /**
-     * Testing if the repository returns all items from database
-     * */
+     * Testing if the method returns all items from database
+     */
     @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canGetAllMessages() {
         // given
-        Message message1 = new Message("Title1", "Text Text1 dvadeset slova");
-        Message message2 = new Message("Title2", "Text Text2 dvadeset slova");
+        Message message1 = new Message("Title1", "Text Text1 with 20 letters");
+        Message message2 = new Message("Title2", "Text Text2 with 20 letters");
         messageRepository.save(message1);
         messageRepository.save(message2);
         //when
@@ -50,14 +53,61 @@ public class MessageServiceIntegrationTest {
      * Testing if the end result from the repository is the same as the messageRequest we sent to create
      */
     @Test
-    void canAddMessage() {
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canCreateMessage() {
         //given
         MessageRequest messageRequest = new MessageRequest("Title", "Text Text with 20 letters");
         //when
         messageService.createNewMessage(messageRequest);
         //then
-        List<Message> messages = messageRepository.findAll();
-//        Message message = messageRepositoryMemoryDatabase.getById(1L);
-        assertThat(messages.get(0).getText()).matches("Text Text with 20 letters");
+//        List<Message> messages = messageRepository.findAll();
+        Message message = messageRepository.getById(1L);
+        assertThat(message.getText()).matches("Text Text with 20 letters");
+    }
+
+    /**
+     * Testing if the method returns the correct Message from database
+     */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void cenGetASingleMessageById() {
+        //given
+        Message message = new Message("Title", "Text Text with 20 letters");
+        messageRepository.save(message);
+        //when
+        Message recievedMessage = messageService.getMessageById(1L);
+        //then
+        assertThat(recievedMessage.getText()).matches("Text Text with 20 letters");
+    }
+
+    /**
+     * Testing if the method deletes the correct Message from database
+     */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canDeleteAMessageById() {
+        //given
+        Message message = new Message("Title", "Text Text with 20 letters");
+        messageRepository.save(message);
+        //when
+        messageService.deleteMessage(1L);
+        //then
+        assertThat(messageRepository.findAll().size()).isEqualTo(0);
+    }
+
+    /**
+     * Testing if the method updates the Message in database with given MessageRequest
+     */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canUpdateMessageById() {
+        //Given
+        Message message = new Message("Title", "Text Text with 20 letters");
+        MessageRequest messageRequest = new MessageRequest("Title update", "Updated Text Text with 20 letters");
+        messageRepository.save(message);
+        //when
+        Message updatedMessage = messageService.updateMessage(1L, messageRequest);
+        //then
+        assertThat(message.getText()).matches(updatedMessage.getText());
     }
 }
