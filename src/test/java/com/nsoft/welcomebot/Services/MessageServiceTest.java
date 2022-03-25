@@ -8,24 +8,27 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
-
+@DataJpaTest
 // Replaces AutoClosable, .openMocks() and .close()
 @ExtendWith(MockitoExtension.class)
 class MessageServiceTest {
 
     @Mock
     private MessageRepository messageRepository;
+    @Autowired
+    private MessageRepository messageRepositoryMemoryDatabase;
     private MessageService messageServiceTest;
 
     @BeforeEach
@@ -35,8 +38,23 @@ class MessageServiceTest {
 
     @AfterEach
     void tearDown() {
-        messageRepository.deleteAll();
+        messageRepositoryMemoryDatabase.deleteAll();
     }
+
+    @Test
+    void canGetAllMessages() {
+        messageServiceTest = new MessageService(messageRepositoryMemoryDatabase);
+        // given
+        Message message1 = new Message("Title1", "Text Text1 dvadeset slova");
+        Message message2 = new Message("Title2", "Text Text2 dvadeset slova");
+        messageRepositoryMemoryDatabase.save(message1);
+        messageRepositoryMemoryDatabase.save(message2);
+        //when
+        List<Message> messages = messageServiceTest.getMessages();
+        //then
+        assertThat(messages.size()).isEqualTo(2);
+    }
+
 
     /**
      * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
@@ -57,31 +75,29 @@ class MessageServiceTest {
     @Test
     void willReturnTheMessageById() {
         //Given
-        Message testMessage = new Message(1L, "Title", "Text Text");
+        Message testMessage = new Message(1L, "Title", "Text Text with 20 letters");
         given(messageRepository.findById(testMessage.getMessageId())).willReturn(Optional.of(testMessage));
         //when
         Message message = messageServiceTest.getMessageById(1L);
         //then
-        assertThat(message.getText()).matches("Text Text");
+        assertThat(message.getText()).matches("Text Text with 20 letters");
         //assertThat(message.getText()).matches("Not the same text");
     }
 
     /**
-     * To break this test, assert that the text is not equal
+     * Testing if the end result from the repository is the same as the messageRequest we sent to create
      */
     @Test
     void canAddMessage() {
+        messageServiceTest = new MessageService(messageRepositoryMemoryDatabase);
         //given
-        MessageRequest messageRequest = new MessageRequest("Title", "Text Text");
+        MessageRequest messageRequest = new MessageRequest("Title", "Text Text with 20 letters");
         //when
         messageServiceTest.createNewMessage(messageRequest);
         //then
-        ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-
-        verify(messageRepository).save(messageArgumentCaptor.capture());
-        Message capturedMessage = messageArgumentCaptor.getValue();
-        assertThat(capturedMessage.getText()).matches(messageRequest.getText());
-//        assertThat(capturedMessage.getText()).doesNotMatch(messageRequest.getText());
+        List<Message> messages = messageRepositoryMemoryDatabase.findAll();
+//        Message message = messageRepositoryMemoryDatabase.getById(1L);
+        assertThat(messages.get(0).getText()).matches("Text Text with 20 letters");
     }
 
     /**
