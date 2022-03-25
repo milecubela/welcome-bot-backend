@@ -12,7 +12,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,27 +31,29 @@ import static org.mockito.Mockito.verify;
 class ScheduleServiceTest {
 
     @Autowired
-    private ScheduleRepository _scheduleRepositoryTest;
+    private ScheduleRepository _scheduleRepositoryTesth2;
+    @Autowired
+    private MessageRepository _messageRepositoryTesth2;
     @Mock
     private ScheduleRepository _mockScheduleRepository;
     @Mock
-    private MessageRepository _messageRepositoryTest;
+    private MessageRepository _mockMmessageRepository;
     private ScheduleService scheduleServiceTest;
 
     @BeforeEach
     void setUp() {
-        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTest, _messageRepositoryTest);
+        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTesth2, _messageRepositoryTesth2);
     }
 
     @AfterEach
     void tearDown() {
-        _scheduleRepositoryTest.deleteAll();
+        _scheduleRepositoryTesth2.deleteAll();
     }
 
     @Test
     void getSchedules() {
-        _scheduleRepositoryTest.findAll();
-        verify(_scheduleRepositoryTest).findAll();
+        _scheduleRepositoryTesth2.findAll();
+        verify(_scheduleRepositoryTesth2).findAll();
     }
 
     @Test
@@ -63,15 +64,22 @@ class ScheduleServiceTest {
 
     @Test
     void willCreateNewIfMessageExists() {
-        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTest, _messageRepositoryTest);
-        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
+        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTesth2, _messageRepositoryTesth2);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 1L);
         MessageRequest messageRequest = new MessageRequest("title of text message", "text of message should be at least 20 letters long");
         Message message = new Message(messageRequest);
-        given(_messageRepositoryTest.findById(scheduleRequest.getMessageId())).willReturn(Optional.of(message));
-        ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
+        _messageRepositoryTesth2.save(message);
         scheduleServiceTest.createNewSchedule(scheduleRequest);
-        verify(_scheduleRepositoryTest).save(scheduleArgumentCaptor.capture());
-        assertThat(scheduleArgumentCaptor.getValue()).isInstanceOf(Schedule.class);
+        var expected = _messageRepositoryTesth2.findAll().isEmpty();
+        assertThat(expected).isFalse();
+    }
+
+    @Test
+    void shouldSetNextRunToRunDate() {
+        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
+        Schedule schedule = new Schedule(scheduleRequest);
+        boolean expected = schedule.getNextRun().isEqual(scheduleRequest.getRunDate());
+        assertThat(expected).isTrue();
     }
 
     @Test
@@ -86,11 +94,11 @@ class ScheduleServiceTest {
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        given(_scheduleRepositoryTest.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
         //when
         scheduleServiceTest.deleteSchedule(scheduleId);
         //then
-        verify(_scheduleRepositoryTest).deleteById(scheduleId);
+        verify(_scheduleRepositoryTesth2).deleteById(scheduleId);
     }
 
     @Test
@@ -109,8 +117,8 @@ class ScheduleServiceTest {
         Schedule schedule = new Schedule(scheduleRequest);
 
         //given
-        given(_messageRepositoryTest.findById(message.getMessageId())).willReturn(Optional.of(message));
-        given(_scheduleRepositoryTest.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_messageRepositoryTesth2.findById(message.getMessageId())).willReturn(Optional.of(message));
+        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
 
         //when
         Schedule returnSchedule = scheduleServiceTest.updateSchedule(scheduleId, scheduleRequest);
@@ -126,8 +134,8 @@ class ScheduleServiceTest {
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        given(_messageRepositoryTest.findById(messageId)).willReturn(Optional.empty());
-        given(_scheduleRepositoryTest.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_messageRepositoryTesth2.findById(messageId)).willReturn(Optional.empty());
+        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
 
         //when
         //then
@@ -139,7 +147,7 @@ class ScheduleServiceTest {
         //given
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
-        given(_scheduleRepositoryTest.findById(scheduleId)).willReturn(Optional.empty());
+        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.empty());
 
         //when
         //then
@@ -152,7 +160,7 @@ class ScheduleServiceTest {
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        given(_scheduleRepositoryTest.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
 
         //when
         Schedule returnSchedule = scheduleServiceTest.getScheduleById(scheduleId);
@@ -165,7 +173,7 @@ class ScheduleServiceTest {
     void shouldThrowGetByIdDoesntExist() {
         //given
         Long scheduleId = 1L;
-        given(_scheduleRepositoryTest.findById(scheduleId)).willReturn(Optional.empty());
+        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.empty());
         //when
         //then
         assertThatThrownBy(() -> scheduleServiceTest.getScheduleById(scheduleId)).isInstanceOf(NotFoundException.class);
