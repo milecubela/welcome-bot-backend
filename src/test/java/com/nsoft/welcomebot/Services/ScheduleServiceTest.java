@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
 @DataJpaTest
@@ -42,7 +43,7 @@ class ScheduleServiceTest {
 
     @BeforeEach
     void setUp() {
-        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTesth2, _messageRepositoryTesth2);
+        scheduleServiceTest = new ScheduleService(_mockScheduleRepository, _mockMmessageRepository);
     }
 
     @AfterEach
@@ -52,8 +53,8 @@ class ScheduleServiceTest {
 
     @Test
     void getSchedules() {
-        _scheduleRepositoryTesth2.findAll();
-        verify(_scheduleRepositoryTesth2).findAll();
+        _mockScheduleRepository.findAll();
+        verify(_mockScheduleRepository).findAll();
     }
 
     @Test
@@ -91,14 +92,17 @@ class ScheduleServiceTest {
     @Test
     void shouldDeleteSchedule() {
         //given
+        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTesth2,_messageRepositoryTesth2);
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
+        schedule.setScheduleId(scheduleId);
+        _scheduleRepositoryTesth2.save(schedule);
         //when
         scheduleServiceTest.deleteSchedule(scheduleId);
         //then
-        verify(_scheduleRepositoryTesth2).deleteById(scheduleId);
+//        verify(_scheduleRepositoryTesth2).deleteById(scheduleId);
+        assertThat(_scheduleRepositoryTesth2.findAll().isEmpty()).isTrue();
     }
 
     @Test
@@ -110,21 +114,31 @@ class ScheduleServiceTest {
 
     @Test
     void shouldUpdateSchedule() {
-        Message message = new Message(new MessageRequest("Title text", "description text can be filled with letters"));
+        // given
+        Message message = new Message(
+                new MessageRequest(
+                        "some title",
+                        "text za testiranje testa tost."
+                )
+        );
         message.setMessageId(1L);
         Long scheduleId = 1L;
-        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(
+                true,true,LocalDateTime.now(),SchedulerInterval.MINUTE,"textchanle",1L
+        );
+        ScheduleRequest scheduleRequestUpdate = new ScheduleRequest(
+                true,false,LocalDateTime.now(),SchedulerInterval.MINUTE,"textchanle",1L
+        );
         Schedule schedule = new Schedule(scheduleRequest);
-
-        //given
-        given(_messageRepositoryTesth2.findById(message.getMessageId())).willReturn(Optional.of(message));
-        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
-
-        //when
-        Schedule returnSchedule = scheduleServiceTest.updateSchedule(scheduleId, scheduleRequest);
-
-        //then
-        assertThat(returnSchedule.getSchedulerInterval()).isEqualTo(scheduleRequest.getSchedulerInterval());
+        schedule.setScheduleId(scheduleId);
+        given(_mockScheduleRepository.findById(scheduleId))
+                .willReturn(Optional.of(schedule));
+        given(_mockMmessageRepository.findById(message.getMessageId()))
+                .willReturn(Optional.of(message));
+        // when
+        Schedule returnSchedule = scheduleServiceTest.updateSchedule(scheduleId, scheduleRequestUpdate);
+        // then
+        assertThat(returnSchedule.isActive()).isFalse();
     }
 
     @Test
@@ -134,8 +148,8 @@ class ScheduleServiceTest {
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        given(_messageRepositoryTesth2.findById(messageId)).willReturn(Optional.empty());
-        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_mockMmessageRepository.findById(messageId)).willReturn(Optional.empty());
+        given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.of(schedule));
 
         //when
         //then
@@ -147,7 +161,8 @@ class ScheduleServiceTest {
         //given
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
-        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.empty());
+        lenient();
+        given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.empty());
 
         //when
         //then
@@ -160,7 +175,8 @@ class ScheduleServiceTest {
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.of(schedule));
+
 
         //when
         Schedule returnSchedule = scheduleServiceTest.getScheduleById(scheduleId);
@@ -173,7 +189,7 @@ class ScheduleServiceTest {
     void shouldThrowGetByIdDoesntExist() {
         //given
         Long scheduleId = 1L;
-        given(_scheduleRepositoryTesth2.findById(scheduleId)).willReturn(Optional.empty());
+        given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.empty());
         //when
         //then
         assertThatThrownBy(() -> scheduleServiceTest.getScheduleById(scheduleId)).isInstanceOf(NotFoundException.class);

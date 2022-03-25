@@ -1,9 +1,22 @@
 package com.nsoft.welcomebot.Scheduler;
 
+import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
+import com.slack.api.bolt.App;
+import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.impl.MethodsClientImpl;
+import com.slack.api.util.http.SlackHttpClient;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,12 +28,23 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {PeriodicalMessages.class})
 @ExtendWith(SpringExtension.class)
 class PeriodicalMessagesTest {
+    @MockBean
+    private App app;
+
+    @MockBean
+    private Credentials credentials;
+
     @Autowired
     private PeriodicalMessages periodicalMessages;
 
@@ -98,3 +122,4 @@ class PeriodicalMessagesTest {
 //        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now().plusHours(1));
     }
 }
+
