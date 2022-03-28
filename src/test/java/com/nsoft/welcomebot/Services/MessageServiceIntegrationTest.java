@@ -3,13 +3,16 @@ package com.nsoft.welcomebot.Services;
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
+import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -109,5 +112,26 @@ public class MessageServiceIntegrationTest {
         Message updatedMessage = messageService.updateMessage(1L, messageRequest);
         //then
         assertThat(message.getText()).matches(updatedMessage.getText());
+    }
+    /**
+     * Testing if the method returns the proper pagination
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnMessagesByPage(){
+        // given
+        Message message1 = new Message("Title1", "Text Text1 with 20 letters");
+        Message message2 = new Message("Title2", "Text Text2 with 20 letters");
+        Message message3 = new Message("Title3", "Text Text3 with 20 letters");
+        messageRepository.save(message1);
+        messageRepository.save(message2);
+        messageRepository.save(message3);
+        List<Message> messages = new ArrayList<>();
+        messages.add(message1);
+        messages.add(message2);
+        // then
+        Page<Message> messagePage = messageService.findAllPaginated(0, 2);
+        // then
+        assertThat(messagePage.getContent()).isEqualTo(messages);
     }
 }
