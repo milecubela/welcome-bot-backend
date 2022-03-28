@@ -32,51 +32,42 @@ class MessageServiceTest {
 
 
     /**
-     * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
+     *  Testing that getMessageById() throws an exception if ID doesn't exist
      */
     @Test
-    void willThrowWhenGetIdIsNotFound() {
-        // given
-//        Message message = new Message(1L, "Title", "Text Text");
-//        given(messageRepository.findById(message.getMessageId())).willReturn(Optional.of(message));
-        // When
+    void canThrowWhenGetIdIsNotFound() {
         // then
         assertThatThrownBy(() -> messageServiceTest.getMessageById(1L)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }
 
     /**
-     * To break this test, assert that the text is not equal
+     * Testing that getMessageById() returns the correct message
      */
     @Test
-    void willReturnTheMessageById() {
+    void canReturnTheMessageById() {
         //Given
         Message testMessage = new Message(1L, "Title", "Text Text with 20 letters");
         given(messageRepository.findById(testMessage.getMessageId())).willReturn(Optional.of(testMessage));
         //when
         Message message = messageServiceTest.getMessageById(1L);
         //then
-        assertThat(message.getText()).matches("Text Text with 20 letters");
-        //assertThat(message.getText()).matches("Not the same text");
+        assertThat(message.getMessageId()).isEqualTo(1L);
     }
 
     /**
-     * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
+     *  Testing if deleteMessage() throws an error if ID doesn't exist
      */
     @Test
-    void willThrowWhenDeleteIdNotFound() {
-        // given
-//        Message message = new Message(1L, "Title", "Text Text");
-//        given(messageRepository.findById(message.getMessageId())).willReturn(Optional.of(message));
-        // When
+    void canThrowWhenDeleteIdNotFound() {
         // then
         assertThatThrownBy(() -> messageServiceTest.deleteMessage(1L)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }
 
     /**
-     * To break the test, assert that the text is not equal
+     * Testing if updateMessage() updates message with given messageRequest
      */
     @Test
-    void willReturnUpdatedMessage() {
+    void canReturnUpdatedMessage() {
         // given
         Message testMessage = new Message(1L, "Title", "Text Text");
         MessageRequest messageRequest = new MessageRequest("Title 2", "Text Text 2");
@@ -89,15 +80,12 @@ class MessageServiceTest {
     }
 
     /**
-     * To break the test, uncomment the Message and given() . It makes sure that findById() will return the valid Message object, and therefor not throw an exception
+     * Testing if updateMessage() throws an exception if ID doesn't exist
      */
     @Test
-    void willThrownWhenUpdateIdNotFound() {
+    void canThrowWhenUpdateIdNotFound() {
         // given
         MessageRequest messageRequest = new MessageRequest("Title 2", "Text Text 2");
-//        Message message = new Message(1L, "Title", "Text Text");
-//        given(messageRepository.findById(message.getMessageId())).willReturn(Optional.of(message));
-        // When
         // then
         assertThatThrownBy(() -> messageServiceTest.updateMessage(1L, messageRequest)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }

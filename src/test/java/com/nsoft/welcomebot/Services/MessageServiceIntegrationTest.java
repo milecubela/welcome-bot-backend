@@ -62,7 +62,7 @@ public class MessageServiceIntegrationTest {
         //then
 //        List<Message> messages = messageRepository.findAll();
         Message message = messageRepository.getById(1L);
-        assertThat(message.getText()).matches("Text Text with 20 letters");
+        assertThat(message.getMessageId()).isEqualTo(1L);
     }
 
     /**
@@ -77,7 +77,7 @@ public class MessageServiceIntegrationTest {
         //when
         Message recievedMessage = messageService.getMessageById(1L);
         //then
-        assertThat(recievedMessage.getText()).matches("Text Text with 20 letters");
+        assertThat(recievedMessage.getMessageId()).isEqualTo(1L);
     }
 
     /**
@@ -108,6 +108,6 @@ public class MessageServiceIntegrationTest {
         //when
         Message updatedMessage = messageService.updateMessage(1L, messageRequest);
         //then
-        assertThat(message.getText()).matches(updatedMessage.getText());
+        assertThat(updatedMessage.getText()).matches(messageRequest.getText());
     }
 }
