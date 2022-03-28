@@ -92,14 +92,16 @@ class ScheduleServiceTest {
     @Test
     void shouldDeleteSchedule() {
         //given
-        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTesth2,_messageRepositoryTesth2);
+        scheduleServiceTest = new ScheduleService(_scheduleRepositoryTesth2, _messageRepositoryTesth2);
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setScheduleId(scheduleId);
         _scheduleRepositoryTesth2.save(schedule);
+
         //when
         scheduleServiceTest.deleteSchedule(scheduleId);
+
         //then
 //        verify(_scheduleRepositoryTesth2).deleteById(scheduleId);
         assertThat(_scheduleRepositoryTesth2.findAll().isEmpty()).isTrue();
@@ -115,28 +117,19 @@ class ScheduleServiceTest {
     @Test
     void shouldUpdateSchedule() {
         // given
-        Message message = new Message(
-                new MessageRequest(
-                        "some title",
-                        "text za testiranje testa tost."
-                )
-        );
+        Message message = new Message(new MessageRequest("some title", "text za testiranje testa tost."));
         message.setMessageId(1L);
         Long scheduleId = 1L;
-        ScheduleRequest scheduleRequest = new ScheduleRequest(
-                true,true,LocalDateTime.now(),SchedulerInterval.MINUTE,"textchanle",1L
-        );
-        ScheduleRequest scheduleRequestUpdate = new ScheduleRequest(
-                true,false,LocalDateTime.now(),SchedulerInterval.MINUTE,"textchanle",1L
-        );
+        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "textchanle", 1L);
+        ScheduleRequest scheduleRequestUpdate = new ScheduleRequest(true, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "textchanle", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setScheduleId(scheduleId);
-        given(_mockScheduleRepository.findById(scheduleId))
-                .willReturn(Optional.of(schedule));
-        given(_mockMmessageRepository.findById(message.getMessageId()))
-                .willReturn(Optional.of(message));
+        given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.of(schedule));
+        given(_mockMmessageRepository.findById(message.getMessageId())).willReturn(Optional.of(message));
+
         // when
         Schedule returnSchedule = scheduleServiceTest.updateSchedule(scheduleId, scheduleRequestUpdate);
+
         // then
         assertThat(returnSchedule.isActive()).isFalse();
     }
@@ -177,7 +170,6 @@ class ScheduleServiceTest {
         Schedule schedule = new Schedule(scheduleRequest);
         given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.of(schedule));
 
-
         //when
         Schedule returnSchedule = scheduleServiceTest.getScheduleById(scheduleId);
 
@@ -190,6 +182,7 @@ class ScheduleServiceTest {
         //given
         Long scheduleId = 1L;
         given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.empty());
+
         //when
         //then
         assertThatThrownBy(() -> scheduleServiceTest.getScheduleById(scheduleId)).isInstanceOf(NotFoundException.class);
