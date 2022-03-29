@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.Controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsoft.welcomebot.Entities.Message;
@@ -196,9 +197,85 @@ class MessageControllerTest {
      * */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnBadRequestIfMessageIdIsNotValid() throws Exception {
+    void canReturnBadRequestIfDeleteMessageIdIsNotValid() throws Exception {
         mockMvc.perform(delete("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
     }
-
+    /**
+     * Testing if PUT /api/v1/messages/{messageId} returns 200 and updates the message in database
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canUpdateMessageWithValidIdAndValidMessageRequest() throws Exception {
+        //given
+        Message message = new Message(1L, "Title", "Text Text with 20 letters");
+        MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
+        messageRepository.save(message);
+        String requestJson = objectMapper.writeValueAsString(messageRequest);
+        //when
+        MvcResult result = mockMvc.perform(put("/api/v1/messages/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .characterEncoding("utf-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseBody = result.getResponse().getContentAsString();
+        Message updatedMessageFromResponse = objectMapper.readValue(responseBody, Message.class);
+        assertThat(updatedMessageFromResponse.getText()).isEqualTo(messageRequest.getText());
+    }
+    /**
+     * Testing if PUT /api/v1/messages/{messageId} returns not found if message with ID doesn't exist
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnNotFoundIfIdDoesntExistInUpdateMessage() throws Exception {
+        //given
+        Message message = new Message(1L, "Title", "Text Text with 20 letters");
+        MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
+        messageRepository.save(message);
+        String requestJson = objectMapper.writeValueAsString(messageRequest);
+        //when
+        mockMvc.perform(put("/api/v1/messages/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .characterEncoding("utf-8"))
+                        .andExpect(status().isNotFound());
+    }
+    /**
+     * Testing if PUT /api/v1/messages/{messageId} returns bad request if message ID is not valid
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnBadRequestIfUpdateMessageIdIsNotValid() throws Exception {
+        //given
+        Message message = new Message(1L, "Title", "Text Text with 20 letters");
+        MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
+        messageRepository.save(message);
+        String requestJson = objectMapper.writeValueAsString(messageRequest);
+        //when
+        mockMvc.perform(put("/api/v1/messages/as")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest());
+    }
+    /**
+     * Testing if PUT /api/v1/messages/{messageId} returns bad request if updateMessage body is not valid
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnBadRequestIfUpdateBodyIsNotValid() throws Exception {
+        //given
+        Message message = new Message(1L, "Title", "Text Text with 20 letters");
+        MessageRequest messageRequest = new MessageRequest("Update Title", "Bad Text");
+        messageRepository.save(message);
+        String requestJson = objectMapper.writeValueAsString(messageRequest);
+        //when
+        mockMvc.perform(put("/api/v1/messages/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest());
+    }
 }
