@@ -4,7 +4,9 @@
 Download the project and make sure you have docker and docker-compose installed.<br>
 Open terminal in the project directory and paste the following line with sudo permissions:
 ```text
+
 docker-compose -f docker-compose-prod.yml up
+
 ```
 
 Technologies used
