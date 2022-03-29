@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -117,10 +116,8 @@ class MessageControllerTest {
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnNotFoundIfMessageByIdDoesntExist() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/v1/messages/1"))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andReturn();
+        mockMvc.perform(get("/api/v1/messages/1"))
+                .andExpect(status().isNotFound());
     }
 
     /**
@@ -129,11 +126,10 @@ class MessageControllerTest {
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnBadRequestIfPathVariableIsNotValid() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/v1/messages/as"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn();
+         mockMvc.perform(get("/api/v1/messages/as"))
+                .andExpect(status().isBadRequest());
     }
+
     /**
      * Testing if the POST /api/v1/messages returns 201 and creates a new message in database
      */
@@ -170,6 +166,39 @@ class MessageControllerTest {
                         .characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
-
+    /**
+     * Testing if DELETE /api/v1/messages/{messageId} returns 200 and deletes a message from database
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canDeleteAMessageByIdFromDeleteRequest() throws Exception {
+        //given
+        Message message = new Message(1L, "Title", "Text Text with 20 letters");
+        messageRepository.save(message);
+        //when
+        mockMvc.perform(delete("/api/v1/messages/1"))
+                .andExpect(status().isOk());
+        //then
+        List<Message> messages = messageRepository.findAll();
+        assertThat(messages.size()).isEqualTo(0);
+    }
+    /**
+     * Testing if DELETE /api/v1/messages/{messageId} returns not found when ID doesn't exist
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnNotFoundIfIdDoesntExistInDeleteMessageById() throws Exception {
+    mockMvc.perform(delete("/api/v1/messages/1"))
+                .andExpect(status().isNotFound());
+    }
+    /**
+     * Testing if DELETE /api/v1/messages/{messageId} returns bad request if we send invalid ID
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnBadRequestIfMessageIdIsNotValid() throws Exception {
+        mockMvc.perform(delete("/api/v1/messages/as"))
+                .andExpect(status().isBadRequest());
+    }
 
 }
