@@ -1,43 +1,28 @@
 package com.nsoft.welcomebot.Scheduler;
 
-import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import com.slack.api.bolt.App;
-import com.slack.api.methods.SlackApiException;
-import com.slack.api.methods.impl.MethodsClientImpl;
-import com.slack.api.util.http.SlackHttpClient;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-
-import org.junit.jupiter.api.Disabled;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {PeriodicalMessages.class})
-@ExtendWith(SpringExtension.class)
+@DataJpaTest
+@ExtendWith(MockitoExtension.class)
 class PeriodicalMessagesTest {
     @MockBean
     private App app;
@@ -45,24 +30,24 @@ class PeriodicalMessagesTest {
     @MockBean
     private Credentials credentials;
 
-    @Autowired
+    @Mock
     private PeriodicalMessages periodicalMessages;
 
-    @MockBean
-    private ScheduleRepository scheduleRepository;
+    @Autowired
+    private ScheduleRepository scheduleRepositoryH2;
 
     @Test
-    void shouldSetActiveToFalseAfterExecution() {
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-
+        schedule.setScheduleId(1L);
         //when
         periodicalMessages.deactivateSchedule(schedule);
-        ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
-        verify(scheduleRepository, times(2)).save(scheduleArgumentCaptor.capture());
-        Schedule returnSchedule = scheduleArgumentCaptor.getValue();
-
+        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Schedule returnSchedule = result.get();
         //then
         assertThat(returnSchedule.isActive()).isFalse();
     }
@@ -70,56 +55,62 @@ class PeriodicalMessagesTest {
     /**
      * Test makes sure the next run date is set a minute from now.
      * To break this test compare the next run date to a timestamp greater than 1 minute from now.
+     * RunDate is set to .now()-1s because of a millisecond difference in execution time which would show the minute difference as 0 instead of 1
+     * without it the difference between the two dates would be ~59.997s and the ChronoUnit comparison would show 0 minutes difference.
      */
     @Test
-    void shouldAddOneMinuteToNextRunDate() {
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canAddOneMinuteToNextRunDate() {
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(1), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
+        schedule.setScheduleId(1L);
 
         //when
         periodicalMessages.setNextRunDate(schedule);
-        ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
-        verify(scheduleRepository).save(scheduleArgumentCaptor.capture());
-        Schedule returnSchedule = scheduleArgumentCaptor.getValue();
-
+        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Schedule returnSchedule = result.get();
         //then
-        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now());
-//        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now().plusHours(1));
+
+        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(1);
     }
 
     @Test
-    void shouldAddOneHourToNextRunDate() {
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canAddOneHourToNextRunDate() {
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.HOUR, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.HOUR, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
+        schedule.setScheduleId(1L);
 
         //when
         periodicalMessages.setNextRunDate(schedule);
-        ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
-        verify(scheduleRepository).save(scheduleArgumentCaptor.capture());
-        Schedule returnSchedule = scheduleArgumentCaptor.getValue();
-
+        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Schedule returnSchedule = result.get();
         //then
-        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now());
-//        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now().plusHours(1));
+        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(60);
     }
 
     @Test
-    void shouldAddOneDayToNextRunDate() {
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canAddOneDayToNextRunDate() {
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.DAY, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.DAY, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
+        schedule.setScheduleId(1L);
 
         //when
         periodicalMessages.setNextRunDate(schedule);
-        ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
-        verify(scheduleRepository).save(scheduleArgumentCaptor.capture());
-        Schedule returnSchedule = scheduleArgumentCaptor.getValue();
-
+        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Schedule returnSchedule = result.get();
         //then
-        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now());
-//        assertThat(returnSchedule.getNextRun()).isAfter(LocalDateTime.now().plusHours(1));
+        assertThat(ChronoUnit.HOURS.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(24);
     }
 }
 

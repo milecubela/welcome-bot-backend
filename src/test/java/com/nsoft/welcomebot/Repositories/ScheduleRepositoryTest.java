@@ -24,30 +24,34 @@ class ScheduleRepositoryTest {
     }
 
     @Test
-    void itShouldFindAllActiveSchedules() {
+    void canFindAllActiveSchedules() {
         //given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
-        Schedule schedule = new Schedule(scheduleRequest);
-        _scheduleRepositoryTest.save(schedule);
+        ScheduleRequest scheduleRequest1 = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
+        Schedule schedule1 = new Schedule(scheduleRequest1);
+        ScheduleRequest scheduleRequest2 = new ScheduleRequest(true, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
+        Schedule schedule2 = new Schedule(scheduleRequest2);
+        _scheduleRepositoryTest.save(schedule1);
+        _scheduleRepositoryTest.save(schedule2);
 
         //when
-        List<Schedule> expectedtohaveone = _scheduleRepositoryTest.findAllActiveSchedules();
-        boolean expected = expectedtohaveone.isEmpty();
+        List<Schedule> result = _scheduleRepositoryTest.findAllActiveSchedules();
         //then
-        assertThat(expected).isFalse();
+        assertThat(result.size()).isEqualTo(1);
     }
 
     @Test
-    void itShouldntFindAnyActiveSchedules() {
+    void cantFindAnyActiveSchedules() {
         //given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
-        Schedule schedule = new Schedule(scheduleRequest);
-        _scheduleRepositoryTest.save(schedule);
+        ScheduleRequest scheduleRequest1 = new ScheduleRequest(true, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
+        Schedule schedule1 = new Schedule(scheduleRequest1);
+        ScheduleRequest scheduleRequest2 = new ScheduleRequest(true, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
+        Schedule schedule2 = new Schedule(scheduleRequest2);
+        _scheduleRepositoryTest.save(schedule1);
+        _scheduleRepositoryTest.save(schedule2);
 
         //when
-        List<Schedule> expectedtobeempty = _scheduleRepositoryTest.findAllActiveSchedules();
-        boolean expected = expectedtobeempty.isEmpty();
+        List<Schedule> result = _scheduleRepositoryTest.findAllActiveSchedules();
         //then
-        assertThat(expected).isTrue();
+        assertThat(result.isEmpty()).isTrue();
     }
 }
