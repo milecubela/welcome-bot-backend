@@ -1,6 +1,5 @@
 package com.nsoft.welcomebot.Controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsoft.welcomebot.Entities.Message;
@@ -66,7 +65,7 @@ class MessageControllerTest {
     }
 
     /**
-     * Testing if the GET /api/v1/messages?=offest pagesize return correct pagination
+     * Testing if the GET /api/v1/messages?=offset pagesize return correct pagination
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -127,7 +126,7 @@ class MessageControllerTest {
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnBadRequestIfPathVariableIsNotValid() throws Exception {
-         mockMvc.perform(get("/api/v1/messages/as"))
+        mockMvc.perform(get("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -142,17 +141,18 @@ class MessageControllerTest {
         String requestJson = objectMapper.writeValueAsString(messageRequest);
         //when
         mockMvc.perform(post("/api/v1/messages")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isCreated());
         List<Message> messages = messageRepository.findAll();
         //then
         assertThat(messages.size()).isEqualTo(1);
     }
+
     /**
      * Testing if the POST /api/v1/messages returns bad request
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnBadRequestIfRequestBodyIsInvalid() throws Exception {
@@ -167,9 +167,10 @@ class MessageControllerTest {
                         .characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
+
     /**
      * Testing if DELETE /api/v1/messages/{messageId} returns 200 and deletes a message from database
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canDeleteAMessageByIdFromDeleteRequest() throws Exception {
@@ -181,29 +182,32 @@ class MessageControllerTest {
                 .andExpect(status().isOk());
         //then
         List<Message> messages = messageRepository.findAll();
-        assertThat(messages.size()).isEqualTo(0);
+        assertThat(messages.size()).isZero();
     }
+
     /**
      * Testing if DELETE /api/v1/messages/{messageId} returns not found when ID doesn't exist
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnNotFoundIfIdDoesntExistInDeleteMessageById() throws Exception {
-    mockMvc.perform(delete("/api/v1/messages/1"))
+        mockMvc.perform(delete("/api/v1/messages/1"))
                 .andExpect(status().isNotFound());
     }
+
     /**
      * Testing if DELETE /api/v1/messages/{messageId} returns bad request if we send invalid ID
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnBadRequestIfDeleteMessageIdIsNotValid() throws Exception {
         mockMvc.perform(delete("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
     }
+
     /**
      * Testing if PUT /api/v1/messages/{messageId} returns 200 and updates the message in database
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canUpdateMessageWithValidIdAndValidMessageRequest() throws Exception {
@@ -214,9 +218,9 @@ class MessageControllerTest {
         String requestJson = objectMapper.writeValueAsString(messageRequest);
         //when
         MvcResult result = mockMvc.perform(put("/api/v1/messages/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .characterEncoding("utf-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -224,9 +228,10 @@ class MessageControllerTest {
         Message updatedMessageFromResponse = objectMapper.readValue(responseBody, Message.class);
         assertThat(updatedMessageFromResponse.getText()).isEqualTo(messageRequest.getText());
     }
+
     /**
      * Testing if PUT /api/v1/messages/{messageId} returns not found if message with ID doesn't exist
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnNotFoundIfIdDoesntExistInUpdateMessage() throws Exception {
@@ -240,11 +245,12 @@ class MessageControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)
                         .characterEncoding("utf-8"))
-                        .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
+
     /**
      * Testing if PUT /api/v1/messages/{messageId} returns bad request if message ID is not valid
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnBadRequestIfUpdateMessageIdIsNotValid() throws Exception {
@@ -260,9 +266,10 @@ class MessageControllerTest {
                         .characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
+
     /**
      * Testing if PUT /api/v1/messages/{messageId} returns bad request if updateMessage body is not valid
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canReturnBadRequestIfUpdateBodyIsNotValid() throws Exception {

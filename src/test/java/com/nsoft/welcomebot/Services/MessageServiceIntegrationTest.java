@@ -75,9 +75,9 @@ public class MessageServiceIntegrationTest {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         //when
-        Message recievedMessage = messageService.getMessageById(1L);
+        Message receivedMessage = messageService.getMessageById(1L);
         //then
-        assertThat(recievedMessage.getMessageId()).isEqualTo(1L);
+        assertThat(receivedMessage.getMessageId()).isEqualTo(1L);
     }
 
     /**
@@ -92,7 +92,7 @@ public class MessageServiceIntegrationTest {
         //when
         messageService.deleteMessage(1L);
         //then
-        assertThat(messageRepository.findAll().size()).isEqualTo(0);
+        assertThat(messageRepository.findAll().size()).isZero();
     }
 
     /**

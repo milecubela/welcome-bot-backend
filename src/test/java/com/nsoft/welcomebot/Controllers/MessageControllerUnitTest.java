@@ -2,20 +2,18 @@ package com.nsoft.welcomebot.Controllers;
 
 import com.nsoft.welcomebot.Services.MessageService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.mockito.Mockito.verify;
 
 class MessageControllerUnitTest {
 
-    private MessageService messageService = Mockito.mock(MessageService.class);
-    private MessageController messageController = new MessageController(messageService);
+    private final MessageService messageService = Mockito.mock(MessageService.class);
+    private final MessageController messageController = new MessageController(messageService);
 
     /**
      * Testing if the function will return all messages if params are not available
-     * */
+     */
     @Test
     void shouldCallAllMessages() {
         //when

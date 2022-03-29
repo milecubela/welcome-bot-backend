@@ -32,7 +32,7 @@ class MessageServiceTest {
 
 
     /**
-     *  Testing that getMessageById() throws an exception if ID doesn't exist
+     * Testing that getMessageById() throws an exception if ID doesn't exist
      */
     @Test
     void canThrowWhenGetIdIsNotFound() {
@@ -55,7 +55,7 @@ class MessageServiceTest {
     }
 
     /**
-     *  Testing if deleteMessage() throws an error if ID doesn't exist
+     * Testing if deleteMessage() throws an error if ID doesn't exist
      */
     @Test
     void canThrowWhenDeleteIdNotFound() {
