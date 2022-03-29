@@ -3,6 +3,7 @@ package com.nsoft.welcomebot.Controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsoft.welcomebot.Entities.Message;
+import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Services.MessageService;
 import org.junit.jupiter.api.AfterEach;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -113,7 +116,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void shouldReturnNotFoundIfMessageByIdDoesntExist() throws Exception {
+    void canReturnNotFoundIfMessageByIdDoesntExist() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/messages/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -125,10 +128,48 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void shouldReturnBadRequestIfPathVariableIsNotValid() throws Exception {
+    void canReturnBadRequestIfPathVariableIsNotValid() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/messages/as"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
+    /**
+     * Testing if the POST /api/v1/messages returns 201 and creates a new message in database
+     */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canCreateANewMessageWithMessageRequest() throws Exception {
+        //given
+        MessageRequest messageRequest = new MessageRequest("Title", "Text Text with 20 letters");
+        String requestJson = objectMapper.writeValueAsString(messageRequest);
+        //when
+        mockMvc.perform(post("/api/v1/messages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .characterEncoding("utf-8"))
+                .andExpect(status().isCreated());
+        List<Message> messages = messageRepository.findAll();
+        //then
+        assertThat(messages.size()).isEqualTo(1);
+    }
+    /**
+     * Testing if the POST /api/v1/messages returns bad request
+     * */
+    @Test
+    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void canReturnBadRequestIfRequestBodyIsInvalid() throws Exception {
+        //given
+        // Text should have min 20 characters
+        MessageRequest badMessageRequest = new MessageRequest("Title", "Text Text");
+        String requestJson = objectMapper.writeValueAsString(badMessageRequest);
+        //when
+        mockMvc.perform(post("/api/v1/messages")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest());
+    }
+
+
 }
