@@ -1,8 +1,8 @@
 CREATE TABLE users
 (
     user_id bigint NOT NULL,
-    email varchar(50) NOT NULL,
-    user_role varchar(50) NOT NULL,
+    email text NOT NULL,
+    user_role text NOT NULL,
     PRIMARY KEY(user_id)
 );
 
