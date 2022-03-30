@@ -40,10 +40,11 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
 
     // Throw this exception when Username is not found in Spring security context
     @ExceptionHandler(value = UsernameNotFoundException.class)
-    public ResponseEntity<Object> handleNotFoundException(UsernameNotFoundException ex) {
+    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
     }
