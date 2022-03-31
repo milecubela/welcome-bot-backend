@@ -1,8 +1,8 @@
 CREATE TABLE messages
 (
     message_id bigint NOT NULL,
-    title varchar(50) NOT NULL,
-    text varchar(50) NOT NULL,
+    title text NOT NULL,
+    text text NOT NULL,
     created_at DATE NULL,
     PRIMARY KEY(message_id)
 );
@@ -17,7 +17,7 @@ CREATE  TABLE schedules
     created_at DATE NULL,
     message_id bigint NOT NULL,
     next_run datetime null,
-    channel varchar(50) NULL,
+    channel text NULL,
     PRIMARY KEY (schedule_id),
     FOREIGN KEY (message_id) REFERENCES messages(message_id)
 );
@@ -26,7 +26,7 @@ CREATE TABLE triggers
 (
     trigger_id bigint NOT NULL,
     message_id bigint NOT NULL,
-    channel varchar(50) NOT NULL,
+    channel text NOT NULL,
     is_active bit DEFAULT(0),
     PRIMARY KEY (trigger_id),
     FOREIGN KEY (message_id) REFERENCES messages(message_id)
