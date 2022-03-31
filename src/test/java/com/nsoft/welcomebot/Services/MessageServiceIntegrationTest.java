@@ -3,7 +3,6 @@ package com.nsoft.welcomebot.Services;
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class MessageServiceIntegrationTest {
+class MessageServiceIntegrationTest {
 
     @Autowired
     private MessageRepository messageRepository;
@@ -113,12 +112,13 @@ public class MessageServiceIntegrationTest {
         //then
         assertThat(updatedMessage.getText()).matches(messageRequest.getText());
     }
+
     /**
      * Testing if the method returns the proper pagination
-     * */
+     */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnMessagesByPage(){
+    void canReturnMessagesByPage() {
         // given
         Message message1 = new Message("Title1", "Text Text1 with 20 letters");
         Message message2 = new Message("Title2", "Text Text2 with 20 letters");
