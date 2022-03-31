@@ -22,7 +22,7 @@ public class SlackJokeOfTheDayCommand implements SlackCommandsInterface {
     public void subscribeToSlackCommand(App app, Credentials crd) {
         app.command("/joke_of_the_day", (req, ctx) -> {
             var json = ConsumeJSON.getJSONObject("https://api.jokes.one/jod");
-            var joke = json.get("text").getAsString();
+            String joke = json.getAsJsonObject("contents").getAsJsonArray("jokes").get(0).getAsJsonObject().getAsJsonObject("joke").get("text").getAsString();
             String message = "Joke of the day for " + LocalDate.now() + " is \n" + joke;
             ctx.say(message);
             return Response.ok();
