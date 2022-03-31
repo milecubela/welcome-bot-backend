@@ -28,7 +28,6 @@ public class OauthTokenService {
         JsonObject jsonObject = JsonParser.parseReader(in).getAsJsonObject();
         in.close();
         con.disconnect();
-        System.out.println(jsonObject);
         return jsonObject;
     }
 }

@@ -43,12 +43,12 @@ public class ScheduleController {
     @DeleteMapping(path = "{scheduleId}")
     public ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId) {
         scheduleService.deleteSchedule(scheduleId);
-        return new ResponseEntity("Schedule deleted", HttpStatus.OK);
+        return new ResponseEntity<>("Schedule deleted", HttpStatus.OK);
     }
 
     @PutMapping(path = "/{scheduleId}")
     public ResponseEntity<Schedule> updateSchedule(@PathVariable("scheduleId") Long scheduleId, @Valid @RequestBody ScheduleRequest scheduleRequest) {
         Schedule updatedSchedule = scheduleService.updateSchedule(scheduleId, scheduleRequest);
-        return new ResponseEntity(updatedSchedule, HttpStatus.OK);
+        return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
     }
 }

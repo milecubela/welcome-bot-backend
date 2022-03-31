@@ -51,6 +51,6 @@ public class TriggerController {
     @PutMapping(path = "/{triggerId}")
     public ResponseEntity<Trigger> updateTrigger(@PathVariable("triggerId") Long triggerId, @Valid @RequestBody TriggerRequest triggerRequest) {
         Trigger updatedTrigger = _triggerService.updateTrigger(triggerId, triggerRequest);
-        return new ResponseEntity(updatedTrigger, HttpStatus.OK);
+        return new ResponseEntity<>(updatedTrigger, HttpStatus.OK);
     }
 }
