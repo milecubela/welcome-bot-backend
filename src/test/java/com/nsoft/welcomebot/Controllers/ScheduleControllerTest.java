@@ -54,8 +54,12 @@ class ScheduleControllerTest {
     void canReturnAllSchedules() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
-        Schedule schedule1 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");
-        Schedule schedule2 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");
+        Message msg = messageRepository.getById(1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
+        Schedule schedule1 = new Schedule(scheduleRequest);
+        Schedule schedule2 = new Schedule(scheduleRequest);
+        schedule1.setMessage(msg);
+        schedule2.setMessage(msg);
         scheduleRepository.save(schedule1);
         scheduleRepository.save(schedule2);
 
@@ -72,9 +76,9 @@ class ScheduleControllerTest {
         Message message = new Message("texttexttext", "text text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
-        Schedule schedule2 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
-        Schedule schedule3 = new Schedule(1L, true, true, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page2channel");
-        Schedule schedule4 = new Schedule(1L, true, true, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page2channel");
+        Schedule schedule2 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
+        Schedule schedule3 = new Schedule(3L, true, true, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page2channel");
+        Schedule schedule4 = new Schedule(4L, true, true, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page2channel");
         scheduleRepository.save(schedule1);
         scheduleRepository.save(schedule2);
         scheduleRepository.save(schedule3);
@@ -112,7 +116,10 @@ class ScheduleControllerTest {
         scheduleService = new ScheduleService(scheduleRepository, messageRepository);
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
-        Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
+        Message msg = messageRepository.getById(1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
+        Schedule schedule1 = new Schedule(scheduleRequest);
+        schedule1.setMessage(msg);
         scheduleRepository.save(schedule1);
         mockMvc.perform(delete("/api/v1/schedules/2")).andExpect(status().isOk());
         List<Schedule> schedules = scheduleRepository.findAll();
