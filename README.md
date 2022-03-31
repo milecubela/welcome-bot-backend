@@ -1,5 +1,15 @@
 **WelcomeBot v1**
 
+<h5>HOW TO RUN </h5>
+Download the project and make sure you have docker and docker-compose installed.<br>
+Open terminal in the project directory and paste the following line with sudo permissions:
+
+```text
+
+docker-compose -f docker-compose-prod.yml up
+
+```
+
 Technologies used
 
 ```text
