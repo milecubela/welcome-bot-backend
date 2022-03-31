@@ -49,4 +49,10 @@ public class Message {
         this.text = messageRequest.getText();
         this.title = messageRequest.getTitle();
     }
+
+    public Message(long messageId, @NonNull String title, @NonNull String text) {
+        this.messageId = messageId;
+        this.title = title;
+        this.text = text;
+    }
 }
