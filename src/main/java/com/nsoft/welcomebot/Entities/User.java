@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.Entities;
 
+import com.nsoft.welcomebot.Models.RequestModels.UserRequest;
 import com.nsoft.welcomebot.Security.AuthUtils.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,9 +33,8 @@ public class User implements UserDetails {
     private UserRole userRole;
 
 
-    public User(@NonNull String email, UserRole userRole) {
-        this.email = email;
-        this.userRole = userRole;
+    public User(@NonNull UserRequest userRequest) {
+        this.email = userRequest.getEmail();
     }
 
     /*
