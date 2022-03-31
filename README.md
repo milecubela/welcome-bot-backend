@@ -10,7 +10,18 @@ docker-compose -f docker-compose-prod.yml up
 
 ```
 
-Technologies used
+**Add SuperAdmin to database**
+
+Edit addSuperAdmin.sql so it contains your SuperAdmin email
+Run addSuperAdmin.sh with sudo privileges
+```text
+sudo su
+sh addSuperAdmin.sh
+```
+On 'Enter Password:' prompt enter your database password(password)
+
+
+**Technologies used**
 
 ```text
 Java 17 - JDK 17.0.2
@@ -18,10 +29,13 @@ Spring Boot 2.6.4
 MariaDB 
 Dependencies: 
     - Spring Data JPA
-    - OAuth2 Client
     - Spring Web
     - Flyway
     - MariaDB Java Client
+    - Spring Boot Starter Test
+    - Slack API Client
+    - Google API Client
+    - Spring Boot Starter Security
 ```
 
 A slack bot with the ability to send automated messages and talk to slack users.
@@ -59,6 +73,7 @@ Before going through these steps the bot owner needs to subscribe to certain Sla
 Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
 in database. 
 
+**App Security**
 
 App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
 in dev environment with application-dev.properties
