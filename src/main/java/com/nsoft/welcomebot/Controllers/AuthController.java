@@ -22,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    private ResponseEntity<Object> loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
+    public ResponseEntity<Object> loginUser(@Valid @RequestHeader("Authorization") TokenRequest tokenRequest) {
         return userService.loginUser(tokenRequest);
     }
 }
