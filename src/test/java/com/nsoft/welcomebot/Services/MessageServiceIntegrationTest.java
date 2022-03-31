@@ -65,7 +65,7 @@ public class MessageServiceIntegrationTest {
         //then
 //        List<Message> messages = messageRepository.findAll();
         Message message = messageRepository.getById(1L);
-        assertThat(message.getText()).matches("Text Text with 20 letters");
+        assertThat(message.getMessageId()).isEqualTo(1L);
     }
 
     /**
@@ -78,9 +78,9 @@ public class MessageServiceIntegrationTest {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         //when
-        Message recievedMessage = messageService.getMessageById(1L);
+        Message receivedMessage = messageService.getMessageById(1L);
         //then
-        assertThat(recievedMessage.getText()).matches("Text Text with 20 letters");
+        assertThat(receivedMessage.getMessageId()).isEqualTo(1L);
     }
 
     /**
@@ -95,7 +95,7 @@ public class MessageServiceIntegrationTest {
         //when
         messageService.deleteMessage(1L);
         //then
-        assertThat(messageRepository.findAll().size()).isEqualTo(0);
+        assertThat(messageRepository.findAll().size()).isZero();
     }
 
     /**
@@ -111,7 +111,7 @@ public class MessageServiceIntegrationTest {
         //when
         Message updatedMessage = messageService.updateMessage(1L, messageRequest);
         //then
-        assertThat(message.getText()).matches(updatedMessage.getText());
+        assertThat(updatedMessage.getText()).matches(messageRequest.getText());
     }
     /**
      * Testing if the method returns the proper pagination
