@@ -37,7 +37,7 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<String> createSchedule(@Valid @RequestBody ScheduleRequest scheduleRequest) {
         scheduleService.createNewSchedule(scheduleRequest);
-        return new ResponseEntity<>("Created new schedule successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Created new schedule successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "{scheduleId}")
