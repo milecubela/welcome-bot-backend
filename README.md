@@ -58,3 +58,7 @@ Before going through these steps the bot owner needs to subscribe to certain Sla
 
 Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
 in database. 
+
+
+App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
+in dev environment with application-dev.properties

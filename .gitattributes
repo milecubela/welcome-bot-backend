@@ -1,3 +1,4 @@
 #pattern  filter=crypt diff=crypt merge=crypt
 tokens.env filter=crypt diff=crypt merge=crypt
 application.properties filter=crypt diff=crypt merge=crypt
+application-dev.properties filter=crypt diff=crypt merge=crypt
