@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("User with that email not found ", email)));
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
     }
 
     /*
@@ -60,33 +60,36 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    /*
-    Initial check for frontend token, returns an appropriate response
+    /**
+     *  Initial check for frontend token, returns an appropriate response
     */
 
     public ResponseEntity<Object> loginUser(TokenRequest tokenRequest) {
-        String email = null;
-        String idtoken = tokenRequest.getIdtoken();
-        if (idtoken != null && idtoken.startsWith("Bearer ")) {
-            String token = idtoken.substring(7);
-            try {
-                JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
-                email = jsonObject.get("email").getAsString();
-            } catch (IOException e) {
-                String message = e.getMessage();
-                return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-            }
-        } else {
+        String idToken = tokenRequest.getIdToken();
+
+        if (idToken == null || !idToken.startsWith("Bearer ")) {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
+        }
+        String email = getEmailFromToken(idToken.substring(7));
+
+        if (!validateUser(email)) {
+            throw new UsernameNotFoundException("User doesn't exist in the database");
         }
 
         TokenResponse tokenResponse = new TokenResponse();
-        if (validateUser(email)) {
-            tokenResponse.setIdToken(idtoken.substring(7));
-            // Accepted, return OK and token
-            return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
-        } else {
-            throw new UsernameNotFoundException("User doesn't exist in the database");
+        tokenResponse.setIdToken(idToken.substring(7));
+        // Accepted, return OK and token
+        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+    }
+
+    private String getEmailFromToken(String token) {
+        String email;
+        try {
+            JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
+            email = jsonObject.get("email").getAsString();
+        } catch (IOException e) {
+            throw new BadTokenException(e.getMessage());
         }
+        return email;
     }
 }
