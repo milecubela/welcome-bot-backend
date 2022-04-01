@@ -12,10 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -29,19 +25,6 @@ class TriggerServiceIntegrationTest {
     public TriggerRepository triggerRepository;
     @Autowired
     public MessageRepository messageRepository;
-
-    @Container
-    public static MariaDBContainer container = (MariaDBContainer) new MariaDBContainer("mariadb")
-            .withDatabaseName("wbotTest")
-            .withUsername("root")
-            .withPassword("");
-
-    @DynamicPropertySource
-    public static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", container::getJdbcUrl);
-        registry.add("spring.datasource.username", container::getUsername);
-        registry.add("spring.datasource.password", container::getPassword);
-    }
 
     @BeforeEach
     void setUp() {
