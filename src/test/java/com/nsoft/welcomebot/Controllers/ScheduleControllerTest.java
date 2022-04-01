@@ -53,7 +53,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnAllSchedules() throws Exception {
+    void shouldReturnAllSchedules() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Message msg = messageRepository.getById(1L);
@@ -74,7 +74,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnPaginatedSchedules() throws Exception {
+    void shouldReturnPaginatedSchedules() throws Exception {
         Message message = new Message("texttexttext", "text text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
@@ -95,7 +95,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canGetScheduleById() throws Exception {
+    void shouldGetScheduleById() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
@@ -108,13 +108,13 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowNotFoundIfScheduleDoesntExist() throws Exception {
+    void shouldThrowNotFoundIfScheduleDoesntExist() throws Exception {
         mockMvc.perform(get("/api/v1/schedules/11")).andExpect(status().isNotFound());
     }
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canDeleteScheduleById() throws Exception {
+    void shouldDeleteScheduleById() throws Exception {
         scheduleService = new ScheduleService(scheduleRepository, messageRepository);
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
@@ -130,13 +130,13 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnDeleteIfScheduleIdDoesntExist() throws Exception {
+    void shouldThrowOnDeleteIfScheduleIdDoesntExist() throws Exception {
         mockMvc.perform(delete("/api/v1/schedules/11")).andExpect(status().isNotFound());
     }
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnCreateIfMessageIdDoesntExist() throws Exception {
+    void shouldThrowOnCreateIfMessageIdDoesntExist() throws Exception {
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "page1channel", 12L);
         String requestJson = objectMapper.writeValueAsString(scheduleRequest);
         //when
@@ -145,7 +145,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canCreateNewSchedule() throws Exception {
+    void shouldCreateNewSchedule() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "page1channel", 1L);
@@ -158,7 +158,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnScheduleUpdateIfIdIsInvalid() throws Exception {
+    void shouldThrowOnScheduleUpdateIfIdIsInvalid() throws Exception {
         ScheduleRequest badRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "TEST", 12L);
         var requestJson = objectMapper.writeValueAsString(badRequest);
         mockMvc.perform(put("/api/v1/schedules/5").contentType(MediaType.APPLICATION_JSON).content(requestJson).characterEncoding("utf-8")).andExpect(status().isNotFound());
@@ -166,7 +166,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnScheduleUpdateIfMessageIdIsInvalid() throws Exception {
+    void shouldThrowOnScheduleUpdateIfMessageIdIsInvalid() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");
@@ -178,7 +178,7 @@ class ScheduleControllerTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canUpdateSchedule() throws Exception {
+    void shouldUpdateSchedule() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");

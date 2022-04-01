@@ -53,20 +53,20 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canGetSchedules() {
+    void shouldGetSchedules() {
         _mockScheduleRepository.findAll();
         verify(_mockScheduleRepository).findAll();
     }
 
     @Test
-    void canThrowOnCreateScheduleIfMessageDoesntExist() {
+    void shouldThrowOnCreateScheduleIfMessageDoesntExist() {
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         assertThatThrownBy(() -> scheduleService.createNewSchedule(scheduleRequest)).isInstanceOf(NotFoundException.class).hasMessageContaining(("Message with ID " + scheduleRequest.getMessageId() + " not found!"));
     }
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canCreateNewIfMessageExists() {
+    void shouldCreateNewIfMessageExists() {
         scheduleService = new ScheduleService(_scheduleRepositoryTesth2, _messageRepositoryTesth2);
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 1L);
         MessageRequest messageRequest = new MessageRequest("title of text message", "text of message should be at least 20 letters long");
@@ -79,14 +79,14 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnDeleteIfDeleteIdDoesntExist() {
+    void shouldThrowOnDeleteIfDeleteIdDoesntExist() {
         Long id = anyLong();
         assertThatThrownBy(() -> scheduleService.deleteSchedule(id)).isInstanceOf(NotFoundException.class).hasMessageContaining(("Schedule with ID " + id + " not found"));
     }
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canDeleteSchedule() {
+    void shouldDeleteSchedule() {
         //given
         scheduleService = new ScheduleService(_scheduleRepositoryTesth2, _messageRepositoryTesth2);
         Long scheduleId = 1L;
@@ -104,7 +104,7 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnUpdateIfUpdateIdDoesntExist() {
+    void shouldThrowOnUpdateIfUpdateIdDoesntExist() {
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         Long id = anyLong();
         assertThatThrownBy(() -> scheduleService.updateSchedule(id, scheduleRequest)).isInstanceOf(NotFoundException.class).hasMessageContaining(("Schedule with ID " + id + " not found"));
@@ -112,7 +112,7 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canUpdateSchedule() {
+    void shouldUpdateSchedule() {
         // given
         Message message = new Message(new MessageRequest("some title", "text za testiranje testa tost."));
         message.setMessageId(1L);
@@ -133,7 +133,7 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnUpdateIfMessageDoesntExist() {
+    void shouldThrowOnUpdateIfMessageDoesntExist() {
         //given
         Long messageId = 1L;
         Long scheduleId = 1L;
@@ -149,7 +149,7 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnUpdateIfScheduleDoesntExist() {
+    void shouldThrowOnUpdateIfScheduleDoesntExist() {
         //given
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -163,7 +163,7 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canGetScheduleById() {
+    void shouldGetScheduleById() {
         //given
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -180,7 +180,7 @@ class ScheduleServiceTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canThrowOnGetByIdIfIdDoesntExist() {
+    void shouldThrowOnGetByIdIfIdDoesntExist() {
         //given
         Long scheduleId = 1L;
         given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.empty());

@@ -38,7 +38,7 @@ class PeriodicalMessagesTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
+    void shouldSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -60,7 +60,7 @@ class PeriodicalMessagesTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canAddOneMinuteToNextRunDate() {
+    void shouldAddOneMinuteToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
         // given
@@ -74,12 +74,12 @@ class PeriodicalMessagesTest {
         Schedule returnSchedule = result.get();
         //then
 
-        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(1);
+        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(5);
     }
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canAddOneHourToNextRunDate() {
+    void shouldAddOneHourToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
         // given
@@ -97,7 +97,7 @@ class PeriodicalMessagesTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canAddOneDayToNextRunDate() {
+    void shouldAddOneDayToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
         // given

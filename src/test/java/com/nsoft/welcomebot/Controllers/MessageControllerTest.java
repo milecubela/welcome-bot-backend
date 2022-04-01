@@ -48,7 +48,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnAllMessages() throws Exception {
+    void shouldReturnAllMessages() throws Exception {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
         Message message2 = new Message("Title", "Text Text with 20 letters");
@@ -71,7 +71,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnPaginatedMessages() throws Exception {
+    void shouldReturnPaginatedMessages() throws Exception {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
         Message message2 = new Message("Title", "Text Text with 20 letters");
@@ -97,7 +97,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnASingleMessageById() throws Exception {
+    void shouldReturnASingleMessageById() throws Exception {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
@@ -117,7 +117,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnNotFoundIfMessageByIdDoesntExist() throws Exception {
+    void shouldReturnNotFoundIfMessageByIdDoesntExist() throws Exception {
         mockMvc.perform(get("/api/v1/messages/1"))
                 .andExpect(status().isNotFound());
     }
@@ -127,7 +127,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnBadRequestIfPathVariableIsNotValid() throws Exception {
+    void shouldReturnBadRequestIfPathVariableIsNotValid() throws Exception {
         mockMvc.perform(get("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
     }
@@ -137,7 +137,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canCreateANewMessageWithMessageRequest() throws Exception {
+    void shouldCreateANewMessageWithMessageRequest() throws Exception {
         //given
         MessageRequest messageRequest = new MessageRequest("Title", "Text Text with 20 letters");
         String requestJson = objectMapper.writeValueAsString(messageRequest);
@@ -157,7 +157,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnBadRequestIfRequestBodyIsInvalid() throws Exception {
+    void shouldReturnBadRequestIfRequestBodyIsInvalid() throws Exception {
         //given
         // Text should have min 20 characters
         MessageRequest badMessageRequest = new MessageRequest("Title", "Text Text");
@@ -175,7 +175,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canDeleteAMessageByIdFromDeleteRequest() throws Exception {
+    void shouldDeleteAMessageByIdFromDeleteRequest() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         messageRepository.save(message);
@@ -192,7 +192,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnNotFoundIfIdDoesntExistInDeleteMessageById() throws Exception {
+    void shouldReturnNotFoundIfIdDoesntExistInDeleteMessageById() throws Exception {
         mockMvc.perform(delete("/api/v1/messages/1"))
                 .andExpect(status().isNotFound());
     }
@@ -202,7 +202,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnBadRequestIfDeleteMessageIdIsNotValid() throws Exception {
+    void shouldReturnBadRequestIfDeleteMessageIdIsNotValid() throws Exception {
         mockMvc.perform(delete("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
     }
@@ -212,7 +212,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canUpdateMessageWithValidIdAndValidMessageRequest() throws Exception {
+    void shouldUpdateMessageWithValidIdAndValidMessageRequest() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
@@ -236,7 +236,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnNotFoundIfIdDoesntExistInUpdateMessage() throws Exception {
+    void shouldReturnNotFoundIfIdDoesntExistInUpdateMessage() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
@@ -255,7 +255,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnBadRequestIfUpdateMessageIdIsNotValid() throws Exception {
+    void shouldReturnBadRequestIfUpdateMessageIdIsNotValid() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
@@ -274,7 +274,7 @@ class MessageControllerTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnBadRequestIfUpdateBodyIsNotValid() throws Exception {
+    void shouldReturnBadRequestIfUpdateBodyIsNotValid() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         MessageRequest messageRequest = new MessageRequest("Update Title", "Bad Text");
