@@ -22,6 +22,7 @@ public class PeriodicalMessages {
     private final ScheduleRepository _scheduleRepository;
     private final App bot2;
     private final Credentials crd;
+
     @Scheduled(fixedRate = 30000)
     public void sendScheduledMessages() throws SlackApiException, IOException {
         List<Schedule> schedules = _scheduleRepository.findAllActiveSchedules();
@@ -30,7 +31,6 @@ public class PeriodicalMessages {
 
         // setDefaultValues sets next run to run date value  (default) +  sendAtScheduledRunDate checks if the run date is now
         for (Schedule schedule : schedules) {
-            setDefaultValues(schedule);
             sendAtScheduledRunDate(schedule);
             //   separates all repeating schedules
             if (checkIsRepeating(schedule)) startrunninglist.add(schedule);
@@ -68,22 +68,16 @@ public class PeriodicalMessages {
         _scheduleRepository.save(schedule);
     }
 
-    public void setDefaultValues(Schedule schedule) {
+    public void sendAtScheduledRunDate(Schedule schedule) throws SlackApiException, IOException {
         if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            schedule.setNextRun(schedule.getNextRun());
-            _scheduleRepository.save(schedule);
+            bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
+            deactivateSchedule(schedule);
         }
     }
 
-    public void sendAtScheduledRunDate(Schedule schedule) throws SlackApiException, IOException {
-        if (!schedule.isActive()) {
-            return;
-        }
-        if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
-            if (!schedule.isRepeat()) schedule.setActive(false);
-            setNextRunDate(schedule);
-            _scheduleRepository.save(schedule);
-        }
+    public void deactivateSchedule(Schedule schedule) {
+        if (!schedule.isRepeat()) schedule.setActive(false);
+        setNextRunDate(schedule);
+        _scheduleRepository.save(schedule);
     }
 }
