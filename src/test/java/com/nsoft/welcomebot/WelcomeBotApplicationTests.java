@@ -8,6 +8,6 @@ class WelcomeBotApplicationTests {
 
     @Test
     void contextLoads() {
-    }
 
+    }
 }

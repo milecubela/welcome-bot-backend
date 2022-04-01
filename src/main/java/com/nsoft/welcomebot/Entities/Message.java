@@ -16,6 +16,7 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "messages")
 public class Message {

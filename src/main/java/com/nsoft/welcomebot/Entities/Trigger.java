@@ -11,6 +11,7 @@ import javax.persistence.*;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "triggers")
 public class Trigger {

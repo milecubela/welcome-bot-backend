@@ -15,6 +15,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping(path = "api/v1/triggers")
 public class TriggerController {
 
@@ -23,7 +24,7 @@ public class TriggerController {
     @PostMapping
     public ResponseEntity<String> createTrigger(@Valid @RequestBody TriggerRequest triggerRequest) {
         _triggerService.createNewTrigger(triggerRequest);
-        return new ResponseEntity<>("Created new trigger succesfully", HttpStatus.CREATED);
+        return new ResponseEntity<>("Created new trigger successfully", HttpStatus.CREATED);
     }
 
     @GetMapping
