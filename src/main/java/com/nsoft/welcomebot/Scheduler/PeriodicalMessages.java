@@ -3,9 +3,8 @@ package com.nsoft.welcomebot.Scheduler;
 
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
-import com.nsoft.welcomebot.Utilities.Credentials;
+import com.nsoft.welcomebot.Services.SlackService;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
-import com.slack.api.bolt.App;
 import com.slack.api.methods.SlackApiException;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,8 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PeriodicalMessages {
     private final ScheduleRepository _scheduleRepository;
-    private final App bot2;
-    private final Credentials crd;
+    private final SlackService slackService;
 
     @Scheduled(fixedDelay = 30000)
     public void sendScheduledMessages() throws SlackApiException, IOException {
@@ -49,7 +47,7 @@ public class PeriodicalMessages {
     }
 
     public void sendMessage(Schedule schedule) throws SlackApiException, IOException {
-        bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
+        slackService.postMessage(schedule.getChannel(), schedule.getMessage().getText());
         setNextRunDate(schedule);
     }
 
@@ -70,7 +68,7 @@ public class PeriodicalMessages {
 
     public void sendAtScheduledRunDate(Schedule schedule) throws SlackApiException, IOException {
         if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
+            slackService.postMessage(schedule.getChannel(), schedule.getMessage().getText());
             deactivateSchedule(schedule);
         }
     }

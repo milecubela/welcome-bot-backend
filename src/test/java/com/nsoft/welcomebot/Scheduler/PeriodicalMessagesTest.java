@@ -3,9 +3,10 @@ package com.nsoft.welcomebot.Scheduler;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
-import com.nsoft.welcomebot.Utilities.Credentials;
+import com.nsoft.welcomebot.Services.SlackService;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
-import com.slack.api.bolt.App;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -25,10 +26,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ExtendWith(MockitoExtension.class)
 class PeriodicalMessagesTest {
     @MockBean
-    private App app;
-
-    @MockBean
-    private Credentials credentials;
+    private SlackService slackService;
 
     @Mock
     private PeriodicalMessages periodicalMessages;
@@ -36,12 +34,21 @@ class PeriodicalMessagesTest {
     @Autowired
     private ScheduleRepository scheduleRepositoryH2;
 
+    @BeforeEach
+    void setUp(){
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, slackService);
+    }
+
+    @AfterEach
+    void tearDown(){
+        scheduleRepositoryH2.deleteAll();
+    }
+
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testChannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setScheduleId(1L);
         //when
@@ -61,10 +68,10 @@ class PeriodicalMessagesTest {
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canAddOneMinuteToNextRunDate() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, slackService);
 
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(1), SchedulerInterval.MINUTE, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(1), SchedulerInterval.MINUTE, "testChannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setScheduleId(1L);
 
@@ -72,18 +79,18 @@ class PeriodicalMessagesTest {
         periodicalMessages.setNextRunDate(schedule);
         Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
         Schedule returnSchedule = result.get();
-        //then
 
-        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(1);
+        //then
+        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(5);
     }
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canAddOneHourToNextRunDate() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, slackService);
 
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.HOUR, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.HOUR, "testChannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setScheduleId(1L);
 
@@ -91,6 +98,7 @@ class PeriodicalMessagesTest {
         periodicalMessages.setNextRunDate(schedule);
         Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
         Schedule returnSchedule = result.get();
+
         //then
         assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(60);
     }
@@ -98,10 +106,10 @@ class PeriodicalMessagesTest {
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void canAddOneDayToNextRunDate() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, slackService);
 
         // given
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.DAY, "testchannel", 1L);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.DAY, "testChannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setScheduleId(1L);
 
@@ -109,6 +117,7 @@ class PeriodicalMessagesTest {
         periodicalMessages.setNextRunDate(schedule);
         Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
         Schedule returnSchedule = result.get();
+
         //then
         assertThat(ChronoUnit.HOURS.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(24);
     }
