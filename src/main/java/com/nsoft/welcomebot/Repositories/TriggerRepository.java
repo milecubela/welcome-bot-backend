@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TriggerRepository extends JpaRepository<Trigger, Long> {
-    List<Trigger> findTriggersByChannelAndIsActiveAndAndTriggerEvent(String name, boolean active, TriggerEvent triggerEvent);
+    List<Trigger> findTriggersByChannelAndIsActiveAndTriggerEvent(String name, Boolean active, TriggerEvent triggerEvent);
 }

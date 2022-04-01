@@ -6,14 +6,11 @@ import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SlackCommand;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import com.slack.api.bolt.App;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import com.slack.api.methods.SlackApiException;
 
+import java.io.IOException;
 import java.util.Arrays;
 
-@Configuration
-@EnableWebMvc
 public class SlackService {
 
     private final Credentials _credentials;
@@ -21,16 +18,14 @@ public class SlackService {
     private final SlackEventsFactory _slackEventsFactory;
     private final SlackCommmandsFactory _slackCommandsFactory;
 
-    @Autowired
     public SlackService(Credentials credentials, App app, SlackEventsFactory slackEventsFactory, SlackCommmandsFactory slackCommandsFactory) {
         _credentials = credentials;
         _app = app;
         _slackEventsFactory = slackEventsFactory;
         _slackCommandsFactory = slackCommandsFactory;
-        subscribeAll();
     }
 
-    private void subscribeAll() {
+    public void subscribeAll() {
         subscribeToEvents();
         subscribeToCommands();
     }
@@ -47,6 +42,13 @@ public class SlackService {
         for (SlackCommand slackCommand : list) {
             _slackCommandsFactory.getCommand(slackCommand).subscribeToSlackCommand(_app, _credentials);
         }
+    }
+
+    public void postMessage(String channel, String text) throws SlackApiException, IOException {
+        _app.client().chatPostMessage(r -> r
+                .channel(channel)
+                .token(_credentials.getSlackBotToken())
+                .text(text));
     }
 
 }

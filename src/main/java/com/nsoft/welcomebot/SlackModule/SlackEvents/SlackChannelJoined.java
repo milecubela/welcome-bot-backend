@@ -33,7 +33,7 @@ public class SlackChannelJoined implements SlackEventInterface {
                     .token(crd.getSlackBotToken())
                     .channel(event.getChannel()));
             var channelName = channelResult.getChannel().getName();
-            for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActiveAndAndTriggerEvent(channelName, true, getEventType())) {
+            for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActiveAndTriggerEvent(channelName, true, getEventType())) {
                 ctx.say(trigger.getMessage().getText());
             }
             return ctx.ack();

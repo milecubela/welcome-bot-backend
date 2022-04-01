@@ -4,8 +4,10 @@ import com.google.gson.JsonObject;
 import com.nsoft.welcomebot.Entities.User;
 import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.BadTokenException;
 import com.nsoft.welcomebot.Models.RequestModels.TokenRequest;
+import com.nsoft.welcomebot.Models.RequestModels.UserRequest;
 import com.nsoft.welcomebot.Models.ResponseModels.TokenResponse;
 import com.nsoft.welcomebot.Repositories.UserRepository;
+import com.nsoft.welcomebot.Security.AuthUtils.UserRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -46,6 +49,15 @@ public class UserService implements UserDetailsService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public void addUser(UserRequest userRequest) {
+        if (validateUser(userRequest.getEmail())) {
+            throw new EntityExistsException("User with email : " + userRequest.getEmail() + " already exists");
+        }
+        User user = new User(userRequest);
+        user.setUserRole(UserRole.ADMIN);
+        userRepository.save(user);
     }
 
     /*

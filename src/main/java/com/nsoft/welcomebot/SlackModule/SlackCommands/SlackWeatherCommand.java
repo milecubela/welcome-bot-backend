@@ -27,6 +27,10 @@ public class SlackWeatherCommand implements SlackCommandsInterface {
             var temperature = json.getAsJsonObject("main").get("temp").getAsInt() - 273;
             double wind = json.getAsJsonObject("wind").get("speed").getAsInt() * 1.6;
             System.out.println(sky);
+            if(city.equals("Mostar")) {
+                ctx.say("You live there. Just look outside the window");
+                return Response.ok();
+            }
             String message = ":thermometer: Weather forecast for " + city + " today is:\n " +
                     "Sky: " + sky +
                     "\nTemperature: " + temperature + "°C" +

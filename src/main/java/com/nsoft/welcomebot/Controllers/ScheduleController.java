@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin
 @RequestMapping(path = "api/v1/schedules")
 public class ScheduleController {
     private final ScheduleService scheduleService;
@@ -37,18 +38,18 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<String> createSchedule(@Valid @RequestBody ScheduleRequest scheduleRequest) {
         scheduleService.createNewSchedule(scheduleRequest);
-        return new ResponseEntity<>("Created new schedule successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Created new schedule successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "{scheduleId}")
     public ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId) {
         scheduleService.deleteSchedule(scheduleId);
-        return new ResponseEntity("Schedule deleted", HttpStatus.OK);
+        return new ResponseEntity<>("Schedule deleted", HttpStatus.OK);
     }
 
     @PutMapping(path = "/{scheduleId}")
     public ResponseEntity<Schedule> updateSchedule(@PathVariable("scheduleId") Long scheduleId, @Valid @RequestBody ScheduleRequest scheduleRequest) {
         Schedule updatedSchedule = scheduleService.updateSchedule(scheduleId, scheduleRequest);
-        return new ResponseEntity(updatedSchedule, HttpStatus.OK);
+        return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
     }
 }

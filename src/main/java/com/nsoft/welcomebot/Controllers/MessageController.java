@@ -14,6 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping(path = "api/v1/messages")
 public class MessageController {
 
@@ -50,6 +51,6 @@ public class MessageController {
     @PutMapping(path = "/{messageId}")
     public ResponseEntity<Message> updateMessage(@PathVariable("messageId") Long messageId, @Valid @RequestBody MessageRequest messageRequest) {
         Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
-        return new ResponseEntity(updatedMessage, HttpStatus.OK);
+        return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
     }
 }
