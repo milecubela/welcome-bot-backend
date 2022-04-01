@@ -32,9 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/home.html").permitAll()
+                .antMatchers("/api/v1/auth/addAdmin").hasRole("SUPERADMIN")
                 .antMatchers("/api/v1/auth/login").permitAll()
-//                .anyRequest().hasRole("ADMIN")
-                .anyRequest().permitAll()
+                .anyRequest().hasRole("ADMIN")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
