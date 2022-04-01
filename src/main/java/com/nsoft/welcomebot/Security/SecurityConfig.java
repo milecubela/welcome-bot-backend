@@ -2,7 +2,10 @@ package com.nsoft.welcomebot.Security;
 
 import com.nsoft.welcomebot.Security.AuthUtils.OauthRequestFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -36,12 +39,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/home.html").permitAll()
-                .antMatchers("/api/v1/auth/addAdmin").hasRole("SUPERADMIN")
                 .antMatchers("/api/v1/auth/login").permitAll()
+                .antMatchers("/api/v1/users").hasRole("SUPERADMIN")
                 .anyRequest().hasRole("ADMIN")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(oauthRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    /**
+     * Make SUPERADMIN have all privileges of ADMIN
+     * */
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
+        hierarchy.setHierarchy("ROLE_SUPERADMIN > ROLE_ADMIN");
+        return hierarchy;
     }
 }
