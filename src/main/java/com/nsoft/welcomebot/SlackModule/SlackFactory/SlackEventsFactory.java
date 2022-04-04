@@ -22,6 +22,9 @@ public class SlackEventsFactory {
     }
 
     public SlackEventInterface get(TriggerEvent triggerEvent) {
+        if (triggerEvent == null) {
+            throw new RuntimeException("Unknown event: " + null);
+        }
         SlackEventInterface event = slackEventsCache.get(triggerEvent);
         if (event == null) {
             add(triggerEvent);
