@@ -42,17 +42,17 @@ public class UserService implements UserDetailsService {
       User lookup in the database
       Should return true for admins
      */
-    public boolean validateUser(String email) {
+    public User validateUser(String email) {
         try {
             Optional<User> user = userRepository.findByEmail(email);
-            return user.isPresent();
+            return user.orElse(null);
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
     public void addUser(UserRequest userRequest) {
-        if (validateUser(userRequest.getEmail())) {
+        if (validateUser(userRequest.getEmail()) != null) {
             throw new EntityExistsException("User with email : " + userRequest.getEmail() + " already exists");
         }
         User user = new User(userRequest);
@@ -71,18 +71,19 @@ public class UserService implements UserDetailsService {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
         }
         String email = getEmailFromToken(idToken);
-
-        if (!validateUser(email)) {
+        User user = validateUser(email);
+        if (user == null) {
             throw new UsernameNotFoundException("User doesn't exist in the database");
         }
 
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setIdToken(idToken);
+        tokenResponse.setUserRole(user.getUserRole());
         // Accepted, return OK and token
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
-    private String getEmailFromToken(String token) {
+    public String getEmailFromToken(String token) {
         String email;
         try {
             JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);

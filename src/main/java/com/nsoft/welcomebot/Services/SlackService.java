@@ -7,9 +7,11 @@ import com.nsoft.welcomebot.Utilities.SlackCommand;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import com.slack.api.bolt.App;
 import com.slack.api.methods.SlackApiException;
+import com.slack.api.model.Attachment;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public class SlackService {
 
@@ -49,6 +51,14 @@ public class SlackService {
                 .channel(channel)
                 .token(_credentials.getSlackBotToken())
                 .text(text));
+    }
+
+    public void postMessageWithAttachment(String channel, String text, List<Attachment> attachments) throws SlackApiException, IOException {
+        _app.client().chatPostMessage(r -> r
+                .channel(channel)
+                .token(_credentials.getSlackBotToken())
+                .text(text)
+                .attachments(attachments));
     }
 
 }
