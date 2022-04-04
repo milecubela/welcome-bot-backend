@@ -40,7 +40,7 @@ public class SlackService {
     private void subscribeToCommands() {
         var list = Arrays.stream(SlackCommand.values()).toList();
         for (SlackCommand slackCommand : list) {
-            _slackCommandsFactory.getCommand(slackCommand).subscribeToSlackCommand(_app, _credentials);
+            _slackCommandsFactory.get(slackCommand).subscribeToSlackCommand(_app, _credentials);
         }
     }
 

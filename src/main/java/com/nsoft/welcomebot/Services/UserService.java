@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
         }
 
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setIdToken(idToken.substring(7));
+        tokenResponse.setIdToken(idToken);
         // Accepted, return OK and token
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
