@@ -67,17 +67,17 @@ public class UserService implements UserDetailsService {
     public ResponseEntity<Object> loginUser(TokenRequest tokenRequest) {
         String idToken = tokenRequest.getIdToken();
 
-        if (idToken == null || !idToken.startsWith("Bearer ")) {
+        if (idToken == null) {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
         }
-        String email = getEmailFromToken(idToken.substring(7));
+        String email = getEmailFromToken(idToken);
 
         if (!validateUser(email)) {
             throw new UsernameNotFoundException("User doesn't exist in the database");
         }
 
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setIdToken(idToken.substring(7));
+        tokenResponse.setIdToken(idToken);
         // Accepted, return OK and token
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
