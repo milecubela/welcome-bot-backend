@@ -47,7 +47,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canCreateTrigger() throws Exception {
+    void shouldCreateTrigger() throws Exception {
         //given
         Message message = new Message(
                 new MessageRequest(
@@ -73,7 +73,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canThrowWhenCreateTrigger() throws Exception {
+    void shouldThrowWhenCreateTrigger() throws Exception {
         //given
         TriggerRequest triggerRequest = new TriggerRequest(
                 "channel",
@@ -91,7 +91,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canGetAllTriggers() throws Exception {
+    void shouldGetAllTriggers() throws Exception {
         //given
         Message message = new Message(
                 new MessageRequest(
@@ -126,7 +126,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canReturnEmptyArrayWhenGetAllTriggers() throws Exception {
+    void shouldReturnEmptyArrayWhenGetAllTriggers() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/triggers"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -139,7 +139,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canGetPaginatedTriggers() throws Exception {
+    void shouldGetPaginatedTriggers() throws Exception {
         //given
         Message message = new Message(
                 new MessageRequest(
@@ -172,7 +172,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canGetTriggerById() throws Exception {
+    void shouldGetTriggerById() throws Exception {
         //given
         Message message = new Message(
                 new MessageRequest(
@@ -199,14 +199,14 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canThrowGetTriggerById() throws Exception {
+    void shouldThrowGetTriggerById() throws Exception {
         mockMvc.perform(get("/api/v1/triggers/" + 345L))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void canDeleteTrigger() throws Exception {
+    void shouldDeleteTrigger() throws Exception {
         //given
         Message message = new Message(
                 new MessageRequest(
@@ -233,14 +233,14 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canThrowWhenDeleteTrigger() throws Exception {
+    void shouldThrowWhenDeleteTrigger() throws Exception {
         mockMvc.perform(delete("/api/v1/triggers/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void canUpdateTrigger() throws Exception {
+    void shouldUpdateTrigger() throws Exception {
         //given
         Message message = new Message(
                 new MessageRequest(
@@ -270,7 +270,7 @@ class TriggerControllerIntegrationTest {
     }
 
     @Test
-    void canThrowOnUpdateTrigger() throws Exception {
+    void shouldThrowOnUpdateTrigger() throws Exception {
         //given
         TriggerRequest triggerRequest = new TriggerRequest(
                 "channel",

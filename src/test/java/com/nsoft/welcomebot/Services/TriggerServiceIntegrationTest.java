@@ -31,14 +31,14 @@ class TriggerServiceIntegrationTest {
         triggerService = new TriggerService(triggerRepository, messageRepository);
     }
 
-    @AfterEach
+    @BeforeEach
     void clean() {
         triggerRepository.deleteAll();
         messageRepository.deleteAll();
     }
 
     @Test
-    void canCreateNewTrigger() {
+    void shouldCreateNewTrigger() {
         Message message = new Message(
                 new MessageRequest(
                         "Neki title",
@@ -56,12 +56,13 @@ class TriggerServiceIntegrationTest {
         // when
         triggerService.createNewTrigger(triggerRequest);
         // then
+        var a = triggerRepository.findAll();
         Integer expected = triggerRepository.findAll().size();
         assertThat(expected).isEqualTo(1);
     }
 
     @Test
-    void canGetTriggerById() {
+    void shouldGetTriggerById() {
         // given
         Message message = new Message(
                 new MessageRequest(
@@ -87,7 +88,7 @@ class TriggerServiceIntegrationTest {
     }
 
     @Test
-    void canDeleteTrigger() {
+    void shouldDeleteTrigger() {
         // given
         Message message = new Message(
                 new MessageRequest(
@@ -114,7 +115,7 @@ class TriggerServiceIntegrationTest {
     }
 
     @Test
-    void canUpdateTrigger() {
+    void shouldUpdateTrigger() {
         // given
         Message message = new Message(
                 new MessageRequest(

@@ -51,7 +51,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canReturnAllSchedules() throws Exception {
+    void shouldReturnAllSchedules() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Message msg = messageRepository.findAll().get(0);
@@ -71,7 +71,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canReturnPaginatedSchedules() throws Exception {
+    void shouldReturnPaginatedSchedules() throws Exception {
         Message message = new Message("texttexttext", "text text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
@@ -91,7 +91,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canGetScheduleById() throws Exception {
+    void shouldGetScheduleById() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
@@ -104,12 +104,12 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canThrowNotFoundIfScheduleDoesntExist() throws Exception {
+    void shouldThrowNotFoundIfScheduleDoesntExist() throws Exception {
         mockMvc.perform(get("/api/v1/schedules/11")).andExpect(status().isNotFound());
     }
 
     @Test
-    void canDeleteScheduleById() throws Exception {
+    void shouldDeleteScheduleById() throws Exception {
         scheduleService = new ScheduleService(scheduleRepository, messageRepository);
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
@@ -125,12 +125,12 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canThrowOnDeleteIfScheduleIdDoesntExist() throws Exception {
+    void shouldThrowOnDeleteIfScheduleIdDoesntExist() throws Exception {
         mockMvc.perform(delete("/api/v1/schedules/11")).andExpect(status().isNotFound());
     }
 
     @Test
-    void canThrowOnCreateIfMessageIdDoesntExist() throws Exception {
+    void shouldThrowOnCreateIfMessageIdDoesntExist() throws Exception {
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "page1channel", 12L);
         String requestJson = objectMapper.writeValueAsString(scheduleRequest);
         //when
@@ -139,7 +139,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canCreateNewSchedule() throws Exception {
+    void shouldCreateNewSchedule() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Message returnMessage = messageRepository.findAll().get(0);
@@ -153,7 +153,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canThrowOnScheduleUpdateIfIdIsInvalid() throws Exception {
+    void shouldThrowOnScheduleUpdateIfIdIsInvalid() throws Exception {
         ScheduleRequest badRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "TEST", 12L);
         var requestJson = objectMapper.writeValueAsString(badRequest);
         mockMvc.perform(put("/api/v1/schedules/5").contentType(MediaType.APPLICATION_JSON)
@@ -161,7 +161,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canThrowOnScheduleUpdateIfMessageIdIsInvalid() throws Exception {
+    void shouldThrowOnScheduleUpdateIfMessageIdIsInvalid() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(1L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");
@@ -173,7 +173,7 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void canUpdateSchedule() throws Exception {
+    void shouldUpdateSchedule() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");

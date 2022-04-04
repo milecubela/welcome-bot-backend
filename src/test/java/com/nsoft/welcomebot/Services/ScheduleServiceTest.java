@@ -54,19 +54,19 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canGetSchedules() {
+    void shouldGetSchedules() {
         _mockScheduleRepository.findAll();
         verify(_mockScheduleRepository).findAll();
     }
 
     @Test
-    void canThrowOnCreateScheduleIfMessageDoesntExist() {
+    void shouldThrowOnCreateScheduleIfMessageDoesntExist() {
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         assertThatThrownBy(() -> scheduleService.createNewSchedule(scheduleRequest)).isInstanceOf(NotFoundException.class).hasMessageContaining(("Message with ID " + scheduleRequest.getMessageId() + " not found!"));
     }
 
     @Test
-    void canCreateNewIfMessageExists() {
+    void shouldCreateNewIfMessageExists() {
         scheduleService = new ScheduleService(_scheduleRepositoryTest, _messageRepositoryTest);
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 1L);
         MessageRequest messageRequest = new MessageRequest("title of text message", "text of message should be at least 20 letters long");
@@ -78,13 +78,13 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canThrowOnDeleteIfDeleteIdDoesntExist() {
+    void shouldThrowOnDeleteIfDeleteIdDoesntExist() {
         Long id = anyLong();
         assertThatThrownBy(() -> scheduleService.deleteSchedule(id)).isInstanceOf(NotFoundException.class).hasMessageContaining(("Schedule with ID " + id + " not found"));
     }
 
     @Test
-    void canDeleteSchedule() {
+    void shouldDeleteSchedule() {
         //given
         scheduleService = new ScheduleService(_scheduleRepositoryTest, _messageRepositoryTest);
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -100,14 +100,14 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canThrowOnUpdateIfUpdateIdDoesntExist() {
+    void shouldThrowOnUpdateIfUpdateIdDoesntExist() {
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         Long id = anyLong();
         assertThatThrownBy(() -> scheduleService.updateSchedule(id, scheduleRequest)).isInstanceOf(NotFoundException.class).hasMessageContaining(("Schedule with ID " + id + " not found"));
     }
 
     @Test
-    void canUpdateSchedule() {
+    void shouldUpdateSchedule() {
         // given
         Message message = new Message(new MessageRequest("some title", "text za testiranje testa tost."));
         message.setMessageId(1L);
@@ -127,7 +127,7 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canThrowOnUpdateIfMessageDoesntExist() {
+    void shouldThrowOnUpdateIfMessageDoesntExist() {
         //given
         Long messageId = 1L;
         Long scheduleId = 1L;
@@ -142,7 +142,7 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canThrowOnUpdateIfScheduleDoesntExist() {
+    void shouldThrowOnUpdateIfScheduleDoesntExist() {
         //given
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -155,7 +155,7 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canGetScheduleById() {
+    void shouldGetScheduleById() {
         //given
         Long scheduleId = 1L;
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -171,7 +171,7 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void canThrowOnGetByIdIfIdDoesntExist() {
+    void shouldThrowOnGetByIdIfIdDoesntExist() {
         //given
         Long scheduleId = 1L;
         given(_mockScheduleRepository.findById(scheduleId)).willReturn(Optional.empty());

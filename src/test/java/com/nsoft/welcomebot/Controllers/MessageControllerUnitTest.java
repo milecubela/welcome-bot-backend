@@ -15,7 +15,7 @@ class MessageControllerUnitTest {
      * Testing if the function will return all messages if params are not available
      */
     @Test
-    void canCallAllMessages() {
+    void shouldCallAllMessages() {
         //when
         messageController.getMessages(null, null);
         // then
@@ -26,7 +26,7 @@ class MessageControllerUnitTest {
      * Testing if the function will return pagination if param are available
      */
     @Test
-    void canCallFindAllPaginated() {
+    void shouldCallFindAllPaginated() {
         //when
         messageController.getMessages(0, 2);
         // then

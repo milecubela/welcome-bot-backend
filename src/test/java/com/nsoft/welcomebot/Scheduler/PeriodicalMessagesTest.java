@@ -38,7 +38,7 @@ class PeriodicalMessagesTest {
     private ScheduleRepository scheduleRepositoryH2;
 
     @Test
-    void canSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
+    void shouldSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testchannel", 1L);
@@ -59,7 +59,7 @@ class PeriodicalMessagesTest {
      * without it the difference between the two dates would be ~59.997s and the ChronoUnit comparison would show 0 minutes difference.
      */
     @Test
-    void canAddOneMinuteToNextRunDate() {
+    void shouldAddOneMinuteToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
         // given
@@ -94,7 +94,7 @@ class PeriodicalMessagesTest {
     }
 
     @Test
-    void canAddOneDayToNextRunDate() {
+    void shouldAddOneDayToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
         // given

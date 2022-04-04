@@ -34,7 +34,7 @@ class TriggerServiceUnitTest {
     }
 
     @Test
-    void canThrowOnCreateNewTrigger() {
+    void shouldThrowOnCreateNewTrigger() {
         // given
         Long triggerId = 1L;
         TriggerRequest triggerRequest = new TriggerRequest(
@@ -52,7 +52,7 @@ class TriggerServiceUnitTest {
     }
 
     @Test
-    void canThrowOnGetTriggerById() {
+    void shouldThrowOnGetTriggerById() {
         // given
         Long triggerId = 1L;
         given(triggerRepository.findById(triggerId))
@@ -64,7 +64,7 @@ class TriggerServiceUnitTest {
     }
 
     @Test
-    void canThrowOnDeleteTrigger() {
+    void shouldThrowOnDeleteTrigger() {
         // given
         Long triggerId = 1L;
         given(triggerRepository.findById(triggerId))
@@ -76,7 +76,7 @@ class TriggerServiceUnitTest {
     }
 
     @Test
-    void canThrowWhenMessageDoesNotExistsOnUpdateTrigger() {
+    void shouldThrowWhenMessageDoesNotExistsOnUpdateTrigger() {
         // given
         Long messageId = 1L;
         Long triggerId = 1L;
@@ -99,7 +99,7 @@ class TriggerServiceUnitTest {
     }
 
     @Test
-    void canThrowWhenTriggerDoesNotExistsOnUpdateTrigger() {
+    void shouldThrowWhenTriggerDoesNotExistsOnUpdateTrigger() {
         // given
         Long triggerId = 1L;
         TriggerRequest triggerRequest = new TriggerRequest(
