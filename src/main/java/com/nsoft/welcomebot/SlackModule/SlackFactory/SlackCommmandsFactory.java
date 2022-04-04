@@ -5,8 +5,7 @@ import com.nsoft.welcomebot.Utilities.SlackCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,24 +14,31 @@ public class SlackCommmandsFactory {
 
     private final List<SlackCommandsInterface> _slackCommands;
 
-    private final Map<SlackCommand, SlackCommandsInterface> slackCommandsCache = new HashMap<>();
+    private final Map<SlackCommand, SlackCommandsInterface> slackCommandsCache = new EnumMap<>(SlackCommand.class);
 
     @Autowired
     public SlackCommmandsFactory(List<SlackCommandsInterface> slackCommands) {
         _slackCommands = slackCommands;
     }
 
-    @PostConstruct
-    public void initSlackCommandsCache() {
-        for (SlackCommandsInterface command : _slackCommands) {
-            slackCommandsCache.put(command.getCommandType(), command);
+    public SlackCommandsInterface get(SlackCommand commandType) {
+        if (commandType == null) {
+            throw new RuntimeException("Unknown command: " + null);
         }
+        SlackCommandsInterface event = slackCommandsCache.get(commandType);
+        if (event == null) {
+            add(commandType);
+            event = slackCommandsCache.get(commandType);
+        }
+        return event;
     }
 
-    public SlackCommandsInterface getCommand(SlackCommand commandType) {
-        SlackCommandsInterface command = slackCommandsCache.get(commandType);
-        if (command == null) throw new RuntimeException("Unknown command: " + commandType);
-        return command;
+    private void add(SlackCommand triggerEvent) {
+        for (SlackCommandsInterface event : _slackCommands) {
+            if (triggerEvent == event.getCommandType()) {
+                slackCommandsCache.put(event.getCommandType(), event);
+            }
+        }
     }
 
 }

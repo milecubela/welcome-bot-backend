@@ -33,7 +33,7 @@ public class SlackService {
     private void subscribeToEvents() {
         var list = Arrays.stream(TriggerEvent.values()).toList();
         for (TriggerEvent triggerEvent : list) {
-            _slackEventsFactory.getEvent(triggerEvent).subscribeToEvent(_app, _credentials);
+            _slackEventsFactory.get(triggerEvent).subscribeToEvent(_app, _credentials);
         }
     }
 

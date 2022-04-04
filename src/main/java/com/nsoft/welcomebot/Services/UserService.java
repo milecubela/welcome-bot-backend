@@ -61,16 +61,16 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     *  Initial check for frontend token, returns an appropriate response
-    */
+     * Initial check for frontend token, returns an appropriate response
+     */
 
     public ResponseEntity<Object> loginUser(TokenRequest tokenRequest) {
         String idToken = tokenRequest.getIdToken();
 
-        if (idToken == null || !idToken.startsWith("Bearer ")) {
+        if (idToken == null) {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
         }
-        String email = getEmailFromToken(idToken.substring(7));
+        String email = getEmailFromToken(idToken);
 
         if (!validateUser(email)) {
             throw new UsernameNotFoundException("User doesn't exist in the database");

@@ -5,8 +5,7 @@ import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,24 +14,28 @@ public class SlackEventsFactory {
 
     private final List<SlackEventInterface> _slackEvents;
 
-    private final Map<TriggerEvent, SlackEventInterface> slackEventsCache = new HashMap<>();
+    private final Map<TriggerEvent, SlackEventInterface> slackEventsCache = new EnumMap<>(TriggerEvent.class);
 
     @Autowired
     public SlackEventsFactory(List<SlackEventInterface> slackEvents) {
         _slackEvents = slackEvents;
     }
 
-    @PostConstruct
-    public void initSlackEventsCache() {
-        for (SlackEventInterface event : _slackEvents) {
-            slackEventsCache.put(event.getEventType(), event);
+    public SlackEventInterface get(TriggerEvent triggerEvent) {
+        SlackEventInterface event = slackEventsCache.get(triggerEvent);
+        if (event == null) {
+            add(triggerEvent);
+            event = slackEventsCache.get(triggerEvent);
         }
+        return event;
     }
 
-    public SlackEventInterface getEvent(TriggerEvent type) {
-        SlackEventInterface event = slackEventsCache.get(type);
-        if (event == null) throw new RuntimeException("Unknown event type: " + type);
-        return event;
+    private void add(TriggerEvent triggerEvent) {
+        for (SlackEventInterface event : _slackEvents) {
+            if (triggerEvent == event.getEventType()) {
+                slackEventsCache.put(event.getEventType(), event);
+            }
+        }
     }
 
 }
