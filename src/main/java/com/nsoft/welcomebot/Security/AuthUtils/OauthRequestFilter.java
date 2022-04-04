@@ -1,8 +1,6 @@
 package com.nsoft.welcomebot.Security.AuthUtils;
 
 
-import com.google.gson.JsonObject;
-import com.nsoft.welcomebot.Services.OauthTokenService;
 import com.nsoft.welcomebot.Services.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,12 +24,10 @@ import java.io.IOException;
 public class OauthRequestFilter extends OncePerRequestFilter {
 
     private final UserService userService;
-    private final OauthTokenService oauthTokenService;
 
 
-    public OauthRequestFilter(UserService userService, OauthTokenService oauthTokenService) {
+    public OauthRequestFilter(UserService userService) {
         this.userService = userService;
-        this.oauthTokenService = oauthTokenService;
     }
 
 
@@ -48,12 +44,7 @@ public class OauthRequestFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            try {
-                JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
-                email = jsonObject.get("email").getAsString();
-            } catch (IOException e) {
-                response.setStatus(401);
-            }
+            email = userService.getEmailFromToken(token);
         }
         return email;
     }
@@ -62,7 +53,7 @@ public class OauthRequestFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails user = userService.loadUserByUsername(email);
-                if (userService.validateUser(email)) {
+                if (userService.validateUser(email) != null) {
                     var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
