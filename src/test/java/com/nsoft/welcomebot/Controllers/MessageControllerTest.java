@@ -5,17 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
-import com.nsoft.welcomebot.Services.MessageService;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
@@ -27,18 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@WebMvcTest(MessageController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("h2")
+@Testcontainers
+//@ActiveProfiles("h2")
 class MessageControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private MessageService messageService;
-    @Autowired
     private MessageRepository messageRepository;
 
-    @AfterEach
+    @BeforeEach
     void tearDown() {
         messageRepository.deleteAll();
     }
@@ -47,7 +44,6 @@ class MessageControllerTest {
      * Testing if the GET /api/v1/messages will return all messages from database
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnAllMessages() throws Exception {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
@@ -61,7 +57,7 @@ class MessageControllerTest {
                 .andReturn();
         //then
         String responseBody = result.getResponse().getContentAsString();
-        List<Message> messageList = objectMapper.readValue(responseBody, new TypeReference<List<Message>>() {
+        List<Message> messageList = objectMapper.readValue(responseBody, new TypeReference<>() {
         });
         assertThat(messageList.size()).isEqualTo(2);
     }
@@ -70,7 +66,6 @@ class MessageControllerTest {
      * Testing if the GET /api/v1/messages?=offset pagesize return correct pagination
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnPaginatedMessages() throws Exception {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
@@ -96,27 +91,26 @@ class MessageControllerTest {
      * Testing if the GET /api/v1/messages/{messageId} returns a message with that ID
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnASingleMessageById() throws Exception {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
+        Long messageId = messageRepository.findAll().get(0).getMessageId();
         //when
-        MvcResult result = mockMvc.perform(get("/api/v1/messages/1"))
+        MvcResult result = mockMvc.perform(get("/api/v1/messages/" + messageId.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
         // then
         String responseBody = result.getResponse().getContentAsString();
         Message responseMessage = objectMapper.readValue(responseBody, Message.class);
-        assertThat(responseMessage.getMessageId()).isEqualTo(1L);
+        assertThat(responseMessage.getMessageId()).isEqualTo(messageId);
     }
 
     /**
      * Testing if the GET /api/v1/messages/{messageId} returns 404 if message is not found
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnNotFoundIfMessageByIdDoesntExist() throws Exception {
         mockMvc.perform(get("/api/v1/messages/1"))
                 .andExpect(status().isNotFound());
@@ -126,7 +120,6 @@ class MessageControllerTest {
      * Testing if the GET /api/v1/messages/{messageId} returns 404 if message is not found
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnBadRequestIfPathVariableIsNotValid() throws Exception {
         mockMvc.perform(get("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
@@ -136,7 +129,6 @@ class MessageControllerTest {
      * Testing if the POST /api/v1/messages returns 201 and creates a new message in database
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldCreateANewMessageWithMessageRequest() throws Exception {
         //given
         MessageRequest messageRequest = new MessageRequest("Title", "Text Text with 20 letters");
@@ -156,7 +148,6 @@ class MessageControllerTest {
      * Testing if the POST /api/v1/messages returns bad request
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnBadRequestIfRequestBodyIsInvalid() throws Exception {
         //given
         // Text should have min 20 characters
@@ -174,13 +165,13 @@ class MessageControllerTest {
      * Testing if DELETE /api/v1/messages/{messageId} returns 200 and deletes a message from database
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldDeleteAMessageByIdFromDeleteRequest() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         messageRepository.save(message);
+        String messageId = messageRepository.findAll().get(0).getMessageId().toString();
         //when
-        mockMvc.perform(delete("/api/v1/messages/1"))
+        mockMvc.perform(delete("/api/v1/messages/" + messageId))
                 .andExpect(status().isOk());
         //then
         List<Message> messages = messageRepository.findAll();
@@ -191,7 +182,6 @@ class MessageControllerTest {
      * Testing if DELETE /api/v1/messages/{messageId} returns not found when ID doesn't exist
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnNotFoundIfIdDoesntExistInDeleteMessageById() throws Exception {
         mockMvc.perform(delete("/api/v1/messages/1"))
                 .andExpect(status().isNotFound());
@@ -201,7 +191,6 @@ class MessageControllerTest {
      * Testing if DELETE /api/v1/messages/{messageId} returns bad request if we send invalid ID
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnBadRequestIfDeleteMessageIdIsNotValid() throws Exception {
         mockMvc.perform(delete("/api/v1/messages/as"))
                 .andExpect(status().isBadRequest());
@@ -211,15 +200,15 @@ class MessageControllerTest {
      * Testing if PUT /api/v1/messages/{messageId} returns 200 and updates the message in database
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldUpdateMessageWithValidIdAndValidMessageRequest() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
         MessageRequest messageRequest = new MessageRequest("Update Title", "Updated Text Text with 20 letters");
         messageRepository.save(message);
+        String messageId = messageRepository.findAll().get(0).getMessageId().toString();
         String requestJson = objectMapper.writeValueAsString(messageRequest);
         //when
-        MvcResult result = mockMvc.perform(put("/api/v1/messages/1")
+        MvcResult result = mockMvc.perform(put("/api/v1/messages/" + messageId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)
                         .characterEncoding("utf-8"))
@@ -235,7 +224,6 @@ class MessageControllerTest {
      * Testing if PUT /api/v1/messages/{messageId} returns not found if message with ID doesn't exist
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnNotFoundIfIdDoesntExistInUpdateMessage() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
@@ -254,7 +242,6 @@ class MessageControllerTest {
      * Testing if PUT /api/v1/messages/{messageId} returns bad request if message ID is not valid
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnBadRequestIfUpdateMessageIdIsNotValid() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
@@ -273,7 +260,6 @@ class MessageControllerTest {
      * Testing if PUT /api/v1/messages/{messageId} returns bad request if updateMessage body is not valid
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnBadRequestIfUpdateBodyIsNotValid() throws Exception {
         //given
         Message message = new Message(1L, "Title", "Text Text with 20 letters");
