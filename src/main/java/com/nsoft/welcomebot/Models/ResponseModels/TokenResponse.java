@@ -1,8 +1,12 @@
 package com.nsoft.welcomebot.Models.ResponseModels;
 
+import com.nsoft.welcomebot.Security.AuthUtils.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Getter
 @Setter
@@ -11,7 +15,6 @@ public class TokenResponse {
 
     private String idToken;
 
-    public TokenResponse(String idToken) {
-        this.idToken = idToken;
-    }
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 }
