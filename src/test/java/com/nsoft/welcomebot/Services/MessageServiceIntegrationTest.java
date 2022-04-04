@@ -39,7 +39,7 @@ class MessageServiceIntegrationTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canGetAllMessages() {
+    void shouldGetAllMessages() {
         // given
         Message message1 = new Message("Title1", "Text Text1 with 20 letters");
         Message message2 = new Message("Title2", "Text Text2 with 20 letters");
@@ -56,7 +56,7 @@ class MessageServiceIntegrationTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canCreateMessage() {
+    void shouldCreateMessage() {
         //given
         MessageRequest messageRequest = new MessageRequest("Title", "Text Text with 20 letters");
         //when
@@ -87,7 +87,7 @@ class MessageServiceIntegrationTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canDeleteAMessageById() {
+    void shouldDeleteAMessageById() {
         //given
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
@@ -102,7 +102,7 @@ class MessageServiceIntegrationTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canUpdateMessageById() {
+    void shouldUpdateMessageById() {
         //Given
         Message message = new Message("Title", "Text Text with 20 letters");
         MessageRequest messageRequest = new MessageRequest("Title update", "Updated Text Text with 20 letters");
@@ -118,7 +118,7 @@ class MessageServiceIntegrationTest {
      */
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canReturnMessagesByPage() {
+    void shouldReturnMessagesByPage() {
         // given
         Message message1 = new Message("Title1", "Text Text1 with 20 letters");
         Message message2 = new Message("Title2", "Text Text2 with 20 letters");

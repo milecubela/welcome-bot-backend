@@ -24,7 +24,7 @@ class ScheduleRepositoryTest {
     }
 
     @Test
-    void canFindAllActiveSchedules() {
+    void shouldFindAllActiveSchedules() {
         //given
         ScheduleRequest scheduleRequest1 = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         Schedule schedule1 = new Schedule(scheduleRequest1);
@@ -40,7 +40,7 @@ class ScheduleRepositoryTest {
     }
 
     @Test
-    void cantFindAnyActiveSchedules() {
+    void shouldtFindAnyActiveSchedules() {
         //given
         ScheduleRequest scheduleRequest1 = new ScheduleRequest(true, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         Schedule schedule1 = new Schedule(scheduleRequest1);

@@ -35,7 +35,7 @@ class MessageServiceTest {
      * Testing that getMessageById() throws an exception if ID doesn't exist
      */
     @Test
-    void canThrowWhenGetIdIsNotFound() {
+    void shouldThrowWhenGetIdIsNotFound() {
         // then
         assertThatThrownBy(() -> messageServiceTest.getMessageById(1L)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }
@@ -44,7 +44,7 @@ class MessageServiceTest {
      * Testing that getMessageById() returns the correct message
      */
     @Test
-    void canReturnTheMessageById() {
+    void shouldReturnTheMessageById() {
         //Given
         Message testMessage = new Message(1L, "Title", "Text Text with 20 letters");
         given(messageRepository.findById(testMessage.getMessageId())).willReturn(Optional.of(testMessage));
@@ -58,7 +58,7 @@ class MessageServiceTest {
      * Testing if deleteMessage() throws an error if ID doesn't exist
      */
     @Test
-    void canThrowWhenDeleteIdNotFound() {
+    void shouldThrowWhenDeleteIdNotFound() {
         // then
         assertThatThrownBy(() -> messageServiceTest.deleteMessage(1L)).isInstanceOf(NotFoundException.class).hasMessageContaining("Message with ID 1 not found!");
     }
@@ -67,7 +67,7 @@ class MessageServiceTest {
      * Testing if updateMessage() updates message with given messageRequest
      */
     @Test
-    void canReturnUpdatedMessage() {
+    void shouldReturnUpdatedMessage() {
         // given
         Message testMessage = new Message(1L, "Title", "Text Text");
         MessageRequest messageRequest = new MessageRequest("Title 2", "Text Text 2");
@@ -83,7 +83,7 @@ class MessageServiceTest {
      * Testing if updateMessage() throws an exception if ID doesn't exist
      */
     @Test
-    void canThrowWhenUpdateIdNotFound() {
+    void shouldThrowWhenUpdateIdNotFound() {
         // given
         MessageRequest messageRequest = new MessageRequest("Title 2", "Text Text 2");
         // then

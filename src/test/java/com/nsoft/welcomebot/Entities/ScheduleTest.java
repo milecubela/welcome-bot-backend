@@ -13,7 +13,7 @@ class ScheduleTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void canSetNextRunToRunDate() {
+    void shouldSetNextRunToRunDate() {
         ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 12L);
         Schedule schedule = new Schedule(scheduleRequest);
         boolean expected = schedule.getNextRun().isEqual(scheduleRequest.getRunDate());
