@@ -9,11 +9,11 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/${LOG_FILE}.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
+            <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- minute rollover -->
-            <fileNamePattern>${LOG_DIR}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/${LOG_FILE}.%d{yyyy-MM-dd_HH-mm}.log</fileNamePattern>
             <!-- keep 30 days' worth of history capped at 3GB total size -->
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
@@ -22,8 +22,10 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
+    <logger name="welcome.bot" level="INFO" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
     </root>
 </configuration>
