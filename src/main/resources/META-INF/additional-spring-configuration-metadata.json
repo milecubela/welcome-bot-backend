@@ -14,6 +14,11 @@
       "name": "OPEN_WEATHER_API_KEY",
       "type": "java.lang.String",
       "description": "Description for OPEN_WEATHER_API_KEY."
+    },
+    {
+      "name": "giphy.url",
+      "type": "java.lang.String",
+      "description": "Description for GIPHY api url."
     }
   ]
 }

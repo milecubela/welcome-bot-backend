@@ -45,6 +45,8 @@ class ScheduleServiceTest {
 
     @BeforeEach
     void setUp() {
+        _scheduleRepositoryTest.deleteAll();
+        _messageRepositoryTest.deleteAll();
         scheduleService = new ScheduleService(_mockScheduleRepository, _mockMessageRepository);
     }
 
@@ -68,10 +70,11 @@ class ScheduleServiceTest {
     @Test
     void shouldCreateNewIfMessageExists() {
         scheduleService = new ScheduleService(_scheduleRepositoryTest, _messageRepositoryTest);
-        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", 1L);
         MessageRequest messageRequest = new MessageRequest("title of text message", "text of message should be at least 20 letters long");
         Message message = new Message(messageRequest);
         _messageRepositoryTest.save(message);
+        Long msgId = _messageRepositoryTest.findAll().get(0).getMessageId();
+        ScheduleRequest scheduleRequest = new ScheduleRequest(true, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "testingchannel", msgId);
         scheduleService.createNewSchedule(scheduleRequest);
         var expected = _messageRepositoryTest.findAll().isEmpty();
         assertThat(expected).isFalse();

@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
-@DataJpaTest
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class TriggerServiceUnitTest {
 
@@ -30,6 +30,7 @@ class TriggerServiceUnitTest {
 
     @BeforeEach
     void setUp() {
+        messageRepository.deleteAll();
         triggerService = new TriggerService(triggerRepository, messageRepository);
     }
 
