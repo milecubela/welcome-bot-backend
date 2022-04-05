@@ -59,7 +59,7 @@ public class MessageService {
     public Message updateMessage(Long messageId, MessageRequest messageRequest) {
         Optional<Message> optionalMessage = _messageRepository.findById(messageId);
         if (optionalMessage.isEmpty())
-            throw new NotFoundException("Message with ID " + messageId + " not found");
+            throw new NotFoundException("Message with ID " + messageId + " not found!");
         Message message = optionalMessage.get();
         message.setText(messageRequest.getText());
         message.setTitle(messageRequest.getTitle());

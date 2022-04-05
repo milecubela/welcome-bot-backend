@@ -1,6 +1,26 @@
 **WelcomeBot v1**
 
-Technologies used
+<h5>HOW TO RUN </h5>
+Download the project and make sure you have docker and docker-compose installed.<br>
+Open terminal in the project directory and paste the following line with sudo permissions:
+
+```text
+
+docker-compose -f docker-compose-prod.yml up
+
+```
+
+**Add SuperAdmin to database**
+
+Run addSuperAdmin.sh with sudo privileges
+```text
+sudo su
+sh addSuperAdmin.sh
+```
+On 'Enter Password:' prompt enter your database password(password)
+
+
+**Technologies used**
 
 ```text
 Java 17 - JDK 17.0.2
@@ -12,6 +32,10 @@ Dependencies:
     - Spring Web
     - Flyway
     - MariaDB Java Client
+    - Spring Boot Starter Test
+    - Slack API Client
+    - Google API Client
+    - Spring Boot Starter Security
 ```
 
 A slack bot with the ability to send automated messages and talk to slack users.
@@ -34,6 +58,7 @@ Trigger  - Create a new trigger
 ```
 
 Adding new events and commands:
+You can find the supported event types here: https://api.slack.com/events
 
 ```text
 Adding events:
@@ -47,6 +72,11 @@ Before going through these steps the bot owner needs to subscribe to certain Sla
 
 Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
 in database. 
+
+**App Security**
+
+App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
+in dev environment with application-dev.properties
 
 Logging 
 

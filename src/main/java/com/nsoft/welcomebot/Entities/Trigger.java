@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.Entities;
 
+import com.nsoft.welcomebot.Models.RequestModels.TriggerRequest;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import lombok.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "triggers")
 public class Trigger {
@@ -28,4 +30,10 @@ public class Trigger {
     private Message message;
 
     private TriggerEvent triggerEvent;
+
+    public Trigger(TriggerRequest triggerRequest) {
+        this.channel = triggerRequest.getChannel();
+        this.triggerEvent = triggerRequest.getTriggerEvent();
+        this.isActive = triggerRequest.getIsActive();
+    }
 }

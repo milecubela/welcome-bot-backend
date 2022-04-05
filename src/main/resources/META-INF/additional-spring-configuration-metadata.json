@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "SLACK_BOT_TOKEN",
+      "type": "java.lang.String",
+      "description": "Description for SLACK_BOT_TOKEN."
+    },
+    {
+      "name": "SLACK_SIGNING_SECRET",
+      "type": "java.lang.String",
+      "description": "Description for SLACK_SIGNING_SECRET."
+    },
+    {
+      "name": "OPEN_WEATHER_API_KEY",
+      "type": "java.lang.String",
+      "description": "Description for OPEN_WEATHER_API_KEY."
+    }
+  ]
+}

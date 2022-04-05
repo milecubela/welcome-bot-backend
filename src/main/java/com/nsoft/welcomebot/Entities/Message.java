@@ -16,6 +16,7 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "messages")
 public class Message {
@@ -47,5 +48,11 @@ public class Message {
     public Message(MessageRequest messageRequest) {
         this.text = messageRequest.getText();
         this.title = messageRequest.getTitle();
+    }
+
+    public Message(long messageId, @NonNull String title, @NonNull String text) {
+        this.messageId = messageId;
+        this.title = title;
+        this.text = text;
     }
 }

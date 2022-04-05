@@ -14,6 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping(path = "api/v1/messages")
 public class MessageController {
 
@@ -30,7 +31,7 @@ public class MessageController {
     }
 
     @GetMapping(path = "{messageId}")
-    public ResponseEntity<Message> getMessages(@PathVariable("messageId") Long messageId) {
+    public ResponseEntity<Message> getMessageById(@PathVariable("messageId") Long messageId) {
         Message message = _messageService.getMessageById(messageId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -38,7 +39,7 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<String> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
         _messageService.createNewMessage(messageRequest);
-        return new ResponseEntity<>("Created new message succesfully", HttpStatus.CREATED);
+        return new ResponseEntity<>("Created new message successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "{messageId}")
@@ -50,6 +51,6 @@ public class MessageController {
     @PutMapping(path = "/{messageId}")
     public ResponseEntity<Message> updateMessage(@PathVariable("messageId") Long messageId, @Valid @RequestBody MessageRequest messageRequest) {
         Message updatedMessage = _messageService.updateMessage(messageId, messageRequest);
-        return new ResponseEntity(updatedMessage, HttpStatus.OK);
+        return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
     }
 }
