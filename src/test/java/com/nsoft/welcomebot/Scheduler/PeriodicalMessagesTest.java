@@ -11,9 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -21,7 +21,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@DataJpaTest
+@SpringBootTest
+@Testcontainers
 @ExtendWith(MockitoExtension.class)
 class PeriodicalMessagesTest {
     @MockBean
@@ -37,7 +38,6 @@ class PeriodicalMessagesTest {
     private ScheduleRepository scheduleRepositoryH2;
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
         // given
@@ -59,7 +59,6 @@ class PeriodicalMessagesTest {
      * without it the difference between the two dates would be ~59.997s and the ChronoUnit comparison would show 0 minutes difference.
      */
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldAddOneMinuteToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
@@ -78,8 +77,7 @@ class PeriodicalMessagesTest {
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void shouldAddOneHourToNextRunDate() {
+    void canAddOneHourToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
         // given
@@ -96,7 +94,6 @@ class PeriodicalMessagesTest {
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldAddOneDayToNextRunDate() {
         periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
 
