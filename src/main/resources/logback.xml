@@ -1,12 +1,12 @@
 <configuration debug="true">
-    <property name="LOG_FILE" value="LogFile" />
-    <property name="LOG_DIR" value="logs" />
+    <property name="LOG_FILE" value="SlackEventLog" />
+    <property name="LOG_DIR" value="logs/slackLogs" />
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="SLACK_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/${LOG_FILE}.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -22,8 +22,27 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="welcome.bot" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
+    <appender name="ERROR_LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/errors/ErrorLogs.log</file>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>WARN</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <!-- minute rollover -->
+        <fileNamePattern>logs/errors/ErrorLogs.%d{yyyy-MM-dd_HH-mm}.log</fileNamePattern>
+        <!-- keep 30 days' worth of history capped at 3GB total size -->
+        <maxHistory>30</maxHistory>
+        <totalSizeCap>3GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+    </encoder>
+</appender>
+    <logger name="slack-event-logger" level="INFO">
+        <appender-ref ref="SLACK_FILE" />
+    </logger>
+    <logger name="error-logger" level="WARN">
+        <appender-ref ref="ERROR_LOGS" />
     </logger>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

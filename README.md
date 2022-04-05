@@ -78,12 +78,14 @@ in database.
 App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
 in dev environment with application-dev.properties
 
-Logging 
+**Logging** 
 
-```text
 Use @Slf4j annotation above the class that uses the logger. 
-log.info("String") / warn() / error()
-
-Loggs everything to console, but only logs warns and errors to logfile
-Rolls over new log file every day
+Custom loggers: 
+```text
+    private static final Logger slackLogger = (Logger) LoggerFactory.getLogger("slack-event-logger");
+    private static final Logger errorLogger = (Logger) LoggerFactory.getLogger("error-logger");
 ```
+
+Root logger logs everything to console, custom loggers use rolling files on daily basis
+
