@@ -12,7 +12,6 @@ docker-compose -f docker-compose-prod.yml up
 
 **Add SuperAdmin to database**
 
-Edit addSuperAdmin.sql so it contains your SuperAdmin email
 Run addSuperAdmin.sh with sudo privileges
 ```text
 sudo su
