@@ -17,4 +17,7 @@ public class Credentials {
     @Value("${OPEN_WEATHER_API_KEY}")
     private String openWeatherApiKey;
 
+    @Value("${giphy.url}")
+    private String giphyUrl;
+
 }
