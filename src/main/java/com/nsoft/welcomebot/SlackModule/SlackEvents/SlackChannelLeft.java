@@ -10,6 +10,8 @@ import com.slack.api.model.event.MemberLeftChannelEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+
 @Component
 public class SlackChannelLeft implements SlackEventInterface {
 
@@ -32,9 +34,11 @@ public class SlackChannelLeft implements SlackEventInterface {
             var channelResult = app.getClient().conversationsInfo(r -> r
                     .token(crd.getSlackBotToken())
                     .channel(event.getChannel()));
+            var user = "<@" + event.getUser() + ">";
             var channelName = channelResult.getChannel().getName();
             for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActiveAndTriggerEvent(channelName, true, getEventType())) {
-                ctx.say(trigger.getMessage().getText());
+                String message = MessageFormat.format(trigger.getMessage().getText(), user);
+                ctx.say(message);
             }
             return ctx.ack();
         });
