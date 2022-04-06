@@ -33,23 +33,27 @@ public class OauthRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String email = getEmailFromToken(request, response);
-        setSecurityContext(request, response, email);
+        String email = getEmailFromToken(request, response, filterChain);
+        setSecurityContext(request, response, email, filterChain);
         filterChain.doFilter(request, response);
     }
 
-    private String getEmailFromToken(HttpServletRequest request, HttpServletResponse response) {
+    private String getEmailFromToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token;
         String email = null;
         final String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            email = userService.getEmailFromToken(token);
+            try {
+                email = userService.getEmailFromToken(token);
+            } catch (Exception e) {
+                filterChain.doFilter(request, response);
+            }
         }
         return email;
     }
 
-    private void setSecurityContext(HttpServletRequest request, HttpServletResponse response, String email) {
+    private void setSecurityContext(HttpServletRequest request, HttpServletResponse response, String email, FilterChain filterChain) throws ServletException, IOException {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails user = userService.loadUserByUsername(email);
@@ -59,7 +63,7 @@ public class OauthRequestFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             } catch (UsernameNotFoundException e) {
-                response.setStatus(403);
+                filterChain.doFilter(request, response);
             }
         }
     }
