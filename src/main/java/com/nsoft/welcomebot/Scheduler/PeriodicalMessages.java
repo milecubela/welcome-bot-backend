@@ -36,7 +36,7 @@ public class PeriodicalMessages {
         // this list is composed of all active repeating schedules
         List<Schedule> startRunningList = new ArrayList<>();
         sendGifs();
-        // setDefaultValues sets next run to run date value  (default) +  sendAtScheduledRunDate checks if the run date is now
+        // sendAtScheduledRunDate checks if the run date is now
         for (Schedule schedule : schedules) {
             sendAtScheduledRunDate(schedule);
             //   separates all repeating schedules
@@ -62,8 +62,6 @@ public class PeriodicalMessages {
 
     public void setNextRunDate(Schedule schedule) {
         if (schedule.getSchedulerInterval() == SchedulerInterval.MINUTE) {
-            // 60-1 fixes a scheduling problem where the localtime would be less than the run time by a few milliseconds,hence not printing the message
-            // by rescheduling it for 59 seconds the localtime is always going to be ~1s more than the scheduled run time,making sure the message prints
             schedule.setNextRun(LocalDateTime.now().plusSeconds(300));
         }
         if (schedule.getSchedulerInterval() == SchedulerInterval.HOUR) {
