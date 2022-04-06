@@ -5,10 +5,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Services.SlackService;
 import com.nsoft.welcomebot.Utilities.ConsumeJSON;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
-import com.slack.api.bolt.App;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.Attachment;
 import lombok.AllArgsConstructor;
@@ -27,8 +27,8 @@ import java.util.Random;
 @AllArgsConstructor
 public class PeriodicalMessages {
     private final ScheduleRepository scheduleRepository;
-    private final App bot2;
-    private final Credentials crd;
+    private final Credentials credentials;
+    private final SlackService slackService;
 
     @Scheduled(fixedDelay = 30000)
     public void sendScheduledMessages() throws SlackApiException, IOException {
@@ -56,7 +56,7 @@ public class PeriodicalMessages {
     }
 
     public void sendMessage(Schedule schedule) throws SlackApiException, IOException {
-        bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
+        slackService.postMessage(schedule.getChannel(), schedule.getMessage().getText());
         setNextRunDate(schedule);
     }
 
@@ -75,7 +75,7 @@ public class PeriodicalMessages {
 
     public void sendAtScheduledRunDate(Schedule schedule) throws SlackApiException, IOException {
         if (LocalDateTime.now().isAfter(schedule.getNextRun())) {
-            bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(schedule.getChannel()).text(schedule.getMessage().getText()));
+            slackService.postMessage(schedule.getChannel(), schedule.getMessage().getText());
             deactivateSchedule(schedule);
         }
     }
@@ -87,11 +87,11 @@ public class PeriodicalMessages {
     }
 
     public void sendGifs() throws IOException, SlackApiException {
-        Schedule gif = scheduleRepository.getById(1L);
+        Schedule gif = scheduleRepository.getById(1108L);
         if (!gif.isActive() || !LocalDateTime.now().isAfter(gif.getNextRun())) {
             return;
         }
-        JsonObject jsonObject = ConsumeJSON.getJSONObject(crd.getGiphyUrl());
+        JsonObject jsonObject = ConsumeJSON.getJSONObject(credentials.getGiphyUrl());
         JsonObject data = new Gson().fromJson(jsonObject, JsonObject.class);
         String receivedJson = data.get("data").getAsJsonArray().get(randomNumber()).getAsJsonObject().get("images").getAsJsonObject().get("downsized").getAsJsonObject().get("url").getAsString();
         Attachment attachment = new Attachment();
@@ -99,7 +99,7 @@ public class PeriodicalMessages {
         attachment.setImageUrl(receivedJson);
         List<Attachment> listAttachments = new ArrayList<>();
         listAttachments.add(attachment);
-        bot2.client().chatPostMessage(r -> r.token(crd.getSlackBotToken()).channel(gif.getChannel()).attachments(listAttachments));
+        slackService.postMessageWithAttachment(gif.getChannel(), listAttachments);
         gif.setNextRun(LocalDateTime.now().plusHours(1));
         scheduleRepository.save(gif);
     }
