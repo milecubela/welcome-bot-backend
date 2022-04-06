@@ -77,7 +77,7 @@ public class ScheduleService {
     }
 
     public void toggleGifs() {
-        Schedule gif = scheduleRepository.getById(1L);
+        Schedule gif = scheduleRepository.getById(1108L);
         if (gif.isActive()) {
             gif.setActive(false);
             scheduleRepository.save(gif);
