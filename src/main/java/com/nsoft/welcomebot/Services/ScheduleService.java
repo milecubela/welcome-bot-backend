@@ -29,7 +29,7 @@ public class ScheduleService {
         return scheduleRepository.findAll();
     }
 
-    public void createNewSchedule(ScheduleRequest scheduleRequest) {
+    public Schedule createNewSchedule(ScheduleRequest scheduleRequest) {
         Optional<Message> message = messageRepository.findById(scheduleRequest.getMessageId());
         if (message.isEmpty()) {
             throw new NotFoundException("Message with ID " + scheduleRequest.getMessageId() + " not found!");
@@ -37,7 +37,7 @@ public class ScheduleService {
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setMessage(message.get());
         schedule.setCreatedAt(LocalDate.now());
-        scheduleRepository.save(schedule);
+        return scheduleRepository.save(schedule);
     }
 
     public void deleteSchedule(Long scheduleId) {
