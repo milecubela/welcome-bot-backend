@@ -68,9 +68,7 @@ class PeriodicalMessagesTest {
 
     /**
      * Test makes sure the next run date is set a minute from now.
-     * To break this test compare the next run date to a timestamp greater than 1 minute from now.
-     * RunDate is set to .now()-1s because of a millisecond difference in execution time which would show the minute difference as 0 instead of 1
-     * without it the difference between the two dates would be ~59.997s and the ChronoUnit comparison would show 0 minutes difference.
+     * To break this test compare the next run date to a timestamp greater than 5 minutes from now.
      */
     @Test
     void shouldAddFiveMinutesToNextRunDate() {
