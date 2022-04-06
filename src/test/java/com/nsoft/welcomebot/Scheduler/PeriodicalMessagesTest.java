@@ -6,15 +6,17 @@ import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import com.slack.api.bolt.App;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @Testcontainers
+@Transactional
 @ExtendWith(MockitoExtension.class)
 class PeriodicalMessagesTest {
     @MockBean
@@ -31,22 +34,33 @@ class PeriodicalMessagesTest {
     @MockBean
     private Credentials credentials;
 
-    @Mock
+    @MockBean
     private PeriodicalMessages periodicalMessages;
 
     @Autowired
     private ScheduleRepository scheduleRepositoryH2;
 
+    @BeforeEach
+    void setUp() {
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+    }
+
+    @AfterEach
+    void tearDown() {
+        scheduleRepositoryH2.deleteAll();
+    }
+
+
     @Test
     void shouldSetActiveToFalseAfterExecutionIfRepeatIsFalse() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(5), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        schedule.setScheduleId(1L);
+        scheduleRepositoryH2.save(schedule);
+        Long scheduleId = scheduleRepositoryH2.findAll().get(0).getScheduleId();
         //when
         periodicalMessages.deactivateSchedule(schedule);
-        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Optional<Schedule> result = scheduleRepositoryH2.findById(scheduleId);
         Schedule returnSchedule = result.get();
         //then
         assertThat(returnSchedule.isActive()).isFalse();
@@ -59,35 +73,30 @@ class PeriodicalMessagesTest {
      * without it the difference between the two dates would be ~59.997s and the ChronoUnit comparison would show 0 minutes difference.
      */
     @Test
-    void shouldAddOneMinuteToNextRunDate() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
-
+    void shouldAddFiveMinutesToNextRunDate() {
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now().minusSeconds(1), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        schedule.setScheduleId(1L);
-
+        scheduleRepositoryH2.save(schedule);
+        Long scheduleId = scheduleRepositoryH2.findAll().get(0).getScheduleId();
         //when
         periodicalMessages.setNextRunDate(schedule);
-        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
-        Schedule returnSchedule = result.get();
+        Schedule result = scheduleRepositoryH2.getById(scheduleId);
         //then
 
-        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(5);
+        assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), result.getNextRun())).isEqualTo(5);
     }
 
     @Test
     void canAddOneHourToNextRunDate() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
-
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.HOUR, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        schedule.setScheduleId(1L);
-
+        scheduleRepositoryH2.save(schedule);
+        Long scheduleId = scheduleRepositoryH2.findAll().get(0).getScheduleId();
         //when
         periodicalMessages.setNextRunDate(schedule);
-        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Optional<Schedule> result = scheduleRepositoryH2.findById(scheduleId);
         Schedule returnSchedule = result.get();
         //then
         assertThat(ChronoUnit.MINUTES.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(60);
@@ -95,16 +104,15 @@ class PeriodicalMessagesTest {
 
     @Test
     void shouldAddOneDayToNextRunDate() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
-
         // given
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.DAY, "testchannel", 1L);
         Schedule schedule = new Schedule(scheduleRequest);
-        schedule.setScheduleId(1L);
+        scheduleRepositoryH2.save(schedule);
+        Long scheduleId = scheduleRepositoryH2.findAll().get(0).getScheduleId();
 
         //when
         periodicalMessages.setNextRunDate(schedule);
-        Optional<Schedule> result = scheduleRepositoryH2.findById(1L);
+        Optional<Schedule> result = scheduleRepositoryH2.findById(scheduleId);
         Schedule returnSchedule = result.get();
         //then
         assertThat(ChronoUnit.HOURS.between(schedule.getRunDate(), returnSchedule.getNextRun())).isEqualTo(24);
