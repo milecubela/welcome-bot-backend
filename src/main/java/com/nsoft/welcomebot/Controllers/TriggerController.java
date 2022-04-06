@@ -19,39 +19,39 @@ import java.util.List;
 @RequestMapping(path = "api/v1/triggers")
 public class TriggerController {
 
-    private final TriggerService _triggerService;
+    private final TriggerService triggerService;
 
     @PostMapping
-    public ResponseEntity<String> createTrigger(@Valid @RequestBody TriggerRequest triggerRequest) {
-        _triggerService.createNewTrigger(triggerRequest);
-        return new ResponseEntity<>("Created new trigger successfully", HttpStatus.CREATED);
+    public ResponseEntity<Trigger> createTrigger(@Valid @RequestBody TriggerRequest triggerRequest) {
+        Trigger returnTrigger = triggerService.createNewTrigger(triggerRequest);
+        return new ResponseEntity<>(returnTrigger, HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<Object> getTriggers(@Valid @RequestParam(name = "offset", required = false) Integer offset, @RequestParam(name = "pagesize", required = false) Integer pagesize) {
         if (offset == null || pagesize == null) {
-            List<Trigger> triggerList = _triggerService.getTriggers();
+            List<Trigger> triggerList = triggerService.getTriggers();
             return new ResponseEntity<>(triggerList, HttpStatus.OK);
         }
-        Page<Trigger> pageTriggers = _triggerService.findAllPaginated(offset, pagesize);
+        Page<Trigger> pageTriggers = triggerService.findAllPaginated(offset, pagesize);
         return new ResponseEntity<>(pageTriggers, HttpStatus.OK);
     }
 
     @GetMapping(path = "{triggerId}")
     public ResponseEntity<Trigger> getTriggerById(@PathVariable("triggerId") Long triggerId) {
-        Trigger trigger = _triggerService.getTriggerById(triggerId);
+        Trigger trigger = triggerService.getTriggerById(triggerId);
         return new ResponseEntity<>(trigger, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{triggerId}")
     public ResponseEntity<String> deleteTrigger(@PathVariable("triggerId") Long triggerId) {
-        _triggerService.deleteTrigger(triggerId);
+        triggerService.deleteTrigger(triggerId);
         return new ResponseEntity<>("Trigger deleted", HttpStatus.OK);
     }
 
     @PutMapping(path = "/{triggerId}")
     public ResponseEntity<Trigger> updateTrigger(@PathVariable("triggerId") Long triggerId, @Valid @RequestBody TriggerRequest triggerRequest) {
-        Trigger updatedTrigger = _triggerService.updateTrigger(triggerId, triggerRequest);
+        Trigger updatedTrigger = triggerService.updateTrigger(triggerId, triggerRequest);
         return new ResponseEntity<>(updatedTrigger, HttpStatus.OK);
     }
 }

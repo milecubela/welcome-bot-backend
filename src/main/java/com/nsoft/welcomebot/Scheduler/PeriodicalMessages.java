@@ -87,7 +87,7 @@ public class PeriodicalMessages {
     }
 
     public void sendGifs() throws IOException, SlackApiException {
-        Schedule gif = scheduleRepository.getById(1L);
+        Schedule gif = scheduleRepository.getById(1108L);
         if (!gif.isActive() || !LocalDateTime.now().isAfter(gif.getNextRun())) {
             return;
         }
