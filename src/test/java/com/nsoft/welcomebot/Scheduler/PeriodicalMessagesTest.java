@@ -3,9 +3,9 @@ package com.nsoft.welcomebot.Scheduler;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Services.SlackService;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
-import com.slack.api.bolt.App;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ExtendWith(MockitoExtension.class)
 class PeriodicalMessagesTest {
     @MockBean
-    private App app;
+    private SlackService slackService;
 
     @MockBean
     private Credentials credentials;
@@ -42,7 +42,7 @@ class PeriodicalMessagesTest {
 
     @BeforeEach
     void setUp() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, app, credentials);
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, credentials, slackService);
     }
 
     @AfterEach
