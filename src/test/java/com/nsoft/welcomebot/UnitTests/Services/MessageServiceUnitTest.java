@@ -1,9 +1,10 @@
-package com.nsoft.welcomebot.Services;
+package com.nsoft.welcomebot.UnitTests.Services;
 
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.NotFoundException;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
+import com.nsoft.welcomebot.Services.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,7 @@ import static org.mockito.BDDMockito.given;
 
 // Replaces AutoClosable, .openMocks() and .close()
 @ExtendWith(MockitoExtension.class)
-class MessageServiceTest {
+class MessageServiceUnitTest {
 
     @Mock
     private MessageRepository messageRepository;

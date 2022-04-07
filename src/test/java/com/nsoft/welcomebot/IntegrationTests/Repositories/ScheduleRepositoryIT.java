@@ -1,7 +1,8 @@
-package com.nsoft.welcomebot.Repositories;
+package com.nsoft.welcomebot.IntegrationTests.Repositories;
 
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
+import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @Testcontainers
-class ScheduleRepositoryTest {
+class ScheduleRepositoryIT {
     @Autowired
     private ScheduleRepository _scheduleRepositoryTest;
 

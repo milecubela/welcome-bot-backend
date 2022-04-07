@@ -1,5 +1,6 @@
-package com.nsoft.welcomebot.Entities;
+package com.nsoft.welcomebot.UnitTests.Entities;
 
+import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class ScheduleTest {
+class ScheduleUnitTest {
 
     @Test
     @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
