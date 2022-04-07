@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public abstract class ConsumeJSON {
+public class JSON {
 
-    public static JsonObject getJSONObject(String url) throws IOException {
+    public static JsonObject get(String url) throws IOException {
         URL Url = new URL(url);
         HttpsURLConnection con = (HttpsURLConnection) Url.openConnection();
         con.setRequestMethod("GET");
@@ -21,5 +21,8 @@ public abstract class ConsumeJSON {
         in.close();
         con.disconnect();
         return json;
+    }
+
+    private JSON() {
     }
 }

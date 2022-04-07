@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Data
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Getter
 @Setter
@@ -21,10 +24,8 @@ public class Schedule {
     @GeneratedValue
     private Long scheduleId;
 
-    @NonNull
     private boolean isRepeat;
 
-    @NonNull
     private boolean isActive;
 
     private LocalDate createdAt;
@@ -63,5 +64,18 @@ public class Schedule {
         this.schedulerInterval = scheduleRequest.getSchedulerInterval();
         this.channel = scheduleRequest.getChannel();
         this.nextRun = scheduleRequest.getRunDate();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Schedule schedule = (Schedule) o;
+        return scheduleId != null && Objects.equals(scheduleId, schedule.scheduleId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

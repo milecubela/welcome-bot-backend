@@ -16,11 +16,11 @@ import java.text.MessageFormat;
 @Component
 public class SlackChannelLeft implements SlackEventInterface {
 
-    private final TriggerRepository _triggerRepository;
+    private final TriggerRepository triggerRepository;
 
     @Autowired
     public SlackChannelLeft(TriggerRepository triggerRepository) {
-        _triggerRepository = triggerRepository;
+        this.triggerRepository = triggerRepository;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SlackChannelLeft implements SlackEventInterface {
                     .channel(event.getChannel()));
             var user = "<@" + event.getUser() + ">";
             var channelName = channelResult.getChannel().getName();
-            for (Trigger trigger : _triggerRepository.findTriggersByChannelAndIsActiveAndTriggerEvent(channelName, true, getEventType())) {
+            for (Trigger trigger : triggerRepository.findTriggersByChannelAndIsActiveAndTriggerEvent(channelName, true, getEventType())) {
                 String message = MessageFormat.format(trigger.getMessage().getText(), user);
                 var result = ctx.say(message);
                 SlackEventLogger.logInfo("Message {" + result.getMessage().getText() + "} posted in channel with id " + trigger.getChannel());
