@@ -1,4 +1,4 @@
-package com.nsoft.welcomebot.Services;
+package com.nsoft.welcomebot.IntegrationTests.Services;
 
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Entities.Schedule;
@@ -6,6 +6,7 @@ import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Services.ScheduleService;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 @Testcontainers
 @ExtendWith(MockitoExtension.class)
-class ScheduleServiceIntegrationTest {
+class ScheduleServiceIT {
 
     @Autowired
     private ScheduleRepository _scheduleRepositoryTest;

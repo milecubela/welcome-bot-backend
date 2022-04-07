@@ -1,8 +1,9 @@
-package com.nsoft.welcomebot.Services;
+package com.nsoft.welcomebot.IntegrationTests.Services;
 
 import com.nsoft.welcomebot.Entities.Message;
 import com.nsoft.welcomebot.Models.RequestModels.MessageRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
+import com.nsoft.welcomebot.Services.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Testcontainers
 @SpringBootTest
-class MessageServiceIntegrationTest {
+class MessageServiceIT {
 
     @Autowired
     private MessageRepository messageRepository;

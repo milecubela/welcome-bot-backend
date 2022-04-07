@@ -1,4 +1,4 @@
-package com.nsoft.welcomebot.Controllers;
+package com.nsoft.welcomebot.IntegrationTests.Controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Testcontainers
 //@ActiveProfiles("h2")
-class MessageControllerTest {
+class MessageControllerIT {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired

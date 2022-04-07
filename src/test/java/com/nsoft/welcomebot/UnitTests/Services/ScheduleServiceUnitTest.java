@@ -1,10 +1,11 @@
-package com.nsoft.welcomebot.Services;
+package com.nsoft.welcomebot.UnitTests.Services;
 
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.NotFoundException;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Services.ScheduleService;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @Testcontainers
 @ExtendWith(MockitoExtension.class)
-class ScheduleServiceTest {
+class ScheduleServiceUnitTest {
 
     @Mock
     private ScheduleRepository _mockScheduleRepository;

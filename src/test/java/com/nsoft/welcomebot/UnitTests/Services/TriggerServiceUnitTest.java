@@ -1,10 +1,11 @@
-package com.nsoft.welcomebot.Services;
+package com.nsoft.welcomebot.UnitTests.Services;
 
 import com.nsoft.welcomebot.Entities.Trigger;
 import com.nsoft.welcomebot.ExceptionHandlers.CustomExceptions.NotFoundException;
 import com.nsoft.welcomebot.Models.RequestModels.TriggerRequest;
 import com.nsoft.welcomebot.Repositories.MessageRepository;
 import com.nsoft.welcomebot.Repositories.TriggerRepository;
+import com.nsoft.welcomebot.Services.TriggerService;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.nsoft.welcomebot.Controllers;
+package com.nsoft.welcomebot.IntegrationTests.Controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-class ScheduleControllerTest {
+class ScheduleControllerIT {
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     @Autowired

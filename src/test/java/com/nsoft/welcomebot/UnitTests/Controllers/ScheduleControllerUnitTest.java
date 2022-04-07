@@ -1,5 +1,6 @@
-package com.nsoft.welcomebot.Controllers;
+package com.nsoft.welcomebot.UnitTests.Controllers;
 
+import com.nsoft.welcomebot.Controllers.ScheduleController;
 import com.nsoft.welcomebot.Services.ScheduleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

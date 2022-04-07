@@ -1,5 +1,6 @@
-package com.nsoft.welcomebot.Controllers;
+package com.nsoft.welcomebot.UnitTests.Controllers;
 
+import com.nsoft.welcomebot.Controllers.MessageController;
 import com.nsoft.welcomebot.Services.MessageService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

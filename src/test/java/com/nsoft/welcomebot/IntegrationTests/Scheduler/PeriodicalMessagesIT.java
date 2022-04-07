@@ -1,8 +1,9 @@
-package com.nsoft.welcomebot.Scheduler;
+package com.nsoft.welcomebot.IntegrationTests.Scheduler;
 
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
+import com.nsoft.welcomebot.Scheduler.PeriodicalMessages;
 import com.nsoft.welcomebot.Services.SlackService;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
@@ -27,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Testcontainers
 @Transactional
 @ExtendWith(MockitoExtension.class)
-class PeriodicalMessagesTest {
+class PeriodicalMessagesIT {
     @MockBean
     private SlackService slackService;
 
