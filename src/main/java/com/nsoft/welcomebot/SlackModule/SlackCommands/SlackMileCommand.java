@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.SlackModule.SlackCommands;
 
+import com.nsoft.welcomebot.SlackModule.Logger.SlackEventLogger;
 import com.nsoft.welcomebot.SlackModule.SlackInterfaces.SlackCommandsInterface;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SlackCommand;
@@ -17,6 +18,7 @@ public class SlackMileCommand implements SlackCommandsInterface {
     public void subscribeToSlackCommand(App app, Credentials crd) {
         app.command("/mile", (req, ctx) -> {
             String message = "Mile about";
+            SlackEventLogger.logInfo("Command /mile invoked");
             return ctx.ack(message);
         });
     }

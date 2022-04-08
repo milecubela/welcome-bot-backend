@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.SlackModule.SlackCommands;
 
+import com.nsoft.welcomebot.SlackModule.Logger.SlackEventLogger;
 import com.nsoft.welcomebot.SlackModule.SlackInterfaces.SlackCommandsInterface;
 import com.nsoft.welcomebot.Utilities.ConsumeJSON;
 import com.nsoft.welcomebot.Utilities.Credentials;
@@ -25,6 +26,7 @@ public class SlackJokeOfTheDayCommand implements SlackCommandsInterface {
             String joke = json.getAsJsonObject("contents").getAsJsonArray("jokes").get(0).getAsJsonObject().getAsJsonObject("joke").get("text").getAsString();
             String message = "Joke of the day for " + LocalDate.now() + " is \n" + joke;
             ctx.say(message);
+            SlackEventLogger.logInfo("Command /joke_of_the_day invoked");
             return Response.ok();
         });
     }
