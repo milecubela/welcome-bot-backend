@@ -32,10 +32,9 @@ class UserRepositoryIT {
     @Test
     void shouldFindUserByEmail() {
         //given
-        UserRole userRole = UserRole.ADMIN;
         UserRequest userRequest = new UserRequest("test-email@gmail.com");
         User user = new User(userRequest);
-        user.setUserRole(userRole);
+        user.setUserRole(UserRole.ADMIN);
         userRepository.save(user);
 
         //when
