@@ -12,7 +12,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/api/v1/users")
-@CrossOrigin
+//@CrossOrigin
 public class UserController {
 
     private final UserService userService;
