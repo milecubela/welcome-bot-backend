@@ -21,4 +21,9 @@ public class AuthController {
         return userService.loginUser(tokenRequest);
     }
 
+    @PostMapping(path = "/logout")
+    public ResponseEntity<Object> logoutUser(@Valid @RequestBody TokenRequest tokenRequest){
+        return userService.logoutUser(tokenRequest);
+    }
+
 }

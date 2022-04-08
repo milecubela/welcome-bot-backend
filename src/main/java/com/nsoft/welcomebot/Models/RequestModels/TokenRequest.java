@@ -7,5 +7,5 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class TokenRequest {
-    private String idToken;
+    private String accessToken;
 }

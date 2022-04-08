@@ -65,22 +65,35 @@ public class UserService implements UserDetailsService {
      */
 
     public ResponseEntity<Object> loginUser(TokenRequest tokenRequest) {
-        String idToken = tokenRequest.getIdToken();
+        String accessToken = tokenRequest.getAccessToken();
 
-        if (idToken == null) {
+        if (accessToken == null) {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
         }
-        String email = getEmailFromToken(idToken);
+        String email = getEmailFromToken(accessToken);
         User user = validateUser(email);
         if (user == null) {
             throw new UsernameNotFoundException("User doesn't exist in the database");
         }
 
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setIdToken(idToken);
+        tokenResponse.setIdToken(accessToken);
         tokenResponse.setUserRole(user.getUserRole());
         // Accepted, return OK and token
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Object> logoutUser(TokenRequest tokenRequest) {
+        String accessToken = tokenRequest.getAccessToken();
+        if (accessToken == null) {
+            throw new BadTokenException("Bad Token request! Provide a bearer token");
+        }
+        try{
+            oauthTokenService.revokeGoogleToken(accessToken);
+        } catch (IOException e) {
+            throw new BadTokenException("Invalid google token or token is already revoked. Please provide a valid token");
+        }
+        return new ResponseEntity<>("Token succesfully revoked!", HttpStatus.OK);
     }
 
     public String getEmailFromToken(String token) {
@@ -89,7 +102,7 @@ public class UserService implements UserDetailsService {
             JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
             email = jsonObject.get("email").getAsString();
         } catch (IOException e) {
-            throw new BadTokenException(e.getMessage());
+            throw new BadTokenException("Invalid Google Token!");
         }
         return email;
     }
