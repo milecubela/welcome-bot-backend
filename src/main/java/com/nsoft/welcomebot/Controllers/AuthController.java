@@ -3,8 +3,12 @@ package com.nsoft.welcomebot.Controllers;
 import com.nsoft.welcomebot.Models.RequestModels.TokenRequest;
 import com.nsoft.welcomebot.Services.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -17,12 +21,11 @@ public class AuthController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<Object> loginUser(@Valid @RequestBody TokenRequest tokenRequest) {
-        return userService.loginUser(tokenRequest);
+        return new ResponseEntity<>(userService.loginUser(tokenRequest), HttpStatus.OK);
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<Object> logoutUser(@Valid @RequestBody TokenRequest tokenRequest){
-        return userService.logoutUser(tokenRequest);
+    public ResponseEntity<Object> logoutUser(@Valid @RequestBody TokenRequest tokenRequest) {
+        return new ResponseEntity<>(userService.logoutUser(tokenRequest), HttpStatus.OK);
     }
-
 }
