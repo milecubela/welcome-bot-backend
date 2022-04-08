@@ -76,7 +76,18 @@ in database.
 **App Security**
 
 App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
-in dev environment with application-dev.properties
+in dev environment with application-dev.properties.
+
+Application has 2 different roles, ADMIN and SUPERADMIN. Admin is the main user, and has access to entire 
+dashboard. SUPERADMIN has te ability to add new admins. 
+
+CORS policy has default setup.
+CSRF protection is disabled and our application has Stateless session creation policy. 
+We are using Google Access Tokens JWTs for authorization. On each request, we are validating the
+access token on oauth2 endpoints, extracting the email from it and checking it against the database. 
+From there we are setting the Spring Security Context with valid user-role and allowing API access.
+
+XSS safety is also configured with default Spring Security implementation.
 
 **Logging** 
 
