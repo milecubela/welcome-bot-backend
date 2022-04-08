@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
         }
 
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setIdToken(accessToken);
+        tokenResponse.setAccessToken(accessToken);
         tokenResponse.setUserRole(user.getUserRole());
         // Accepted, return OK and token
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);

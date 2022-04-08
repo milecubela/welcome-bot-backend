@@ -13,7 +13,7 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 public class TokenResponse {
 
-    private String idToken;
+    private String accessToken;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
