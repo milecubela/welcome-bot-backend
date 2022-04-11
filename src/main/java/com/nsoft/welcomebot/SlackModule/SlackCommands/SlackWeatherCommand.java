@@ -1,6 +1,5 @@
 package com.nsoft.welcomebot.SlackModule.SlackCommands;
 
-import com.nsoft.welcomebot.SlackModule.Logger.SlackEventLogger;
 import com.nsoft.welcomebot.SlackModule.SlackInterfaces.SlackCommandsInterface;
 import com.nsoft.welcomebot.Utilities.ConsumeJSON;
 import com.nsoft.welcomebot.Utilities.Credentials;
@@ -27,7 +26,8 @@ public class SlackWeatherCommand implements SlackCommandsInterface {
             sky = sky.substring(1, sky.length() - 1);
             var temperature = json.getAsJsonObject("main").get("temp").getAsInt() - 273;
             double wind = json.getAsJsonObject("wind").get("speed").getAsInt() * 1.6;
-            if(city.equals("Mostar")) {
+            System.out.println(sky);
+            if (city.equals("Mostar")) {
                 ctx.say("You live there. Just look outside the window");
                 return Response.ok();
             }
@@ -36,7 +36,6 @@ public class SlackWeatherCommand implements SlackCommandsInterface {
                     "\nTemperature: " + temperature + "°C" +
                     "\nThe wind is blowing at " + (int) wind + "km/h";
             ctx.say(message);
-            SlackEventLogger.logInfo("Command /weather invoked");
             return Response.ok();
         });
     }

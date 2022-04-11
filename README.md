@@ -28,7 +28,6 @@ Spring Boot 2.6.4
 MariaDB 
 Dependencies: 
     - Spring Data JPA
-    - OAuth2 Client
     - Spring Web
     - Flyway
     - MariaDB Java Client
@@ -62,7 +61,7 @@ You can find the supported event types here: https://api.slack.com/events
 
 ```text
 Adding events:
-    1. Add new enum member in TriggerEvent under Utilities package.
+    1. Add new enum member in TriggerEvent under Utilities package that describes the event.
     2. Create a new class in SlackEvents package that will contain its interface methods.
 Adding commands:
 Before going through these steps the bot owner needs to subscribe to certain SlashCommands in its bot configuration page.
@@ -73,6 +72,15 @@ Before going through these steps the bot owner needs to subscribe to certain Sla
 Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
 in database. 
 
+**Note for using tests**
+
+Because we are using testcontainers for integration testing, you need to add user to the docker group.
+
+```text
+$ sudo groupadd docker
+$ sudo gpasswd -a $USER docker
+$ sudo service docker restart
+```
 **App Security**
 
 App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
