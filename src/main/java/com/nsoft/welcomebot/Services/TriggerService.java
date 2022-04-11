@@ -17,31 +17,31 @@ import java.util.Optional;
 @Service
 public class TriggerService {
 
-    private final TriggerRepository _triggerRepository;
-    private final MessageRepository _messageRepository;
+    private final TriggerRepository triggerRepository;
+    private final MessageRepository messageRepository;
 
     @Autowired
     public TriggerService(TriggerRepository triggerRepository, MessageRepository messageRepository) {
-        _triggerRepository = triggerRepository;
-        _messageRepository = messageRepository;
+        this.triggerRepository = triggerRepository;
+        this.messageRepository = messageRepository;
     }
 
-    public void createNewTrigger(TriggerRequest triggerRequest) {
-        Optional<Message> optionalMessage = _messageRepository.findById(triggerRequest.getMessageId());
+    public Trigger createNewTrigger(TriggerRequest triggerRequest) {
+        Optional<Message> optionalMessage = messageRepository.findById(triggerRequest.getMessageId());
         if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + triggerRequest.getMessageId() + " not found!");
         }
         Trigger trigger = new Trigger(triggerRequest);
         trigger.setMessage(optionalMessage.get());
-        _triggerRepository.save(trigger);
+        return triggerRepository.save(trigger);
     }
 
     public List<Trigger> getTriggers() {
-        return _triggerRepository.findAll();
+        return triggerRepository.findAll();
     }
 
     public Trigger getTriggerById(Long triggerId) {
-        Optional<Trigger> optionalTrigger = _triggerRepository.findById(triggerId);
+        Optional<Trigger> optionalTrigger = triggerRepository.findById(triggerId);
         if (optionalTrigger.isEmpty()) {
             throw new NotFoundException("Trigger with ID " + triggerId + " not found!");
         }
@@ -49,16 +49,16 @@ public class TriggerService {
     }
 
     public void deleteTrigger(Long triggerId) {
-        Optional<Trigger> optionalTrigger = _triggerRepository.findById(triggerId);
+        Optional<Trigger> optionalTrigger = triggerRepository.findById(triggerId);
         if (optionalTrigger.isEmpty()) {
             throw new NotFoundException("Trigger with ID " + triggerId + " not found!");
         }
-        _triggerRepository.deleteById(triggerId);
+        triggerRepository.deleteById(triggerId);
     }
 
     public Trigger updateTrigger(Long triggerId, TriggerRequest triggerRequest) {
-        Optional<Trigger> optionalTrigger = _triggerRepository.findById(triggerId);
-        Optional<Message> optionalMessage = _messageRepository.findById(triggerRequest.getMessageId());
+        Optional<Trigger> optionalTrigger = triggerRepository.findById(triggerId);
+        Optional<Message> optionalMessage = messageRepository.findById(triggerRequest.getMessageId());
         if (optionalTrigger.isEmpty()) {
             throw new NotFoundException("Trigger with ID " + triggerId + " not found!");
         } else if (optionalMessage.isEmpty()) {
@@ -69,11 +69,11 @@ public class TriggerService {
         trigger.setChannel(triggerRequest.getChannel());
         trigger.setIsActive(triggerRequest.getIsActive());
         trigger.setMessage(optionalMessage.get());
-        _triggerRepository.save(trigger);
+        triggerRepository.save(trigger);
         return trigger;
     }
 
     public Page<Trigger> findAllPaginated(int offset, int pagesize) {
-        return _triggerRepository.findAll(PageRequest.of(offset, pagesize));
+        return triggerRepository.findAll(PageRequest.of(offset, pagesize));
     }
 }

@@ -36,9 +36,9 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createSchedule(@Valid @RequestBody ScheduleRequest scheduleRequest) {
-        scheduleService.createNewSchedule(scheduleRequest);
-        return new ResponseEntity<>("Created new schedule successfully", HttpStatus.CREATED);
+    public ResponseEntity<Schedule> createSchedule(@Valid @RequestBody ScheduleRequest scheduleRequest) {
+        Schedule returnSchedule = scheduleService.createNewSchedule(scheduleRequest);
+        return new ResponseEntity<>(returnSchedule, HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "{scheduleId}")
@@ -51,5 +51,11 @@ public class ScheduleController {
     public ResponseEntity<Schedule> updateSchedule(@PathVariable("scheduleId") Long scheduleId, @Valid @RequestBody ScheduleRequest scheduleRequest) {
         Schedule updatedSchedule = scheduleService.updateSchedule(scheduleId, scheduleRequest);
         return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/toggle")
+    public ResponseEntity<String> toggleGif() {
+        scheduleService.toggleGifs();
+        return new ResponseEntity<>("Successfully toggled gif sending", HttpStatus.OK);
     }
 }

@@ -14,16 +14,14 @@ import java.net.URL;
 @Service
 public class OauthTokenService {
 
-/*
-    Function that takes googleid token as param, and checks if the token is valid
- */
-
+    /*
+        Function that takes googleid token as param, and checks if the token is valid
+     */
     public JsonObject verifyGoogleToken(String token) throws IOException {
 
         URL url = new URL("https://oauth2.googleapis.com/tokeninfo?id_token=" + token);
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         JsonObject jsonObject = JsonParser.parseReader(in).getAsJsonObject();
         in.close();

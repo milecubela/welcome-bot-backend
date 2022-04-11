@@ -53,11 +53,10 @@ public class SlackService {
                 .text(text));
     }
 
-    public void postMessageWithAttachment(String channel, String text, List<Attachment> attachments) throws SlackApiException, IOException {
+    public void postMessageWithAttachment(String channel, List<Attachment> attachments) throws SlackApiException, IOException {
         _app.client().chatPostMessage(r -> r
                 .channel(channel)
                 .token(_credentials.getSlackBotToken())
-                .text(text)
                 .attachments(attachments));
     }
 

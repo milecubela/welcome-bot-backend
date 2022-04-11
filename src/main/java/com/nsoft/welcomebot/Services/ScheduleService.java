@@ -17,55 +17,55 @@ import java.util.Optional;
 @Service
 public class ScheduleService {
 
-    private final ScheduleRepository _scheduleRepository;
-    private final MessageRepository _messageRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final MessageRepository messageRepository;
 
     public ScheduleService(ScheduleRepository scheduleRepository, MessageRepository messageRepository) {
-        _scheduleRepository = scheduleRepository;
-        _messageRepository = messageRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.messageRepository = messageRepository;
     }
 
     public List<Schedule> getSchedules() {
-        return _scheduleRepository.findAll();
+        return scheduleRepository.findAll();
     }
 
-    public void createNewSchedule(ScheduleRequest scheduleRequest) {
-        Optional<Message> message = _messageRepository.findById(scheduleRequest.getMessageId());
+    public Schedule createNewSchedule(ScheduleRequest scheduleRequest) {
+        Optional<Message> message = messageRepository.findById(scheduleRequest.getMessageId());
         if (message.isEmpty()) {
             throw new NotFoundException("Message with ID " + scheduleRequest.getMessageId() + " not found!");
         }
         Schedule schedule = new Schedule(scheduleRequest);
         schedule.setMessage(message.get());
         schedule.setCreatedAt(LocalDate.now());
-        _scheduleRepository.save(schedule);
+        return scheduleRepository.save(schedule);
     }
 
     public void deleteSchedule(Long scheduleId) {
-        Optional<Schedule> optionalSchedule = _scheduleRepository.findById(scheduleId);
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
         if (optionalSchedule.isEmpty()) {
             throw new NotFoundException("Schedule with ID " + scheduleId + " not found");
         }
-        _scheduleRepository.deleteById(scheduleId);
+        scheduleRepository.deleteById(scheduleId);
     }
 
     public Schedule updateSchedule(Long scheduleId, ScheduleRequest scheduleRequest) {
-        Optional<Schedule> optionalSchedule = _scheduleRepository.findById(scheduleId);
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
         if (optionalSchedule.isEmpty()) {
             throw new NotFoundException("Schedule with ID " + scheduleId + " not found");
         }
-        Optional<Message> optionalMessage = _messageRepository.findById(scheduleRequest.getMessageId());
+        Optional<Message> optionalMessage = messageRepository.findById(scheduleRequest.getMessageId());
         if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + scheduleRequest.getMessageId() + " not found!");
         }
         Schedule schedule = optionalSchedule.get();
         schedule.updateSchedule(scheduleRequest);
         schedule.setMessage(optionalMessage.get());
-        _scheduleRepository.save(schedule);
+        scheduleRepository.save(schedule);
         return schedule;
     }
 
     public Schedule getScheduleById(Long scheduleId) {
-        Optional<Schedule> optionalSchedule = _scheduleRepository.findById(scheduleId);
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
         if (optionalSchedule.isEmpty()) {
             throw new NotFoundException("Schedule with ID " + scheduleId + " not found");
         }
@@ -73,6 +73,17 @@ public class ScheduleService {
     }
 
     public Page<Schedule> findAllPaginated(int offset, int pagesize) {
-        return _scheduleRepository.findAll(PageRequest.of(offset, pagesize));
+        return scheduleRepository.findAll(PageRequest.of(offset, pagesize));
+    }
+
+    public void toggleGifs() {
+        Schedule gif = scheduleRepository.getById(1108L);
+        if (gif.isActive()) {
+            gif.setActive(false);
+            scheduleRepository.save(gif);
+        } else {
+            gif.setActive(true);
+            scheduleRepository.save(gif);
+        }
     }
 }

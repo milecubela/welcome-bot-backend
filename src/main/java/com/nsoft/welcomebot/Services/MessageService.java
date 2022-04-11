@@ -16,19 +16,19 @@ import java.util.Optional;
 @Service
 public class MessageService {
 
-    private final MessageRepository _messageRepository;
+    private final MessageRepository messageRepository;
 
     @Autowired
     public MessageService(MessageRepository messageRepository) {
-        _messageRepository = messageRepository;
+        this.messageRepository = messageRepository;
     }
 
     public List<Message> getMessages() {
-        return _messageRepository.findAll();
+        return messageRepository.findAll();
     }
 
     public Message getMessageById(Long messageId) {
-        Optional<Message> optionalMessage = _messageRepository.findById(messageId);
+        Optional<Message> optionalMessage = messageRepository.findById(messageId);
         if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + messageId + " not found!");
         }
@@ -36,31 +36,31 @@ public class MessageService {
     }
 
     public Page<Message> findAllPaginated(int offset, int pagesize) {
-        return _messageRepository.findAll(PageRequest.of(offset, pagesize));
+        return messageRepository.findAll(PageRequest.of(offset, pagesize));
     }
 
-    public void createNewMessage(MessageRequest messageRequest) {
+    public Message createNewMessage(MessageRequest messageRequest) {
         Message message = new Message(messageRequest);
         message.setCreatedAt(LocalDate.now());
-        _messageRepository.save(message);
+        return messageRepository.save(message);
     }
 
     public void deleteMessage(Long messageId) {
-        Optional<Message> optionalMessage = _messageRepository.findById(messageId);
+        Optional<Message> optionalMessage = messageRepository.findById(messageId);
         if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + messageId + " not found!");
         }
-        _messageRepository.deleteById(messageId);
+        messageRepository.deleteById(messageId);
     }
 
     public Message updateMessage(Long messageId, MessageRequest messageRequest) {
-        Optional<Message> optionalMessage = _messageRepository.findById(messageId);
+        Optional<Message> optionalMessage = messageRepository.findById(messageId);
         if (optionalMessage.isEmpty())
             throw new NotFoundException("Message with ID " + messageId + " not found!");
         Message message = optionalMessage.get();
         message.setText(messageRequest.getText());
         message.setTitle(messageRequest.getTitle());
-        _messageRepository.save(message);
+        messageRepository.save(message);
         return message;
     }
 }

@@ -1,4 +1,4 @@
-package com.nsoft.welcomebot.Controllers;
+package com.nsoft.welcomebot.IntegrationTests.Controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,10 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,8 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("h2")
-class ScheduleControllerTest {
+@Testcontainers
+class ScheduleControllerIT {
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     @Autowired
@@ -52,12 +51,11 @@ class ScheduleControllerTest {
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnAllSchedules() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
-        Message msg = messageRepository.getById(1L);
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
+        Message msg = messageRepository.findAll().get(0);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", msg.getMessageId());
         Schedule schedule1 = new Schedule(scheduleRequest);
         Schedule schedule2 = new Schedule(scheduleRequest);
         schedule1.setMessage(msg);
@@ -73,7 +71,6 @@ class ScheduleControllerTest {
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldReturnPaginatedSchedules() throws Exception {
         Message message = new Message("texttexttext", "text text with 20 letters");
         messageRepository.save(message);
@@ -94,78 +91,76 @@ class ScheduleControllerTest {
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldGetScheduleById() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "page1channel");
         scheduleRepository.save(schedule1);
-        MvcResult result = mockMvc.perform(get("/api/v1/schedules/2")).andDo(print()).andExpect(status().isOk()).andReturn();
+        Schedule returnSchedule = scheduleRepository.findAll().get(0);
+        MvcResult result = mockMvc.perform(get("/api/v1/schedules/" + returnSchedule.getScheduleId())).andDo(print()).andExpect(status().isOk()).andReturn();
         String responseBody = result.getResponse().getContentAsString();
         Schedule schedule = objectMapper.readValue(responseBody, Schedule.class);
-        assertThat(schedule.getScheduleId()).isEqualTo(2);
+        assertThat(schedule.getScheduleId()).isEqualTo(returnSchedule.getScheduleId());
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldThrowNotFoundIfScheduleDoesntExist() throws Exception {
         mockMvc.perform(get("/api/v1/schedules/11")).andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldDeleteScheduleById() throws Exception {
         scheduleService = new ScheduleService(scheduleRepository, messageRepository);
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
-        Message msg = messageRepository.getById(1L);
+        Message msg = messageRepository.findAll().get(0);
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "testchannel", 1L);
         Schedule schedule1 = new Schedule(scheduleRequest);
         schedule1.setMessage(msg);
         scheduleRepository.save(schedule1);
-        mockMvc.perform(delete("/api/v1/schedules/2")).andExpect(status().isOk());
+        Schedule returnSchedule = scheduleRepository.findAll().get(0);
+        mockMvc.perform(delete("/api/v1/schedules/" + returnSchedule.getScheduleId())).andExpect(status().isOk());
         List<Schedule> schedules = scheduleRepository.findAll();
         assertThat(schedules.isEmpty()).isTrue();
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldThrowOnDeleteIfScheduleIdDoesntExist() throws Exception {
         mockMvc.perform(delete("/api/v1/schedules/11")).andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldThrowOnCreateIfMessageIdDoesntExist() throws Exception {
         ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "page1channel", 12L);
         String requestJson = objectMapper.writeValueAsString(scheduleRequest);
         //when
-        mockMvc.perform(post("/api/v1/schedules").contentType(MediaType.APPLICATION_JSON).content(requestJson).characterEncoding("utf-8")).andExpect(status().isNotFound());
+        mockMvc.perform(post("/api/v1/schedules").contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson).characterEncoding("utf-8")).andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldCreateNewSchedule() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "page1channel", 1L);
+        Message returnMessage = messageRepository.findAll().get(0);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "page1channel", returnMessage.getMessageId());
         String requestJson = objectMapper.writeValueAsString(scheduleRequest);
         //when
-        mockMvc.perform(post("/api/v1/schedules").contentType(MediaType.APPLICATION_JSON).content(requestJson).characterEncoding("utf-8")).andExpect(status().isCreated());
+        mockMvc.perform(post("/api/v1/schedules").contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson).characterEncoding("utf-8")).andExpect(status().isCreated());
         List<Schedule> result = scheduleRepository.findAll();
         assertThat(result.size()).isEqualTo(1);
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldThrowOnScheduleUpdateIfIdIsInvalid() throws Exception {
         ScheduleRequest badRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "TEST", 12L);
         var requestJson = objectMapper.writeValueAsString(badRequest);
-        mockMvc.perform(put("/api/v1/schedules/5").contentType(MediaType.APPLICATION_JSON).content(requestJson).characterEncoding("utf-8")).andExpect(status().isNotFound());
+        mockMvc.perform(put("/api/v1/schedules/5").contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson).characterEncoding("utf-8")).andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldThrowOnScheduleUpdateIfMessageIdIsInvalid() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
@@ -173,19 +168,22 @@ class ScheduleControllerTest {
         scheduleRepository.save(schedule1);
         ScheduleRequest badRequest = new ScheduleRequest(false, false, LocalDateTime.now(), SchedulerInterval.MINUTE, "TEST", 12L);
         var requestJson = objectMapper.writeValueAsString(badRequest);
-        mockMvc.perform(put("/api/v1/schedules/1").contentType(MediaType.APPLICATION_JSON).content(requestJson).characterEncoding("utf-8")).andExpect(status().isNotFound());
+        mockMvc.perform(put("/api/v1/schedules/1").contentType(MediaType.APPLICATION_JSON).content(requestJson).
+                characterEncoding("utf-8")).andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(scripts = "classpath:cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldUpdateSchedule() throws Exception {
         Message message = new Message("Title", "Text Text with 20 letters");
         messageRepository.save(message);
         Schedule schedule1 = new Schedule(2L, false, false, LocalDate.now(), LocalDateTime.now(), LocalDateTime.now(), SchedulerInterval.MINUTE, message, "testchannel");
         scheduleRepository.save(schedule1);
-        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "TEST", 1L);
+        Message returnMessage = messageRepository.findAll().get(0);
+        Schedule returnedSchedule = scheduleRepository.findAll().get(0);
+        ScheduleRequest scheduleRequest = new ScheduleRequest(false, true, LocalDateTime.now(), SchedulerInterval.MINUTE, "TEST", returnMessage.getMessageId());
         var requestJson = objectMapper.writeValueAsString(scheduleRequest);
-        MvcResult result = mockMvc.perform(put("/api/v1/schedules/2").contentType(MediaType.APPLICATION_JSON).content(requestJson).characterEncoding("utf-8")).andExpect(status().isOk()).andReturn();
+        MvcResult result = mockMvc.perform(put("/api/v1/schedules/" + returnedSchedule.getScheduleId()).contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson).characterEncoding("utf-8")).andExpect(status().isOk()).andReturn();
         String responseBody = result.getResponse().getContentAsString();
         Schedule newSchedule = objectMapper.readValue(responseBody, Schedule.class);
         assertThat(newSchedule.isActive()).isTrue();
