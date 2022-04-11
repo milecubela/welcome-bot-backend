@@ -5,7 +5,6 @@ import com.nsoft.welcomebot.Models.RequestModels.ScheduleRequest;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import com.nsoft.welcomebot.Scheduler.PeriodicalMessages;
 import com.nsoft.welcomebot.Services.SlackService;
-import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +32,6 @@ class PeriodicalMessagesIT {
     private SlackService slackService;
 
     @MockBean
-    private Credentials credentials;
-
-    @MockBean
     private PeriodicalMessages periodicalMessages;
 
     @Autowired
@@ -43,7 +39,7 @@ class PeriodicalMessagesIT {
 
     @BeforeEach
     void setUp() {
-        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, credentials, slackService);
+        periodicalMessages = new PeriodicalMessages(scheduleRepositoryH2, slackService);
     }
 
     @AfterEach

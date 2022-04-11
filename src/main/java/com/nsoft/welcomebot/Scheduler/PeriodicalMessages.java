@@ -4,7 +4,6 @@ package com.nsoft.welcomebot.Scheduler;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import com.nsoft.welcomebot.Services.SlackService;
-import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SchedulerInterval;
 import com.slack.api.methods.SlackApiException;
 import lombok.AllArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PeriodicalMessages {
     private final ScheduleRepository scheduleRepository;
-    private final Credentials credentials;
     private final SlackService slackService;
 
     @Scheduled(fixedDelay = 30000)
@@ -54,6 +52,7 @@ public class PeriodicalMessages {
     }
 
     public void sendAtScheduledRunDateAndDeactivate(Schedule schedule) throws SlackApiException, IOException {
+        if (schedule.getScheduleId() == 1108L) return;
         slackService.postMessage(schedule.getChannel(), schedule.getMessage().getText());
         deactivateSchedule(schedule);
     }
