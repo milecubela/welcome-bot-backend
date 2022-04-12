@@ -40,17 +40,12 @@ public class UserService implements UserDetailsService {
       User lookup in the database
       Should return true for admins
      */
-    public User validateUser(String email) {
-        try {
-            Optional<User> user = userRepository.findByEmail(email);
-            return user.orElse(null);
-        } catch (Exception e) {
-            return null;
-        }
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public void addUser(UserRequest userRequest) {
-        if (validateUser(userRequest.getEmail()) != null) {
+        if (getUserByEmail(userRequest.getEmail()).isPresent()) {
             throw new EntityExistsException("User with email : " + userRequest.getEmail() + " already exists");
         }
         User user = new User(userRequest);
@@ -69,13 +64,13 @@ public class UserService implements UserDetailsService {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
         }
         String email = getEmailFromToken(accessToken);
-        User user = validateUser(email);
-        if (user == null) {
+        Optional<User> user = getUserByEmail(email);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User doesn't exist in the database");
         }
 
         // Accepted, token response with token and user role
-        return new TokenResponse(accessToken, user.getUserRole());
+        return new TokenResponse(accessToken, user.get().getUserRole());
     }
 
     public String logoutUser(TokenRequest tokenRequest) {

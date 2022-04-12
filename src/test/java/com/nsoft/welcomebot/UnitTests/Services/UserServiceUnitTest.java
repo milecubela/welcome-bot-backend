@@ -38,8 +38,19 @@ class UserServiceUnitTest {
         User user = new User(1L, EMAIL, UserRole.ADMIN);
         given(userRepository.findByEmail(user.getEmail())).willReturn(Optional.of(user));
         //when
-        User result = userService.validateUser(EMAIL);
+        Optional<User> result = userService.getUserByEmail(EMAIL);
         //then
-        assertThat(result.getEmail()).isEqualTo(EMAIL);
+        assertThat(result.get().getEmail()).isEqualTo(EMAIL);
+    }
+
+    @Test
+    void shouldReturnEmptyIfUserDoesntExist(){
+        //given
+        User user = new User(1L, EMAIL, UserRole.ADMIN);
+        given(userRepository.findByEmail(user.getEmail())).willReturn(Optional.empty());
+        //when
+        Optional<User> result = userService.getUserByEmail(EMAIL);
+        //then
+        assertThat(result).isEmpty();
     }
 }
