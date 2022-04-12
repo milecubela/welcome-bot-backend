@@ -57,7 +57,7 @@ public class OauthRequestFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails user = userService.loadUserByUsername(email);
-                if (userService.validateUser(email) != null) {
+                if (userService.getUserByEmail(email).isPresent()) {
                     var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

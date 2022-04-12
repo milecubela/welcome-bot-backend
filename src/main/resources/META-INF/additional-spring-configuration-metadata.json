@@ -19,6 +19,21 @@
       "name": "giphy.url",
       "type": "java.lang.String",
       "description": "Description for GIPHY api url."
+    },
+    {
+      "name": "app.google.oauth.tokenvalidate",
+      "type": "java.lang.String",
+      "description": "Description for app.google.oauth.tokenvalidate."
+    },
+    {
+      "name": "app.security.enabled",
+      "type": "java.lang.String",
+      "description": "Description for app.security.enabled."
+    },
+    {
+      "name": "app.google.oauth.tokenrevoke",
+      "type": "java.lang.String",
+      "description": "Description for app.google.oauth.tokenrevoke."
     }
   ]
 }

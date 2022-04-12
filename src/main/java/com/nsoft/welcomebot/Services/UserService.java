@@ -8,8 +8,6 @@ import com.nsoft.welcomebot.Models.RequestModels.UserRequest;
 import com.nsoft.welcomebot.Models.ResponseModels.TokenResponse;
 import com.nsoft.welcomebot.Repositories.UserRepository;
 import com.nsoft.welcomebot.Security.AuthUtils.UserRole;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,17 +40,12 @@ public class UserService implements UserDetailsService {
       User lookup in the database
       Should return true for admins
      */
-    public User validateUser(String email) {
-        try {
-            Optional<User> user = userRepository.findByEmail(email);
-            return user.orElse(null);
-        } catch (Exception e) {
-            return null;
-        }
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public void addUser(UserRequest userRequest) {
-        if (validateUser(userRequest.getEmail()) != null) {
+        if (getUserByEmail(userRequest.getEmail()).isPresent()) {
             throw new EntityExistsException("User with email : " + userRequest.getEmail() + " already exists");
         }
         User user = new User(userRequest);
@@ -64,23 +57,33 @@ public class UserService implements UserDetailsService {
      * Initial check for frontend token, returns an appropriate response
      */
 
-    public ResponseEntity<Object> loginUser(TokenRequest tokenRequest) {
-        String idToken = tokenRequest.getIdToken();
+    public TokenResponse loginUser(TokenRequest tokenRequest) {
+        String accessToken = tokenRequest.getAccessToken();
 
-        if (idToken == null) {
+        if (accessToken == null) {
             throw new BadTokenException("Bad Token request! Provide a bearer token");
         }
-        String email = getEmailFromToken(idToken);
-        User user = validateUser(email);
-        if (user == null) {
+        String email = getEmailFromToken(accessToken);
+        Optional<User> user = getUserByEmail(email);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User doesn't exist in the database");
         }
 
-        TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setIdToken(idToken);
-        tokenResponse.setUserRole(user.getUserRole());
-        // Accepted, return OK and token
-        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+        // Accepted, token response with token and user role
+        return new TokenResponse(accessToken, user.get().getUserRole());
+    }
+
+    public String logoutUser(TokenRequest tokenRequest) {
+        String accessToken = tokenRequest.getAccessToken();
+        if (accessToken == null) {
+            throw new BadTokenException("Bad Token request! Provide a bearer token");
+        }
+        try {
+            oauthTokenService.revokeGoogleToken(accessToken);
+        } catch (IOException e) {
+            throw new BadTokenException("Invalid google token or token is already revoked. Please provide a valid token");
+        }
+        return "Successfully logged out user!";
     }
 
     public String getEmailFromToken(String token) {
@@ -89,7 +92,7 @@ public class UserService implements UserDetailsService {
             JsonObject jsonObject = oauthTokenService.verifyGoogleToken(token);
             email = jsonObject.get("email").getAsString();
         } catch (IOException e) {
-            throw new BadTokenException(e.getMessage());
+            throw new BadTokenException("Invalid Google Token!");
         }
         return email;
     }

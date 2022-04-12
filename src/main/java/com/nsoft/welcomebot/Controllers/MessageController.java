@@ -14,7 +14,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@CrossOrigin
 @RequestMapping(path = "api/v1/messages")
 public class MessageController {
 

@@ -15,7 +15,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@CrossOrigin
 @RequestMapping(path = "api/v1/triggers")
 public class TriggerController {
 
