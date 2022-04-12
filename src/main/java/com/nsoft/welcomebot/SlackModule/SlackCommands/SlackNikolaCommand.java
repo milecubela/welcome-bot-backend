@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.SlackModule.SlackCommands;
 
+import com.nsoft.welcomebot.SlackModule.Logger.SlackEventLogger;
 import com.nsoft.welcomebot.SlackModule.SlackInterfaces.SlackCommandsInterface;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SlackCommand;
@@ -17,6 +18,7 @@ public class SlackNikolaCommand implements SlackCommandsInterface {
     public void subscribeToSlackCommand(App app, Credentials crd) {
         app.command("/nikola", (req, ctx) -> {
             String message = "Nikola about";
+            SlackEventLogger.logInfo("Command /nikola invoked");
             return ctx.ack(message);
         });
     }

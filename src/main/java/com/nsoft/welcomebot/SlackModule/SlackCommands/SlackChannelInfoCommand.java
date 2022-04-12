@@ -1,5 +1,6 @@
 package com.nsoft.welcomebot.SlackModule.SlackCommands;
 
+import com.nsoft.welcomebot.SlackModule.Logger.SlackEventLogger;
 import com.nsoft.welcomebot.SlackModule.SlackInterfaces.SlackCommandsInterface;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SlackCommand;
@@ -25,6 +26,7 @@ public class SlackChannelInfoCommand implements SlackCommandsInterface {
                 message += "<@" + convMembers.get(i) + ">";
                 message += (i + 1 < convMembers.size() ? ", " : ".");
             }
+            SlackEventLogger.logInfo("Command /channel-info invoked");
             return ctx.ack(message);
         });
     }

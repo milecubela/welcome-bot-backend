@@ -1,7 +1,7 @@
 package com.nsoft.welcomebot.Services;
 
-import com.nsoft.welcomebot.SlackModule.SlackFactory.SlackCommmandsFactory;
-import com.nsoft.welcomebot.SlackModule.SlackFactory.SlackEventsFactory;
+import com.nsoft.welcomebot.SlackModule.SlackFactory.SlackCommandsCache;
+import com.nsoft.welcomebot.SlackModule.SlackFactory.SlackEventsCache;
 import com.nsoft.welcomebot.Utilities.Credentials;
 import com.nsoft.welcomebot.Utilities.SlackCommand;
 import com.nsoft.welcomebot.Utilities.TriggerEvent;
@@ -17,14 +17,14 @@ public class SlackService {
 
     private final Credentials _credentials;
     private final App _app;
-    private final SlackEventsFactory _slackEventsFactory;
-    private final SlackCommmandsFactory _slackCommandsFactory;
+    private final SlackEventsCache slackEventsCache;
+    private final SlackCommandsCache slackCommandsCache;
 
-    public SlackService(Credentials credentials, App app, SlackEventsFactory slackEventsFactory, SlackCommmandsFactory slackCommandsFactory) {
+    public SlackService(Credentials credentials, App app, SlackEventsCache slackEventsFactory, SlackCommandsCache slackCommandsFactory) {
         _credentials = credentials;
         _app = app;
-        _slackEventsFactory = slackEventsFactory;
-        _slackCommandsFactory = slackCommandsFactory;
+        slackEventsCache = slackEventsFactory;
+        slackCommandsCache = slackCommandsFactory;
     }
 
     public void subscribeAll() {
@@ -35,14 +35,14 @@ public class SlackService {
     private void subscribeToEvents() {
         var list = Arrays.stream(TriggerEvent.values()).toList();
         for (TriggerEvent triggerEvent : list) {
-            _slackEventsFactory.getEvent(triggerEvent).subscribeToEvent(_app, _credentials);
+            slackEventsCache.get(triggerEvent).subscribeToEvent(_app, _credentials);
         }
     }
 
     private void subscribeToCommands() {
         var list = Arrays.stream(SlackCommand.values()).toList();
         for (SlackCommand slackCommand : list) {
-            _slackCommandsFactory.getCommand(slackCommand).subscribeToSlackCommand(_app, _credentials);
+            slackCommandsCache.get(slackCommand).subscribeToSlackCommand(_app, _credentials);
         }
     }
 

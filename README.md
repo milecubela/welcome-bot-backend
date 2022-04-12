@@ -28,7 +28,6 @@ Spring Boot 2.6.4
 MariaDB 
 Dependencies: 
     - Spring Data JPA
-    - OAuth2 Client
     - Spring Web
     - Flyway
     - MariaDB Java Client
@@ -62,7 +61,7 @@ You can find the supported event types here: https://api.slack.com/events
 
 ```text
 Adding events:
-    1. Add new enum member in TriggerEvent under Utilities package.
+    1. Add new enum member in TriggerEvent under Utilities package that describes the event.
     2. Create a new class in SlackEvents package that will contain its interface methods.
 Adding commands:
 Before going through these steps the bot owner needs to subscribe to certain SlashCommands in its bot configuration page.
@@ -73,10 +72,30 @@ Before going through these steps the bot owner needs to subscribe to certain Sla
 Bot can also communicate with users and listen to their messages to give them a correct response. Responses are defined
 in database. 
 
+**Note for using tests**
+
+Because we are using testcontainers for integration testing, you need to add user to the docker group.
+
+```text
+$ sudo groupadd docker
+$ sudo gpasswd -a $USER docker
+$ sudo service docker restart
+```
 **App Security**
 
 App is secured with Google Oauth2 and Spring Security. To disable security, run the application 
-in dev environment with application-dev.properties
+in dev environment with application-dev.properties.
+
+Application has 2 different roles, ADMIN and SUPERADMIN. Admin is the main user, and has access to entire 
+dashboard. SUPERADMIN has te ability to add new admins. 
+
+CORS policy has default setup.
+CSRF protection is disabled and our application has Stateless session creation policy. 
+We are using Google Access Tokens JWTs for authorization. On each request, we are validating the
+access token on oauth2 endpoints, extracting the email from it and checking it against the database. 
+From there we are setting the Spring Security Context with valid user-role and allowing API access.
+
+XSS safety is also configured with default Spring Security implementation.
 
 **Logging** 
 
