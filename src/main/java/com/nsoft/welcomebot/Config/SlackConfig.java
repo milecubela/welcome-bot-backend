@@ -32,8 +32,6 @@ public class SlackConfig {
         AppConfig appConfig = new AppConfig();
         appConfig.setSigningSecret(crd.getSlackSigningSecret());
         appConfig.setSingleTeamBotToken(crd.getSlackBotToken());
-        App app = new App(appConfig);
-        return app;
+        return new App(appConfig);
     }
-
 }
