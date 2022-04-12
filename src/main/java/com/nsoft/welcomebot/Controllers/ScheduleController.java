@@ -52,7 +52,7 @@ public class ScheduleController {
         return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/toggle")
+    @PutMapping(path = "/toggle")
     public ResponseEntity<String> toggleGif() {
         scheduleService.toggleGifs();
         return new ResponseEntity<>("Successfully toggled gif sending", HttpStatus.OK);
