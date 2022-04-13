@@ -39,6 +39,7 @@ public class PeriodicalMessages {
     }
 
     public void setNextRunDate(Schedule schedule) {
+        if (isScheduledGif(schedule)) return;
         if (schedule.getSchedulerInterval() == SchedulerInterval.MINUTE) {
             schedule.setNextRun(LocalDateTime.now().plusSeconds(300));
         }
@@ -52,7 +53,7 @@ public class PeriodicalMessages {
     }
 
     public void sendAtScheduledRunDateAndDeactivate(Schedule schedule) throws SlackApiException, IOException {
-        if (schedule.getScheduleId() == 1108L) return;
+        if (isScheduledGif(schedule)) return;
         slackService.postMessage(schedule.getChannel(), schedule.getMessage().getText());
         deactivateSchedule(schedule);
     }
@@ -61,5 +62,11 @@ public class PeriodicalMessages {
         if (!schedule.isRepeat()) schedule.setActive(false);
         setNextRunDate(schedule);
         scheduleRepository.save(schedule);
+    }
+
+    // Add new entity for gif or is_gif column in schedule instead of hardcoding schedule id
+    public boolean isScheduledGif(Schedule schedule) {
+        return schedule.getScheduleId() == 1108L;
+
     }
 }
