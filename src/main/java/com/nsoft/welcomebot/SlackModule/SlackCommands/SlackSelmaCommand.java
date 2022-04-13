@@ -17,7 +17,9 @@ public class SlackSelmaCommand implements SlackCommandsInterface {
     @Override
     public void subscribeToSlackCommand(App app, Credentials crd) {
         app.command("/selma", (req, ctx) -> {
-            String message = "Selma about";
+            String message = "Selma Čokljat is 26 and she is a bachelor of electrical engineering." +
+                    " She is a person who is eager for constant improvement and she is one of the collaborators for my creation.\n" +
+                    "Selma used different technologies related to my Front-End development, and some of them are Vue3 and Google authentication.";
             SlackEventLogger.logInfo("Command /selma invoked");
             return ctx.ack(message);
         });
