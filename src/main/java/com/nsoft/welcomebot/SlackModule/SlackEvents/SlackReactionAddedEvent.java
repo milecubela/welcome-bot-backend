@@ -22,7 +22,7 @@ public class SlackReactionAddedEvent implements SlackEventInterface {
             var itemUser = "<@" + event.getItemUser() + ">";
             var reaction = event.getReaction();
             String message = "User " + user + " reacted with :" + reaction + ": to " + itemUser + "'s message";
-            ctx.setChannelId("C037FSVSEJX");
+            ctx.setChannelId("C03BHV6CPS5");
             ctx.say(message);
             return ctx.ack();
         });
