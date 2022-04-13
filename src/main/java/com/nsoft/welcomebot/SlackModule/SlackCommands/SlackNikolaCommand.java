@@ -17,7 +17,12 @@ public class SlackNikolaCommand implements SlackCommandsInterface {
     @Override
     public void subscribeToSlackCommand(App app, Credentials crd) {
         app.command("/nikola", (req, ctx) -> {
-            String message = "Nikola about";
+            String message = "Nikola is a 24yr old student from Mostar, ever since a young age he's been passionate about technology " +
+                    "and he decided to follow that passion. He's currently attending the Faculty of Information Technologies" +
+                    " where he learned a wide variety of soft and technical skills, and he's hoping to add more." +
+                    " Some of his interests are technology, mountain biking and cryptocurrencies.\n" +
+                    "Nikola implemented my scheduled messages and gifs feature and dockerized me so I can work anywhere." +
+                    " He also worked on my API counterpart and wrote my tests.";
             SlackEventLogger.logInfo("Command /nikola invoked");
             return ctx.ack(message);
         });
