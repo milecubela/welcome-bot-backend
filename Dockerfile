@@ -15,4 +15,4 @@ WORKDIR /app
 
 COPY --from=builder /app/target/welcomeBot.jar ./welcomeBot.jar
 
-ENTRYPOINT ["java","-Dspring.profiles.active=dev", "-jar", "./welcomeBot.jar"]
+ENTRYPOINT ["java", "-jar", "./welcomeBot.jar"]
