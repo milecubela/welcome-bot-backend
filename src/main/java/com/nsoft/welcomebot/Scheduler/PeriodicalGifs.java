@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.nsoft.welcomebot.Entities.Schedule;
 import com.nsoft.welcomebot.Repositories.ScheduleRepository;
 import com.nsoft.welcomebot.Services.SlackService;
-import com.nsoft.welcomebot.Utilities.ConsumeJSON;
 import com.nsoft.welcomebot.Utilities.Credentials;
+import com.nsoft.welcomebot.Utilities.JSON;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.Attachment;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class PeriodicalGifs {
         if (!gif.isActive() || !LocalDateTime.now().isAfter(gif.getNextRun())) {
             return;
         }
-        JsonObject jsonObject = ConsumeJSON.getJSONObject(credentials.getGiphyUrl());
+        JsonObject jsonObject = JSON.get(credentials.getGiphyUrl());
         JsonObject data = new Gson().fromJson(jsonObject, JsonObject.class);
         String receivedJson = data.get("data").getAsJsonArray().get(randomNumber()).getAsJsonObject().get("images").getAsJsonObject().get("downsized").getAsJsonObject().get("url").getAsString();
         Attachment attachment = new Attachment();
